@@ -1,0 +1,22 @@
+{
+  "name": "film-review-app",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "private": true,
+  "workspaces": [
+    "packages/backend/",
+    "packages/frontend/"
+  ],
+  "scripts": {
+    "start": "concurrently \"yarn workspace backend dev\" \"yarn workspace frontend dev\""
+  },
+  "dependencies": {
+    "lerna": "^8.1.2",
+    "typescript": "^5.3.3"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "concurrently": "^8.2.2"
+  }
+}
