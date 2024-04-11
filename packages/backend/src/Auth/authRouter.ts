@@ -1,11 +1,14 @@
-// src/Auth/authRouter.ts
-
 import { Router } from "express";
-import * as AuthController from "./authController";
+import { authController } from "./authController";
+import protect from "../Middlewares/authMiddlewares"; // Adjust the import path as necessary
 
 const authRouter = Router();
 
-authRouter.post("/signup", AuthController.signup);
-authRouter.post("/login", AuthController.login);
+// Public routes
+authRouter.post("/logout", protect, authController.logout.bind(authController));
+authRouter.post("/signup", authController.signup.bind(authController));
+authRouter.post("/login", authController.login.bind(authController));
+
+// Protected route, explicitly applying the 'protect' middleware
 
 export default authRouter;

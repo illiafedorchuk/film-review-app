@@ -2,6 +2,12 @@ import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
 
 @Entity("users")
 export class User {
+  static findById(userId: string) {
+    throw new Error("Method not implemented.");
+  }
+  static findByIdAndUpdate(_id: any, arg1: { refreshToken: any }) {
+    throw new Error("Method not implemented.");
+  }
   @PrimaryGeneratedColumn()
   id!: number;
 
@@ -9,22 +15,19 @@ export class User {
   email!: string;
 
   @Column({ nullable: true })
-  nickname!: string;
+  name!: string;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, select: false })
   password!: string;
-
-  @Column({ nullable: true })
-  firstName!: string;
-
-  @Column({ nullable: true })
-  lastName!: string;
 
   @Column({ default: false })
   isAdmin!: boolean;
 
   @Column({ default: true })
   isActive!: boolean;
+
+  @Column({ type: "text", nullable: true })
+  refreshToken!: string | null;
 
   @Column({ default: () => "CURRENT_TIMESTAMP" })
   createdAt!: Date;
