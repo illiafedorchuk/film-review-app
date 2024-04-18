@@ -8,6 +8,10 @@ const authRouter = Router();
 authRouter.post("/logout", protect, authController.logout.bind(authController));
 authRouter.post("/signup", authController.signup.bind(authController));
 authRouter.post("/login", authController.login.bind(authController));
+authRouter.post(
+  "/refresh-token/:id",
+  authController.refreshToken.bind(authController)
+);
 
 // Protected route, explicitly applying the 'protect' middleware
 

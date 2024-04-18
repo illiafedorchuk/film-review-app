@@ -1,0 +1,28 @@
+/////////////////
+Auth page
+/////////////////
+Profile page
+-> icon
+-> name
+-> status
+-> about me
+-> watched films counter
+-> liked films counter
+-> folders
+-> want to watch 
+-> reviews
+/////////////////
+Main page
+-> all films
+-> new films
+-> want to watch films
+-> upgoing films
+/////////////////
+film page
+-> film
+-> reviews
+-> trailer
+-> descriptions
+-> info about film
+/////////////////
+
