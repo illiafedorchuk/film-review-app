@@ -1,55 +1,96 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React from "react";
-import { Link } from "react-router-dom";
-import { FaBars, FaTimes, FaHome, FaUserAlt, FaTools } from "react-icons/fa";
+import React, { useState } from "react";
+import {
+  BiFilterAlt as BiFilterLeft,
+  BiX,
+  BiHome,
+  BiBookmark as BiBookmarkFill,
+  BiEnvelope,
+  BiChat as BiChatLeftTextFill,
+  BiArrowFromLeft,
+  BiChevronRight,
+  BiChevronLeft,
+} from "react-icons/bi";
+import SidebarItem from "./SidebarItem"; // Import the SidebarItem component
+import { IconBaseProps } from "react-icons";
 
-// Ensure to receive the props for controlling state
 const Sidebar = ({
-  isOpen,
-  setIsOpen,
-  toggleSidebar,
+  expanded,
+  setExpanded,
 }: {
-  isOpen: boolean;
-  setIsOpen: (isOpen: boolean) => void;
-  toggleSidebar: () => void;
+  expanded: boolean;
+  setExpanded: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
-  const iconStyle = "text-purple-500 text-xl"; // Style for icons
+  const [isSubMenuOpen, setIsSubMenuOpen] = useState(false);
+
+  const toggleSubMenu = () => {
+    setIsSubMenuOpen(!isSubMenuOpen);
+  };
+
+  const toggleSidebar = () => {
+    setExpanded(!expanded);
+  };
 
   return (
     <div
-      className={`fixed top-0 left-0 h-full z-30 ${
-        isOpen ? "w-256px" : "w-16"
-      } transition-width duration-300 ease-in-out bg-white shadow-lg`}
+      className={`absolute top-0 bottom-0 lg:left-0 ${
+    expanded ? " w-[70px]" : "-left-[300px] w-[200px]"
+} duration-100 p-2 overflow-y-auto text-center bg-white shadow h-screen z-10`}
     >
-      <div className="p-5 text-right">
-        <button onClick={toggleSidebar} className="text-xl">
-          {isOpen ? (
-            <FaTimes className={iconStyle} />
+      <div className="text-gray-100 text-xl">
+        <div className="flex justify-between items-center p-2">
+          {expanded ? (
+            <BiChevronRight
+              className="text-gray-800 text-4xl cursor-pointer"
+              onClick={toggleSidebar}
+            />
           ) : (
-            <FaBars className={iconStyle} />
+            <BiChevronLeft
+              className="text-gray-800 text-4xl cursor-pointer"
+              onClick={toggleSidebar}
+            />
           )}
-        </button>
+        </div>
       </div>
-      <ul className="mt-10">
-        <li className="p-4 hover:bg-purple-100">
-          <Link to="/" className="flex items-center justify-start">
-            <FaHome className={iconStyle} />
-            {isOpen && <span className="ml-4">Home</span>}
-          </Link>
-        </li>
-        <li className="p-4 hover:bg-purple-100">
-          <Link to="/about" className="flex items-center justify-start">
-            <FaUserAlt className={iconStyle} />
-            {isOpen && <span className="ml-4">About</span>}
-          </Link>
-        </li>
-        <li className="p-4 hover:bg-purple-100">
-          <Link to="/services" className="flex items-center justify-start">
-            <FaTools className={iconStyle} />
-            {isOpen && <span className="ml-4">Services</span>}
-          </Link>
-        </li>
-      </ul>
+      <hr className="my-2 text-gray-300" />
+      <SidebarItem icon={BiHome} label="Home" expanded={expanded} />
+      <SidebarItem icon={BiBookmarkFill} label="Bookmark" expanded={expanded} />
+      <SidebarItem icon={BiEnvelope} label="Messages" expanded={expanded} />
+      <SidebarItem
+        icon={BiChatLeftTextFill}
+        label="Chatbox"
+        onClick={toggleSubMenu}
+        hasSubMenu={true}
+        isSubMenuOpen={isSubMenuOpen}
+        expanded={expanded}
+      />
+      {isSubMenuOpen && (
+        <>
+          {/* Define icons for these items or remove icon prop if not needed */}
+          <SidebarItem
+            label="Social"
+            expanded={expanded}
+            icon={function (props: IconBaseProps): JSX.Element {
+              throw new Error("Function not implemented.");
+            }}
+          />
+          <SidebarItem
+            label="Personal"
+            expanded={expanded}
+            icon={function (props: IconBaseProps): JSX.Element {
+              throw new Error("Function not implemented.");
+            }}
+          />
+          <SidebarItem
+            label="Friends"
+            expanded={expanded}
+            icon={function (props: IconBaseProps): JSX.Element {
+              throw new Error("Function not implemented.");
+            }}
+          />
+        </>
+      )}
+      <SidebarItem icon={BiArrowFromLeft} label="Logout" expanded={expanded} />
     </div>
   );
 };

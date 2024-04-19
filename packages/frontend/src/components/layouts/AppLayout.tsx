@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+// In AppLayout.tsx
 import React, { ReactNode, useState } from "react";
-import Sidebar from "../Sidebar";
+import Sidebar from "../Sidebar"; // Ensure the import path is correct based on your project structure
 
 interface AppLayoutProps {
   children: ReactNode;
@@ -16,23 +17,21 @@ const AppLayout: React.FC<AppLayoutProps> = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false); // State to control the sidebar
 
-  // This will toggle the sidebar state
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
   };
+
   return (
     <>
-      {showNav && (
-        <Sidebar
-          isOpen={isOpen}
-          toggleSidebar={toggleSidebar}
-          setIsOpen={function (isOpen: boolean): void {
-            throw new Error("Function not implemented.");
-          }}
-        />
-      )}
       <div style={{ background, maxWidth: "100%", margin: "0 auto" }}>
-        <div style={{ maxWidth: "1920px", margin: "0 auto" }}>{children}</div>
+        <div
+          style={{ maxWidth: "1920px", margin: "0 auto", position: "relative" }}
+        >
+          <Sidebar expanded={isOpen} setExpanded={setIsOpen} />
+          <main className={`${isOpen ? "ml-0" : "ml-16"} transition-all`}>
+            {children}
+          </main>
+        </div>
       </div>
     </>
   );

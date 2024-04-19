@@ -47,9 +47,9 @@ const LoginForm = () => {
 
   return (
     <AppLayout>
-      <div className="flex flex-wrap justify-center min-h-screen bg-gray-100">
-        <div className="flex flex-col justify-center items-center w-full px-4 py-10 lg:w-1/2">
-          <div className="w-full max-w-lg px-10 py-20 bg-white rounded-3xl border-2 border-gray-100">
+      <div className="flex flex-wrap justify-center min-h-screen bg-gray-100 ">
+        <div className="flex flex-col justify-center items-center w-full px-4 py-10 lg:w-1/2 ">
+          <div className="w-4/5 max-w-lg px-10 py-20 bg-white rounded-3xl border-2 border-gray-100">
             <h1 className="text-4xl font-semibold">Login</h1>
             <p className="font-medium text-md text-gray-500 mt-4">
               Please enter your details.
