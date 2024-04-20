@@ -28,9 +28,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
           style={{ maxWidth: "1920px", margin: "0 auto", position: "relative" }}
         >
           <Sidebar expanded={isOpen} setExpanded={setIsOpen} />
-          <main className={`${isOpen ? "ml-0" : "ml-16"} transition-all`}>
-            {children}
-          </main>
+          <main className={`transition-all`}>{children}</main>
         </div>
       </div>
     </>

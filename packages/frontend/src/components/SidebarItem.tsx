@@ -6,9 +6,8 @@ type SidebarItemProps = {
   label: string;
   onClick?: () => void;
   active?: boolean;
-  hasSubMenu?: boolean;
-  isSubMenuOpen?: boolean;
   expanded: boolean;
+  value?: string;
 };
 
 const SidebarItem: React.FC<SidebarItemProps> = ({
@@ -21,7 +20,7 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
   return (
     <div
       className={`p-2.5 mt-2 flex items-center font-semibold rounded-md px-4 justify-center cursor-pointer ${
-        active ? "hover:text-white" : "hover:bg-purple-400"
+        active ? "" : "hover:bg-purple-400  hover:text-white"
       }`}
       onClick={onClick}
     >
@@ -29,9 +28,7 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
       {expanded || !label ? (
         <span className="sr-only">{label}</span>
       ) : (
-        <span className="text-[15px] ml-4 text-black flex-1 hover:text-white">
-          {label}
-        </span>
+        <span className="text-[15px] ml-4 flex-1">{label}</span>
       )}
     </div>
   );
