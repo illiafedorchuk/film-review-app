@@ -16,6 +16,12 @@ export const signRefreshToken = (userId: number) => {
   });
 };
 
+export const signResetPasswordToken = (userId: number) => {
+  return jwt.sign({ id: userId }, process.env.JWT_RESET_PASSWORD_TOKEN_KEY!, {
+    expiresIn: +process?.env?.JWT_RESET_PASSWORD_TOKEN_EXPIRATION!,
+  });
+};
+
 export const createSendToken = async (
   user: User,
   statusCode: number,

@@ -19,7 +19,7 @@ const schema = z.object({
 
 type FormFields = z.infer<typeof schema>;
 
-const RegisterForm = () => {
+const RegisterPage = () => {
   const [error, setError] = useState<string | null>(null);
   const {
     register,
@@ -49,8 +49,8 @@ const RegisterForm = () => {
 
   return (
     <AppLayout>
-      <div className="flex w-full h-screen">
-        <div className="w-full flex items-center justify-center lg:w-1/2">
+      <div className="flex w-full h-screen bg-gray-100">
+        <div className="w-full flex items-center justify-center lg:w-1/2 ">
           <div className="w-11/12 max-w-[600px] px-8 py-5 rounded-3xl bg-white border-2 border-gray-100">
             <h1 className="text-4xl font-semibold">Register</h1>
             <p className="font-medium text-md text-gray-500 mt-2">
@@ -112,10 +112,10 @@ const RegisterForm = () => {
             </p>
             <button className="mt-4 py-3 px-6 bg-white text-violet-500 rounded-xl font-semibold hover:bg-gray-200 transition duration-300 ease-in-out">
               <Link
-                to="/signup"
+                to="/signin"
                 className="text-violet-500 hover:text-violet-600 transition duration-300 ease-in-out"
               >
-                Sign Up
+                Sign In
               </Link>
             </button>
           </div>
@@ -125,4 +125,4 @@ const RegisterForm = () => {
   );
 };
 
-export default RegisterForm;
+export default RegisterPage;

@@ -3,8 +3,23 @@ import bcrypt from "bcryptjs";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { User } from "../Users/user"; // Adjust the import path as necessary
 import { AppDataSource } from "../../db/data-source";
-import { createSendToken, signAccessToken } from "../Utils/TokenUtils";
+import {
+  createSendToken,
+  signAccessToken,
+  signResetPasswordToken,
+} from "../Utils/TokenUtils";
 import catchAsync from "../Utils/CatchAsync";
+import { MailtrapClient } from "mailtrap";
+import nodemailer from "nodemailer";
+
+var transport = nodemailer.createTransport({
+  host: "sandbox.smtp.mailtrap.io",
+  port: 2525,
+  auth: {
+    user: "46b2190e43cd58",
+    pass: "75ea69df48ad2f",
+  },
+});
 
 interface ExtendedRequest extends Request {
   user?: User;
@@ -158,6 +173,78 @@ class AuthController {
       } catch (error) {
         console.error("Error during logout or token verification:", error);
         return res.status(500).json({ message: "Internal server error." });
+      }
+    }
+  );
+
+  public forgotPassword = async (
+    req: Request,
+    res: Response
+  ): Promise<Response | void> => {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({ message: "Please provide an email." });
+    }
+
+    const userRepository = AppDataSource.getRepository(User);
+    const user = await userRepository.findOne({ where: { email } });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found." });
+    }
+
+    // Generate a password reset token
+    signResetPasswordToken(user.id);
+
+    const mailOptions = {
+      from: "broski@film-app", // Use the provided email as the 'from' address
+      to: email, // Adjust the recipient as needed
+      subject: `Message from ${email}`,
+      text: `http://localhost:5173/${signResetPasswordToken(user.id)}`,
+    };
+
+    try {
+      await transport.sendMail(mailOptions);
+      return res.status(200).json({ message: "Password reset email sent." });
+    } catch (error) {
+      console.error("Error sending email:", error);
+      return res
+        .status(500)
+        .json({ message: "Failed to send password reset email." });
+    }
+  };
+
+  public resetPassword = catchAsync(
+    async (req: Request, res: Response): Promise<Response | void> => {
+      const { signResetPasswordToken } = req.params; // Verify that 'token' is correctly extracted from params
+      const { password } = req.body; // Assuming you're also receiving 'password' in the request body
+      console.log(signResetPasswordToken);
+      try {
+        // Verify the token
+        const decoded: any = jwt.verify(
+          signResetPasswordToken,
+          process.env.JWT_RESET_PASSWORD_TOKEN_KEY!
+        );
+        const userId = decoded.id;
+        // Find the user and update the password
+        const userRepository = AppDataSource.getRepository(User);
+        const user = await userRepository.findOne({ where: { id: userId } });
+
+        if (!user) {
+          return res.status(404).json({ message: "User not found." });
+        }
+
+        const hashedPassword = await bcrypt.hash(password, 10);
+        user.password = hashedPassword;
+        await userRepository.save(user);
+
+        return res
+          .status(200)
+          .json({ message: "Password updated successfully." });
+      } catch (error) {
+        console.error("Error during password reset:", error);
+        return res.status(500).json({ message: "Failed to reset password." });
       }
     }
   );

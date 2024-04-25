@@ -10,7 +10,6 @@ import {
   BiArrowFromLeft,
   BiChevronRight,
   BiChevronLeft,
-  BiMenu,
 } from "react-icons/bi";
 import SidebarItem from "./SidebarItem";
 import { IconBaseProps } from "react-icons";
@@ -53,7 +52,7 @@ const Sidebar = ({
             onClick={toggleSidebar}
           />
           {isSidebarVisible && (
-            <div className="absolute top-0 bottom-0 left-0 w-[70%] duration-100 p-2 overflow-y-auto text-center bg-white shadow h-screen z-10">
+            <div className="absolute top-0 bottom-0 left-0 w-[70%] duration-100 p-2 overflow-y-auto text-center bg-white shadow h-screen z-20">
               <SidebarContent
                 expanded={expanded}
                 toggleSidebar={toggleSidebar}

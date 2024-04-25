@@ -1,8 +1,9 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import LoginForm from "./pages/auth/LoginForm";
-import RegisterForm from "./pages/auth/RegistrationForm";
+import LoginPage from "./pages/auth/LoginPage";
+import RegisterPage from "./pages/auth/RegistrationPage";
+import ResetPasswordPage from "./pages/auth/ResetPasswordPage";
 import "./index.css";
 
 const rootElement = document.getElementById("root");
@@ -12,8 +13,12 @@ if (rootElement) {
     <React.StrictMode>
       <BrowserRouter>
         <Routes>
-          <Route path="/signin" element={<LoginForm />} />
-          <Route path="/signup" element={<RegisterForm />} />
+          <Route path="/signin" element={<LoginPage />} />
+          <Route path="/signup" element={<RegisterPage />} />
+          <Route
+            path="/resetPassword/:signResetPasswordToken"
+            element={<ResetPasswordPage />}
+          />
         </Routes>
       </BrowserRouter>
     </React.StrictMode>

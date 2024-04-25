@@ -20,7 +20,7 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
   return (
     <div
       className={`p-2.5 mt-2 flex items-center font-semibold rounded-md px-4 justify-center cursor-pointer ${
-        active ? "" : "hover:bg-purple-400  hover:text-white"
+        active ? "" : "hover:bg-violet-400  hover:text-white"
       }`}
       onClick={onClick}
     >
