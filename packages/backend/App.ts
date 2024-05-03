@@ -8,7 +8,7 @@ import cors from "cors";
 import { globalErrorHandler } from "./src/Utils/ErrorController"; // Adjust the path as necessary
 
 const app: Express = express();
-
+const apiKey = process.env.API_KEY;
 dotenv.config();
 app.use(express.json());
 app.use(cookieParser());

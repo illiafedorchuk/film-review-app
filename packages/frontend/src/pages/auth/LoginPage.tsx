@@ -55,9 +55,9 @@ const LoginPage = () => {
 
   return (
     <AppLayout>
-      <div className="flex flex-wrap justify-center min-h-screen bg-gray-100 ">
+      <div className="flex flex-wrap justify-center min-h-screen bg-gray-100">
         <div className="flex flex-col justify-center items-center w-full px-4 py-10 lg:w-1/2 ">
-          <div className="w-4/5 max-w-lg px-10 py-20 bg-white rounded-3xl border-2 border-gray-100 ">
+          <div className=" max-sm:w-full sm:w-4/5 max-w-lg px-10 py-20  sm:bg-white rounded-3xl border-2 border-gray-100 max-sm:bg-gray-100 ">
             <h1 className="text-4xl font-semibold">
               {forgotPasswordModalOpen ? "Forgot password?" : "Login"}
             </h1>
@@ -69,7 +69,7 @@ const LoginPage = () => {
             {forgotPasswordModalOpen ? (
               <ForgotPasswordModal onClose={toggleForgotPasswordModal} />
             ) : (
-              <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+              <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 ">
                 <TextInput
                   label="Email"
                   placeholder="Enter your email"
@@ -78,7 +78,7 @@ const LoginPage = () => {
                   name="email"
                   error={errors.email}
                 />
-                <div className="flex flex-col mt-4">
+                <div className="flex flex-col mt-4 ">
                   <PasswordField
                     name="password"
                     label="Password"
@@ -129,18 +129,18 @@ const LoginPage = () => {
         </div>
         <div className="hidden lg:flex w-1/2 bg-violet-500 justify-center items-center rounded-s-full text-white">
           <div className="text-center">
-            <h2 className="text-3xl font-semibold mb-4">Welcome Back!</h2>
+            <h2 className="text-3xl font-semibold mb-4">First time here?</h2>
             <p className="text-lg">
-              Enter your personal details to use all of site features
+              Сreate an account to use all of site features.
             </p>
-            <button className="mt-4 py-3 px-6 bg-white text-violet-500 rounded-xl font-semibold hover:bg-gray-200 transition duration-300 ease-in-out">
-              <Link
-                to="/signup"
-                className="text-violet-500 hover:text-violet-600 transition duration-300 ease-in-out"
-              >
+            <Link
+              to="/signup"
+              className="text-violet-500 hover:text-violet-600 transition duration-300 ease-in-out"
+            >
+              <button className="mt-4 py-3 px-6 bg-white text-violet-500 rounded-xl font-semibold hover:bg-gray-200 transition duration-300 ease-in-out">
                 Sign Up
-              </Link>
-            </button>
+              </button>
+            </Link>
           </div>
         </div>
       </div>

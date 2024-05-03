@@ -201,7 +201,9 @@ class AuthController {
       from: "broski@film-app", // Use the provided email as the 'from' address
       to: email, // Adjust the recipient as needed
       subject: `Message from ${email}`,
-      text: `http://localhost:5173/${signResetPasswordToken(user.id)}`,
+      text: `http://localhost:5173/resetPassword/${signResetPasswordToken(
+        user.id
+      )}`,
     };
 
     try {

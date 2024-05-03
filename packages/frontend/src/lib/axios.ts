@@ -1,10 +1,7 @@
 import Axios from "axios";
 
 // Create an Axios instance with common configuration
-const axios = Axios.create({
-  baseURL: "http://localhost:3000", // Change to your backend's base URL
-  withCredentials: true, // Necessary if your backend uses sessions
-});
+const axios = Axios.create({});
 
 // Request interceptor to handle or modify requests before they are sent
 axios.interceptors.request.use(async (config) => {

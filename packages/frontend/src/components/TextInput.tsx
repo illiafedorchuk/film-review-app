@@ -21,7 +21,7 @@ const TextInput = ({
         {...register(name)}
         type={type}
         placeholder={placeholder}
-        className="w-full h-12 border-2 border-gray-100 rounded-xl p-4 mt-1 bg-transparent"
+        className="w-full h-12 border-2 border-gray-100 rounded-xl p-4 mt-1 bg-transparent max-sm:border-gray-200"
       />
       {error && <div className="text-red-500">{error.message}</div>}
     </div>

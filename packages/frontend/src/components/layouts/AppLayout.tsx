@@ -23,7 +23,9 @@ const AppLayout: React.FC<AppLayoutProps> = ({
 
   return (
     <>
-      <div style={{ background, maxWidth: "100%", margin: "0 auto" }}>
+      <div
+        style={{ background: "#F3F4F6", maxWidth: "100%", margin: "0 auto" }}
+      >
         <div
           style={{ maxWidth: "1920px", margin: "0 auto", position: "relative" }}
         >

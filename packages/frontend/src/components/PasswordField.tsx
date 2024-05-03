@@ -36,7 +36,7 @@ function PasswordField({
       </label>
       <div className="relative w-full">
         <div
-          className="absolute inset-y-0 right-2 flex items-center px-2 text-gray-600"
+          className="absolute inset-y-0 right-2 flex items-center px-2 text-gray-600 "
           onClick={() => setShowPassword(!showPassword)}
         >
           {showPassword ? (
@@ -50,7 +50,7 @@ function PasswordField({
           placeholder={placeholder}
           id={name}
           type={showPassword ? "text" : "password"}
-          className="w-full h-12 border-2 border-gray-100 rounded-xl p-4 mt-1 bg-transparent"
+          className="w-full h-12 border-2 border-gray-100 rounded-xl p-4 mt-1 bg-transparent max-sm:border-gray-200"
           value={password}
           onChange={handleInputChange}
         />

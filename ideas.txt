@@ -6,7 +6,6 @@ Profile page
 -> name
 -> status
 -> about me
--> watched films counter
 -> liked films counter
 -> folders
 -> want to watch 

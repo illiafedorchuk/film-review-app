@@ -77,7 +77,7 @@ const ResetPasswordPage = () => {
             />
             <button
               type="submit"
-              className="bg-violet-500 hover:bg-violet-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full mt-4"
+              className="bg-violet-500 rounded-xl text-white font-bold text-md w-full active:scale-[.98] active:duration-75 transition-all hover:scale-[1.01] ease-in-out transform h-12"
               disabled={isSubmitting}
             >
               Reset
