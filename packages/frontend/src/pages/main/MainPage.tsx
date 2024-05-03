@@ -6,11 +6,11 @@ import axios from "../../lib/axios";
 
 const popular = async () => {
   const res = await axios.get(
-    `https://api.themoviedb.org/3/movie/popular?api_key=25827bdb07a5e10047fca31922e36d9e`,
+    `https://api.themoviedb.org/3/movie/popular?api_key=${process.env.API_KEY}`,
     {
       withCredentials: true,
       headers: {
-        Authorization: `Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIyNTgyN2JkYjA3YTVlMTAwNDdmY2EzMTkyMmUzNmQ5ZSIsInN1YiI6IjY2MmI3NTNhOWFjNTM1MDExZDhmNDI3ZCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.qyi8WLt1tYDQkgIirCkcCffhVivVScHULIBLZiFUAi4`,
+        Authorization: `Bearer ${process.env.API_TOKEN}`,
         accept: "application/json",
         "X-Requested-With": "XMLHttpRequest",
       },
