@@ -1,7 +1,10 @@
 import Axios from "axios";
 
 // Create an Axios instance with common configuration
-const axios = Axios.create({});
+const axios = Axios.create({
+  baseURL: "https://api.themoviedb.org/3",
+  withCredentials: true,
+});
 
 // Request interceptor to handle or modify requests before they are sent
 axios.interceptors.request.use(async (config) => {

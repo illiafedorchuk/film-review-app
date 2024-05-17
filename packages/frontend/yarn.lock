@@ -1023,6 +1023,29 @@ electron-to-chromium@^1.4.668:
   resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.735.tgz#c32914ef2cd0a3a545a3def841d253a31a8a93be"
   integrity sha512-pkYpvwg8VyOTQAeBqZ7jsmpCjko1Qc6We1ZtZCjRyYbT5v4AIUKDy5cQTRotQlSSZmMr8jqpEt6JtOj5k7lR7A==
 
+embla-carousel-auto-scroll@^8.1.0:
+  version "8.1.0"
+  resolved "https://registry.yarnpkg.com/embla-carousel-auto-scroll/-/embla-carousel-auto-scroll-8.1.0.tgz#d1777fe55ae112dcf033331e8218914172554e9f"
+  integrity sha512-+TS6+1AliO3bL8GkskOvpNOSdsTCo2RS/ekglBzeDYA10qzmmvO6sMQo6jlYxxZYaJQLjw0lAPuniLjCiMzoJA==
+
+embla-carousel-react@^8.1.0:
+  version "8.1.0"
+  resolved "https://registry.yarnpkg.com/embla-carousel-react/-/embla-carousel-react-8.1.0.tgz#26951cdde010f81181865c8f43f6b8417cae0a8f"
+  integrity sha512-sSqTG+mz+nnzOGbbjINKlv+2UBrS213dGbUL32x/kkLRRlzqGDxe3dcJzaNBZlg3d8IyEvgcrI9trQwXBCNIug==
+  dependencies:
+    embla-carousel "8.1.0"
+    embla-carousel-reactive-utils "8.1.0"
+
+embla-carousel-reactive-utils@8.1.0:
+  version "8.1.0"
+  resolved "https://registry.yarnpkg.com/embla-carousel-reactive-utils/-/embla-carousel-reactive-utils-8.1.0.tgz#21581bc97f71d717c69c93ab7882cbd01664d78c"
+  integrity sha512-jiPOa5iT61HATnn6cjym4+0r+VGopJlFTO6MtzDUM435vjZQ1ot995aa7hJJ++ssYOhUlHYt6YJy08Ooigx4hQ==
+
+embla-carousel@8.1.0:
+  version "8.1.0"
+  resolved "https://registry.yarnpkg.com/embla-carousel/-/embla-carousel-8.1.0.tgz#6cc6b2ab5f3e7b7a6ea55a5bcc727d32551643f0"
+  integrity sha512-s6i450b1cppstIQB0RQ/eHzBGS57twsM09GiAE04w4QyLYzZkuosxpiAGxK6Cez6BIp0Vd/SCmD7yWliEP6XEw==
+
 emoji-regex@^8.0.0:
   version "8.0.0"
   resolved "https://registry.yarnpkg.com/emoji-regex/-/emoji-regex-8.0.0.tgz#e818fd69ce5ccfcb404594f842963bf53164cc37"
@@ -1406,6 +1429,11 @@ inherits@2:
   version "2.0.4"
   resolved "https://registry.yarnpkg.com/inherits/-/inherits-2.0.4.tgz#0fa2c64f932917c3433a0ded55363aae37416b7c"
   integrity sha512-k/vGaX4/Yla3WzyMCvTQOXYeIHvqOKtnqBduzTHpzpQZzAskKMhZ2K+EnBiSM9zGSoIFeMpXKxa4dYeZIQqewQ==
+
+install@^0.13.0:
+  version "0.13.0"
+  resolved "https://registry.yarnpkg.com/install/-/install-0.13.0.tgz#6af6e9da9dd0987de2ab420f78e60d9c17260776"
+  integrity sha512-zDml/jzr2PKU9I8J/xyZBQn8rPCAY//UOYNmR01XwNwyfhEWObo2SWfSl1+0tm1u6PhxLwDnfsT/6jB7OUxqFA==
 
 is-binary-path@~2.1.0:
   version "2.1.0"
@@ -2074,6 +2102,11 @@ supports-preserve-symlinks-flag@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/supports-preserve-symlinks-flag/-/supports-preserve-symlinks-flag-1.0.0.tgz#6eda4bd344a3c94aea376d4cc31bc77311039e09"
   integrity sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==
+
+swiper@^11.1.3:
+  version "11.1.3"
+  resolved "https://registry.yarnpkg.com/swiper/-/swiper-11.1.3.tgz#ff5cbeea349d207a2423c4106b1905cb12804a19"
+  integrity sha512-80MSxonyTxrGcaWj9YgvvhD8OG0B9/9IVZP33vhIEvyWvmKjnQDBieO+29wKvMx285sAtvZyrWBdkxaw6+D3aw==
 
 tailwindcss@^3.4.3:
   version "3.4.3"
