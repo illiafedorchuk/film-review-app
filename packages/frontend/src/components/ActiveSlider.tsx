@@ -74,7 +74,7 @@ const ActiveSlider = () => {
                 <h1 className="text-lg lg:text-xl">{item.title} </h1>
                 <p className="lg:text-[14px]">{item.content} </p>
               </div>
-              <RxArrowTopRight className="absolute bottom-3 left-3 w-[24px] h-[24px] text-white group-hover:text-blue-500 group-hover:rotate-45 duration-100" />
+              <RxArrowTopRight className="absolute bottom-3 left-3 w-[24px] h-[24px] text-white group-hover:text-violet-300 group-hover:rotate-45 duration-100" />
             </div>
           </SwiperSlide>
         ))}
