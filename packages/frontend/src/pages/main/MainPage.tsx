@@ -7,36 +7,36 @@ import ActiveSlider from "../../components/ActiveSlider";
 import { SetStateAction, useEffect, useState } from "react";
 import { get } from "react-hook-form";
 import { useApiGet } from "../../hooks/useApi";
-
-const getPopularMovies = async () => {
-  try {
-    const response = await fetch(
-      `https://api.themoviedb.org/3?api_key=${process.env.API_KEY}`
-    );
-    const data = await response.json();
-  } catch (error) {
-    console.error("Failed to fetch popular movies", error);
-  }
-};
+import RandomReviewCard from "../../components/RandomReviewCard";
 
 export const MainPage = () => {
   const { data, isLoading } = useApiGet(
     "https://api.themoviedb.org/3/movie/popular",
     {
-      api_key: "25827bdb07a5e10047fca31922e36d9e",
+      api_key: process.env.REACT_APP_TMDB_API_KEY,
     }
   );
+  const { data: reviewsData, isLoading: isReviewsLoading } = useApiGet(
+    "https://api.themoviedb.org/3/movie/823464/reviews",
+    {
+      api_key: process.env.REACT_APP_TMDB_API_KEY,
+    }
+  );
+
+  const { data: randomMovieList, isLoading: isRandomMovieListLoading } =
+    useApiGet("https://api.themoviedb.org/3/movie/top_rated", {
+      api_key: process.env.REACT_APP_TMDB_API_KEY,
+    });
 
   function handleGenreClick(arg0: string) {
     throw new Error("Function not implemented.");
   }
-
   const genreButtonsArr = [
     "🍿All",
     "😂Comedy",
     "😨Drama",
     "👻Horror",
-    "🧐Fansasy",
+    "🧐Fantasy",
     "😎Action",
   ];
 
@@ -62,16 +62,31 @@ export const MainPage = () => {
                 `${data.results[0].backdrop_path}`
               }
               alt=""
-              className="w-full h-full rounded-lg object-cover brightness-75"
+              className="w-full h-full rounded-lg object-cover brightness-50"
             />
           )}
+
+          <div className="absolute top-1/3 left-52">
+            {data && data.results && data.results.length > 0 && (
+              <div>
+                <h1 className="text-white font-bold text-3xl">
+                  {data.results[0].original_title}
+                </h1>
+                <p className="text-white text-md w-1/2 py-5">
+                  {data.results[0].overview}
+                </p>
+              </div>
+            )}
+          </div>
         </div>
-        <div className="bg-violet-300 w-1/5 m-5 rounded-lg ">
-          <div className="bg-violet-200 rounded-lg w-full h-full rotate-6"></div>
-        </div>
+        {reviewsData && reviewsData.results && (
+          <RandomReviewCard reviews={reviewsData.results} />
+        )}
       </div>
       <div className="flex mt-3 px-44 font-bold text-xl">Special for you</div>
-      <ActiveSlider />;
+      {randomMovieList && randomMovieList.results && (
+        <ActiveSlider movies={randomMovieList.results} />
+      )}
     </AppLayout>
   );
 };

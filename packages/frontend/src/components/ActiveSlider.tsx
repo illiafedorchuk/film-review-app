@@ -1,44 +1,23 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
 import React from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
-
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/free-mode";
-
 import { FreeMode, Pagination } from "swiper/modules";
-import { RxArrowTopRight } from "react-icons/rx";
+import SliderItem from "./SliderItem";
 
-const placeholderData = [
-  {
-    title: "Title 1",
-    content: "Content 1",
-    icon: RxArrowTopRight,
-  },
-  {
-    title: "Title 2",
-    content: "Content 2",
-    icon: RxArrowTopRight,
-  },
-  {
-    title: "Title 3",
-    content: "Content 3",
-    icon: RxArrowTopRight,
-  },
-  {
-    title: "Title 4",
-    content: "Content 4",
-    icon: RxArrowTopRight,
-  },
-  {
-    title: "Title 5",
-    content: "Content 5",
-    icon: RxArrowTopRight,
-  },
-];
+interface Movie {
+  id: number;
+  title: string;
+  overview: string;
+  backdrop_path: string;
+}
 
-const ActiveSlider = () => {
+const ActiveSlider = ({ movies }: { movies: Movie[] }) => {
   return (
-    <div className="flex items-center justify-center flex-col py-5 px-5">
+    <div className="flex items-center justify-center flex-col py-5 px-5 ">
       <Swiper
         breakpoints={{
           340: {
@@ -65,17 +44,12 @@ const ActiveSlider = () => {
         modules={[FreeMode, Pagination]}
         className="max-w-full lg:max-w-[80%]"
       >
-        {placeholderData.map((item) => (
-          <SwiperSlide key={item.title}>
-            <div className="flex flex-col gap-4 mb-10 group relative shadow-lg text-white rounded-xl px-4 py-6 h-[175px] md:h-[200px] w-full overflow-hidden cursor-pointer">
-              <div className="absolute inset-0 bg-cover bg-center" />
-              <div className="absolute inset-0 bg-black opacity-10 group-hover:opacity-50" />
-              <div className="relative flex flex-col gap-2">
-                <h1 className="text-lg lg:text-xl">{item.title} </h1>
-                <p className="lg:text-[14px]">{item.content} </p>
-              </div>
-              <RxArrowTopRight className="absolute bottom-3 left-3 w-[24px] h-[24px] text-white group-hover:text-violet-300 group-hover:rotate-45 duration-100" />
-            </div>
+        {movies.map((movie) => (
+          <SwiperSlide key={movie.id} className="color-violet-500">
+            <SliderItem
+              title={movie.title}
+              imageUrl={`https://image.tmdb.org/t/p/original${movie.backdrop_path}`}
+            />
           </SwiperSlide>
         ))}
       </Swiper>
