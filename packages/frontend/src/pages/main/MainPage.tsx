@@ -13,24 +13,35 @@ export const MainPage = () => {
   const { data, isLoading } = useApiGet(
     "https://api.themoviedb.org/3/movie/popular",
     {
-      api_key: process.env.REACT_APP_TMDB_API_KEY,
+      api_key: "25827bdb07a5e10047fca31922e36d9e",
     }
   );
+
+  const randomMovieIndex =
+    data && data.results ? Math.floor(Math.random() * data.results.length) : 0;
+  const selectedMovie =
+    data && data.results ? data.results[randomMovieIndex] : null;
+  const selectedMovieId = selectedMovie ? selectedMovie.id : null;
+
   const { data: reviewsData, isLoading: isReviewsLoading } = useApiGet(
-    "https://api.themoviedb.org/3/movie/823464/reviews",
+    selectedMovieId
+      ? `https://api.themoviedb.org/3/movie/${selectedMovieId}/reviews`
+      : null,
     {
-      api_key: process.env.REACT_APP_TMDB_API_KEY,
-    }
+      api_key: "25827bdb07a5e10047fca31922e36d9e",
+    },
+    [selectedMovieId]
   );
 
   const { data: randomMovieList, isLoading: isRandomMovieListLoading } =
     useApiGet("https://api.themoviedb.org/3/movie/top_rated", {
-      api_key: process.env.REACT_APP_TMDB_API_KEY,
+      api_key: "25827bdb07a5e10047fca31922e36d9e",
     });
 
   function handleGenreClick(arg0: string) {
     throw new Error("Function not implemented.");
   }
+
   const genreButtonsArr = [
     "🍿All",
     "😂Comedy",
@@ -42,8 +53,8 @@ export const MainPage = () => {
 
   return (
     <AppLayout>
-      <div className="flex flex-wrap justify-center ">
-        <div className="flex justify-around mt-10 w-4/5 gap-8 px-4 ">
+      <div className="flex flex-wrap justify-center">
+        <div className="grid mt-10 w-4/5 gap-4 px-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6">
           {genreButtonsArr.map((genre) => (
             <GenreButton
               genre={genre}
@@ -54,26 +65,26 @@ export const MainPage = () => {
         </div>
       </div>
       <div className="flex justify-center mt-3 h-96 px-12">
-        <div className="bg-white w-3/5 m-5 rounded-xl">
-          {data && data.results && data.results.length > 0 && (
+        <div className="bg-white w-3/5 m-5 rounded-xl max-lg:w-[85%]">
+          {selectedMovie && (
             <img
               src={
                 "https://image.tmdb.org/t/p/original" +
-                `${data.results[0].backdrop_path}`
+                selectedMovie.backdrop_path
               }
-              alt=""
+              alt={selectedMovie.title}
               className="w-full h-full rounded-lg object-cover brightness-50"
             />
           )}
 
           <div className="absolute top-1/3 left-52">
-            {data && data.results && data.results.length > 0 && (
+            {selectedMovie && (
               <div>
-                <h1 className="text-white font-bold text-3xl">
-                  {data.results[0].original_title}
+                <h1 className="text-white font-bold text-3xl max-md:text-md">
+                  {selectedMovie.original_title}
                 </h1>
-                <p className="text-white text-md w-1/2 py-5">
-                  {data.results[0].overview}
+                <p className="text-white text-md w-[50%] py-5 max-md:text-sm">
+                  {selectedMovie.overview}
                 </p>
               </div>
             )}

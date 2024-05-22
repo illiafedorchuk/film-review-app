@@ -55,7 +55,7 @@ const RandomReviewCard: React.FC<RandomReviewCardProps> = ({ reviews }) => {
 
   return (
     <>
-      <div className="bg-violet-300 w-full lg:w-1/5 m-5 rounded-lg relative">
+      <div className="bg-violet-300 w-full lg:w-1/5 m-5 rounded-lg relative max-lg:hidden">
         <div className="bg-violet-200 rounded-lg w-full h-full rotate-6 flex flex-col items-center justify-center p-4">
           <div className="w-24 h-24 bg-white rounded-full overflow-hidden mb-4">
             <img

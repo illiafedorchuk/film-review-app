@@ -30,7 +30,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
           style={{ maxWidth: "1920px", margin: "0 auto", position: "relative" }}
         >
           <Sidebar expanded={isOpen} setExpanded={setIsOpen} />
-          <main className={`transition-all hover:duration-300`}>
+          <main className={`transition-all hover:duration-300 z-0`}>
             {children}
           </main>
         </div>

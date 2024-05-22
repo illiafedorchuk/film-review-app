@@ -2,7 +2,7 @@ import Axios from "axios";
 
 // Create an Axios instance with common configuration
 const axios = Axios.create({
-  baseURL: "https://api.themoviedb.org/3",
+  baseURL: "http://localhost:3000",
   withCredentials: true,
 });
 
