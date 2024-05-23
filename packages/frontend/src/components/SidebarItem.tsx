@@ -25,11 +25,7 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
       onClick={onClick}
     >
       <Icon className="h-5 w-5 text-center" />
-      {expanded || !label ? (
-        <span className="sr-only">{label}</span>
-      ) : (
-        <span className="text-[15px] ml-4 flex-1">{label}</span>
-      )}
+      {expanded && <span>{label}</span>}
     </div>
   );
 };

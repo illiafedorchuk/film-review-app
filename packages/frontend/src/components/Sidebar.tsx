@@ -1,20 +1,17 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState, useEffect } from "react";
 import {
-  BiFilterAlt as BiFilterLeft,
-  BiX,
   BiHome,
   BiBookmark as BiBookmarkFill,
   BiEnvelope,
-  BiChat as BiChatLeftTextFill,
   BiArrowFromLeft,
   BiChevronRight,
   BiChevronLeft,
 } from "react-icons/bi";
 import SidebarItem from "./SidebarItem";
-import { IconBaseProps } from "react-icons";
+
 const Sidebar = ({
-  expanded = true,
+  expanded = false,
   setExpanded,
 }: {
   expanded: boolean;
@@ -39,6 +36,7 @@ const Sidebar = ({
         setIsSidebarVisible(false); // Ensures sidebar is closed on non-mobile screens
       }
     };
+
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
@@ -48,25 +46,22 @@ const Sidebar = ({
       {isMobile ? (
         <>
           <BiChevronRight
-            className="text-4xl cursor-pointer fixed left-4 top-4"
+            className="text-4xl cursor-pointer fixed left-4 top-4 z-50"
             onClick={toggleSidebar}
           />
           {isSidebarVisible && (
-            <div className="absolute top-0 bottom-0 left-0 w-[70%] duration-100 p-2 overflow-y-auto text-center bg-white shadow h-screen z-20 rounded-lg ">
-              <SidebarContent
-                expanded={expanded}
-                toggleSidebar={toggleSidebar}
-              />
+            <div className="fixed top-0 bottom-0 left-0 w-[70%] duration-100 p-2 overflow-y-auto text-center bg-white shadow h-screen z-50">
+              <SidebarContent expanded={true} toggleSidebar={toggleSidebar} />
             </div>
           )}
         </>
       ) : (
         <div
-          className={`absolute top-0 bottom-0 left-0 duration-100 p-2 overflow-y-auto text-center bg-white shadow h-screen z-10 ${
+          className={`fixed top-0 bottom-0 left-0 duration-100 p-2 overflow-y-auto text-center bg-white shadow h-screen z-50 ${
             expanded ? "w-[200px]" : "w-[70px]"
           }`}
         >
-          <SidebarContent expanded={!expanded} toggleSidebar={toggleSidebar} />
+          <SidebarContent expanded={expanded} toggleSidebar={toggleSidebar} />
         </div>
       )}
     </div>
@@ -84,12 +79,12 @@ const SidebarContent = ({
     <div className="text-gray-100 text-xl">
       <div className="flex justify-between items-center p-2">
         {expanded ? (
-          <BiChevronRight
+          <BiChevronLeft
             className="text-gray-800 text-4xl cursor-pointer"
             onClick={toggleSidebar}
           />
         ) : (
-          <BiChevronLeft
+          <BiChevronRight
             className="text-gray-800 text-4xl cursor-pointer"
             onClick={toggleSidebar}
           />
@@ -97,10 +92,10 @@ const SidebarContent = ({
       </div>
     </div>
     <hr className="my-2 text-gray-300" />
-    <SidebarItem icon={BiHome} label="Home" expanded={expanded} />
-    <SidebarItem icon={BiBookmarkFill} label="Bookmark" expanded={expanded} />
-    <SidebarItem icon={BiEnvelope} label="Messages" expanded={expanded} />
-    <SidebarItem icon={BiArrowFromLeft} label="Logout" expanded={expanded} />
+    <SidebarItem icon={BiHome} expanded={expanded} label={"Home"} />
+    <SidebarItem icon={BiBookmarkFill} expanded={expanded} label={"Bookmark"} />
+    <SidebarItem icon={BiEnvelope} expanded={expanded} label={"Messages"} />
+    <SidebarItem icon={BiArrowFromLeft} expanded={expanded} label={"Exit"} />
   </>
 );
 

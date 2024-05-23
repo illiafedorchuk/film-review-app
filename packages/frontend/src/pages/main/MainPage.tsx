@@ -1,13 +1,11 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import GenreButton from "../../components/GenreButton";
+// pages/MainPage.tsx
+import React from "react";
 import AppLayout from "../../components/layouts/AppLayout";
-import { Link } from "react-router-dom";
-import axios from "../../lib/axios";
-import ActiveSlider from "../../components/ActiveSlider";
-import { SetStateAction, useEffect, useState } from "react";
-import { get } from "react-hook-form";
 import { useApiGet } from "../../hooks/useApi";
+import ActiveSlider from "../../components/ActiveSlider";
 import RandomReviewCard from "../../components/RandomReviewCard";
+import GenreButtonsContainer from "../../components/GenreButtonsContainer";
 
 export const MainPage = () => {
   const { data, isLoading } = useApiGet(
@@ -38,8 +36,8 @@ export const MainPage = () => {
       api_key: "25827bdb07a5e10047fca31922e36d9e",
     });
 
-  function handleGenreClick(arg0: string) {
-    throw new Error("Function not implemented.");
+  function handleGenreClick(genre: string) {
+    console.log("Selected genre:", genre);
   }
 
   const genreButtonsArr = [
@@ -51,21 +49,21 @@ export const MainPage = () => {
     "😎Action",
   ];
 
+  const truncateText = (text: string, maxLength: number) => {
+    if (text.length > maxLength) {
+      return text.substring(0, maxLength) + "...";
+    }
+    return text;
+  };
+
   return (
     <AppLayout>
-      <div className="flex flex-wrap justify-center">
-        <div className="grid mt-10 w-4/5 gap-4 px-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6">
-          {genreButtonsArr.map((genre) => (
-            <GenreButton
-              genre={genre}
-              key={genre}
-              onClick={() => handleGenreClick(genre)}
-            />
-          ))}
-        </div>
-      </div>
-      <div className="flex justify-center mt-3 h-96 px-12">
-        <div className="bg-white w-3/5 m-5 rounded-xl max-lg:w-[85%]">
+      <GenreButtonsContainer
+        genres={genreButtonsArr}
+        onGenreClick={handleGenreClick}
+      />
+      <div className="flex justify-center mt-3 h-96 px-12 max-sm:p-0 max-sm:h-[60%]">
+        <div className="bg-white w-3/5 m-5 rounded-xl max-lg:w-[85%] relative">
           {selectedMovie && (
             <img
               src={
@@ -77,14 +75,14 @@ export const MainPage = () => {
             />
           )}
 
-          <div className="absolute top-1/3 left-52">
+          <div className="absolute top-1/4 sm:top-1/3 sm:left-10 lg:left-10 xl:left-20 p-4 sm:p-0 text-left">
             {selectedMovie && (
               <div>
-                <h1 className="text-white font-bold text-3xl max-md:text-md">
+                <h1 className="text-white font-bold text-2xl sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl">
                   {selectedMovie.original_title}
                 </h1>
-                <p className="text-white text-md w-[50%] py-5 max-md:text-sm">
-                  {selectedMovie.overview}
+                <p className="text-white text-base sm:text-sm md:text-lg lg:text-lg xl:text-xl py-3 sm:py-5">
+                  {truncateText(selectedMovie.overview, 150)}
                 </p>
               </div>
             )}
@@ -94,7 +92,9 @@ export const MainPage = () => {
           <RandomReviewCard reviews={reviewsData.results} />
         )}
       </div>
-      <div className="flex mt-3 px-44 font-bold text-xl">Special for you</div>
+      <div className=" mt-3 px-4 sm:px-10 md:px-20 lg:px-44 font-bold text-lg sm:text-xl text-center">
+        Special for you
+      </div>
       {randomMovieList && randomMovieList.results && (
         <ActiveSlider movies={randomMovieList.results} />
       )}
