@@ -55,8 +55,11 @@ const RandomReviewCard: React.FC<RandomReviewCardProps> = ({ reviews }) => {
 
   return (
     <>
-      <div className="bg-violet-300 w-full lg:w-1/5 m-5 rounded-lg relative max-lg:hidden">
-        <div className="bg-violet-200 rounded-lg w-full h-full rotate-6 flex flex-col items-center justify-center p-4">
+      <div className="bg-violet-300 w-full lg:w-1/5 m-5 rounded-lg relative max-lg:hidden ">
+        <div
+          className="duration-300 bg-violet-200 rounded-lg w-full h-full rotate-6 flex flex-col items-center justify-center p-4 hover:rotate-0 hover:shadow-[0_0_30px_3px_rgba(100,0,300,0.3)] cursor-pointer"
+          onClick={handleOpenModal}
+        >
           <div className="w-24 h-24 bg-white rounded-full overflow-hidden mb-4">
             <img
               src={
@@ -72,10 +75,7 @@ const RandomReviewCard: React.FC<RandomReviewCardProps> = ({ reviews }) => {
           <p className="text-violet-950 font-bold mb-2 text-l">
             {currentReview.author}
           </p>
-          <p
-            className="text-violet-950 text-sm cursor-pointer mb-4 text-md"
-            onClick={handleOpenModal}
-          >
+          <p className="text-violet-950 text-sm cursor-pointer mb-4 text-md">
             {truncateContent(currentReview.content, 100)}
           </p>
           <div className="flex items-center space-x-2 text-violet-950">

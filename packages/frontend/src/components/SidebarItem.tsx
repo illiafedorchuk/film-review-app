@@ -19,13 +19,15 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
 }) => {
   return (
     <div
-      className={`p-2.5 mt-2 flex items-center font-semibold rounded-md px-4 justify-center cursor-pointer hover:duration-300 ${
-        active ? "" : "hover:bg-violet-200  hover:text-violet-500"
+      className={`p-2  mt-2 flex items-center font-semibold rounded-md px-4 cursor-pointer duration-500  ${
+        active ? "" : "hover:bg-violet-100 "
       }`}
       onClick={onClick}
     >
-      <Icon className="h-5 w-5 text-center" />
-      {expanded && <span>{label}</span>}
+      <Icon className="h-6 w-5 text-center" />
+      <span className={`ml-4 w-5 ${expanded ? "inline" : "hidden"} `}>
+        {label}
+      </span>
     </div>
   );
 };

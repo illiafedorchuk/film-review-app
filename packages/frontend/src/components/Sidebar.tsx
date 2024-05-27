@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   BiHome,
   BiBookmark as BiBookmarkFill,
@@ -20,13 +19,13 @@ const Sidebar = ({
   const [isMobile, setIsMobile] = useState(window.innerWidth < 640);
   const [isSidebarVisible, setIsSidebarVisible] = useState(false);
 
-  const toggleSidebar = () => {
+  const toggleSidebar = useCallback(() => {
     if (isMobile) {
       setIsSidebarVisible(!isSidebarVisible);
     } else {
-      setExpanded(!expanded);
+      setExpanded((prevExpanded) => !prevExpanded);
     }
-  };
+  }, [isMobile, isSidebarVisible, setExpanded]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -50,14 +49,14 @@ const Sidebar = ({
             onClick={toggleSidebar}
           />
           {isSidebarVisible && (
-            <div className="fixed top-0 bottom-0 left-0 w-[70%] duration-100 p-2 overflow-y-auto text-center bg-white shadow h-screen z-50">
+            <div className="fixed top-0 bottom-0 left-0 w-[70%] p-2 overflow-y-auto text-center shadow-lg h-screen z-50 ">
               <SidebarContent expanded={true} toggleSidebar={toggleSidebar} />
             </div>
           )}
         </>
       ) : (
         <div
-          className={`fixed top-0 bottom-0 left-0 duration-100 p-2 overflow-y-auto text-center bg-white shadow h-screen z-50 ${
+          className={`fixed top-0 bottom-0 left-0 duration-500 p-2 overflow-y-auto text-center  bg-violet-200 h-screen z-50 rounded-r-3xl shadow-lg ${
             expanded ? "w-[200px]" : "w-[70px]"
           }`}
         >
@@ -68,35 +67,41 @@ const Sidebar = ({
   );
 };
 
-const SidebarContent = ({
-  expanded,
-  toggleSidebar,
-}: {
-  expanded: boolean;
-  toggleSidebar: () => void;
-}) => (
-  <>
-    <div className="text-gray-100 text-xl">
-      <div className="flex justify-between items-center p-2">
-        {expanded ? (
-          <BiChevronLeft
-            className="text-gray-800 text-4xl cursor-pointer"
-            onClick={toggleSidebar}
-          />
-        ) : (
-          <BiChevronRight
-            className="text-gray-800 text-4xl cursor-pointer"
-            onClick={toggleSidebar}
-          />
-        )}
+const SidebarContent = React.memo(
+  ({
+    expanded,
+    toggleSidebar,
+  }: {
+    expanded: boolean;
+    toggleSidebar: () => void;
+  }) => (
+    <>
+      <div className="text-gray-100 text-xl">
+        <div className="flex justify-between items-center p-2">
+          {expanded ? (
+            <BiChevronLeft
+              className="text-gray-800 text-4xl cursor-pointer"
+              onClick={toggleSidebar}
+            />
+          ) : (
+            <BiChevronRight
+              className="text-gray-800 text-4xl cursor-pointer"
+              onClick={toggleSidebar}
+            />
+          )}
+        </div>
       </div>
-    </div>
-    <hr className="my-2 text-gray-300" />
-    <SidebarItem icon={BiHome} expanded={expanded} label={"Home"} />
-    <SidebarItem icon={BiBookmarkFill} expanded={expanded} label={"Bookmark"} />
-    <SidebarItem icon={BiEnvelope} expanded={expanded} label={"Messages"} />
-    <SidebarItem icon={BiArrowFromLeft} expanded={expanded} label={"Exit"} />
-  </>
+      <hr className="my-2 text-gray-300" />
+      <SidebarItem icon={BiHome} expanded={expanded} label={"Home"} />
+      <SidebarItem
+        icon={BiBookmarkFill}
+        expanded={expanded}
+        label={"Bookmark"}
+      />
+      <SidebarItem icon={BiEnvelope} expanded={expanded} label={"Messages"} />
+      <SidebarItem icon={BiArrowFromLeft} expanded={expanded} label={"Exit"} />
+    </>
+  )
 );
 
 export default Sidebar;

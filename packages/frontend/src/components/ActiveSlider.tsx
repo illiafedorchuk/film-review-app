@@ -25,11 +25,11 @@ const ActiveSlider = ({ movies }: { movies: Movie[] }) => {
             spaceBetween: 20,
           },
           640: {
-            slidesPerView: 1,
+            slidesPerView: 2,
             spaceBetween: 20,
           },
           1024: {
-            slidesPerView: 2,
+            slidesPerView: 3,
             spaceBetween: 30,
           },
           1280: {
@@ -42,7 +42,7 @@ const ActiveSlider = ({ movies }: { movies: Movie[] }) => {
           clickable: true,
         }}
         modules={[FreeMode, Pagination]}
-        className="max-w-full lg:max-w-[80%] md:max-w-[80%] sm:max-w-[80%]"
+        className="max-w-full lg:max-w-[80%] md:max-w-[80%] sm:max-w-[80%] "
       >
         {movies.map((movie) => (
           <SwiperSlide key={movie.id} className="color-violet-500">

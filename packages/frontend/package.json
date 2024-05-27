@@ -11,7 +11,10 @@
     "proxy": "https://api.themoviedb.org"
   },
   "dependencies": {
+    "@emotion/react": "^11.11.4",
+    "@emotion/styled": "^11.11.5",
     "@hookform/resolvers": "^3.3.4",
+    "@mui/material": "^5.15.18",
     "axios": "^1.6.8",
     "embla-carousel-auto-scroll": "^8.1.0",
     "embla-carousel-react": "^8.1.0",
