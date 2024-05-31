@@ -14,9 +14,9 @@ const GenreButtonsContainer = ({
   onGenreClick: (genre: string) => void;
 }) => {
   return (
-    <div className="flex flex-col items-center justify-center py-5 px-5">
+    <div className="flex flex-col items-center justify-center py-5 px-2">
       {/* Swiper for small devices */}
-      <div className="sm:block md:hidden w-full max-md:w-[80%]">
+      <div className="sm:block md:hidden w-full max-md:w-[82%]">
         <Swiper
           breakpoints={{
             340: {

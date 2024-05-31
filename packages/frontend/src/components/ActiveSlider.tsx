@@ -17,7 +17,7 @@ interface Movie {
 
 const ActiveSlider = ({ movies }: { movies: Movie[] }) => {
   return (
-    <div className="flex items-center justify-center flex-col py-5 px-5 max-sm:px-12">
+    <div className="flex items-center justify-center flex-col py-5 px-6 max-sm:px-12">
       <Swiper
         breakpoints={{
           340: {

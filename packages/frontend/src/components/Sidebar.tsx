@@ -41,7 +41,7 @@ const Sidebar = ({
   }, []);
 
   return (
-    <div className="fixed z-50 top-0 left-0">
+    <div className="fixed z-50 top-0 left-0 ">
       {isMobile ? (
         <>
           <BiChevronRight
