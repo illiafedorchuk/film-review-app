@@ -28,6 +28,12 @@ const FilmPreviewCard: React.FC<FilmPreviewCardProps> = ({
     ? movie.genre_ids.map((id) => genreMap[id]).join(" · ")
     : "N/A";
 
+  const getRatingBgColor = (rating: number) => {
+    if (rating >= 7) return "bg-green-500";
+    if (rating >= 4) return "bg-yellow-500";
+    return "bg-red-500";
+  };
+
   return (
     <div className="relative rounded-lg overflow-hidden transform hover:scale-105 transition-transform duration-300 max-w-xs sm:max-w-sm mx-2 group">
       <div className="relative">
@@ -41,7 +47,11 @@ const FilmPreviewCard: React.FC<FilmPreviewCardProps> = ({
         </div>
       </div>
       {movie.vote_average !== undefined && (
-        <div className="absolute top-0 left-0 bg-violet-500 text-white text-sm font-semibold p-2 rounded-br-lg">
+        <div
+          className={`absolute top-0 left-0 ${getRatingBgColor(
+            movie.vote_average
+          )} text-white text-sm font-semibold p-2 rounded-br-lg`}
+        >
           {movie.vote_average.toFixed(1)}
         </div>
       )}

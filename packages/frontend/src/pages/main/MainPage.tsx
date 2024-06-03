@@ -8,8 +8,11 @@ import RandomReviewCard from "../../components/RandomReviewCard";
 import GenreButtonsContainer from "../../components/GenreButtonsContainer";
 import MovieDetailsCarousel from "../../components/MovieDetailsCarousel";
 import FilmPreviewCard from "../../components/FilmPreviewCard";
+import MovieSearch from "../../components/MovieSearch";
 import Pagination from "../../components/Pagination";
-import { BiSearch } from "react-icons/bi"; // Import BiIcons
+import FilterDropdown from "../../components/FilterDropdown";
+import SortDropdown from "../../components/SortDropdown"; // Import the new component
+import YearDropdown from "../../components/YearDropdown"; // Import the new component
 
 interface Movie {
   id: number;
@@ -22,14 +25,14 @@ interface Movie {
 
 export const MainPage = () => {
   const [movies, setMovies] = useState<Movie[]>([]);
-  const [reviews, setReviews] = useState([]);
+  const [reviews, setReviews] = useState<any[]>([]);
   const [currentMovieIndex, setCurrentMovieIndex] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedGenre, setSelectedGenre] = useState<string>("All");
-  const [searchQuery, setSearchQuery] = useState<string>("");
   const [rating, setRating] = useState<number>(10);
   const [sortBy, setSortBy] = useState<string>("popularity.desc");
-  const moviesPerPage = 20;
+  const [selectedGenres, setSelectedGenres] = useState<number[]>([]);
+  const [selectedYears, setSelectedYears] = useState<string[]>([]);
 
   const genreMap: { [key: number]: string } = {
     28: "Action",
@@ -53,11 +56,10 @@ export const MainPage = () => {
     37: "Western",
   };
 
+  const API_KEY = "25827bdb07a5e10047fca31922e36d9e";
+
   const { data: popularMoviesData } = useApiGet(
-    "https://api.themoviedb.org/3/movie/popular",
-    {
-      api_key: "25827bdb07a5e10047fca31922e36d9e",
-    }
+    `https://api.themoviedb.org/3/movie/popular?api_key=${API_KEY}`
   );
 
   useEffect(() => {
@@ -68,7 +70,7 @@ export const MainPage = () => {
       const fetchReviews = async () => {
         const reviewPromises = movieList.map((movie: { id: any }) =>
           fetch(
-            `https://api.themoviedb.org/3/movie/${movie.id}/reviews?api_key=25827bdb07a5e10047fca31922e36d9e`
+            `https://api.themoviedb.org/3/movie/${movie.id}/reviews?api_key=${API_KEY}`
           ).then((res) => res.json())
         );
         const reviewsArray = await Promise.all(reviewPromises);
@@ -78,15 +80,48 @@ export const MainPage = () => {
     }
   }, [popularMoviesData]);
 
+  const fetchMovies = async (
+    page: number,
+    genreIds: number[],
+    selectedYears: string[]
+  ) => {
+    const genreQuery =
+      genreIds.length > 0 ? `&with_genres=${genreIds.join(",")}` : "";
+    const yearQuery =
+      selectedYears.length > 0
+        ? selectedYears
+            .map((year) =>
+              year === "<2000"
+                ? "&primary_release_date.lte=1999-12-31"
+                : `&primary_release_year=${year}`
+            )
+            .join("")
+        : "";
+    const response = await fetch(
+      `https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&page=${page}&sort_by=${sortBy}${genreQuery}${yearQuery}`
+    );
+    const data = await response.json();
+    return data;
+  };
+
+  useEffect(() => {
+    const getMovies = async () => {
+      const movieData = await fetchMovies(
+        currentPage,
+        selectedGenres,
+        selectedYears
+      );
+      setMovies(movieData.results);
+    };
+    getMovies();
+  }, [currentPage, selectedGenres, sortBy, selectedYears]);
+
   const handleMovieChange = (index: React.SetStateAction<number>) => {
     setCurrentMovieIndex(index);
   };
 
   const { data: randomMovieList } = useApiGet(
-    "https://api.themoviedb.org/3/movie/top_rated",
-    {
-      api_key: "25827bdb07a5e10047fca31922e36d9e",
-    }
+    `https://api.themoviedb.org/3/movie/top_rated?api_key=${API_KEY}`
   );
 
   const handleGenreClick = (genre: any) => {
@@ -94,16 +129,24 @@ export const MainPage = () => {
     console.log("Selected genre:", genre);
   };
 
-  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(event.target.value);
-  };
-
   const handleRatingChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setRating(Number(event.target.value));
   };
 
-  const handleSortChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setSortBy(event.target.value);
+  const handleSortChange = (value: string) => {
+    setSortBy(value);
+  };
+
+  const handleYearChange = (years: string[]) => {
+    setSelectedYears(years);
+  };
+
+  const handleMovieSelect = (movie: Movie) => {
+    console.log("Selected movie:", movie);
+  };
+
+  const handleGenreChange = (genreIds: number[]) => {
+    setSelectedGenres(genreIds);
   };
 
   const genreButtonsArr = [
@@ -115,29 +158,16 @@ export const MainPage = () => {
     "😎Action",
   ];
 
-  const sortByOptions = [
-    { value: "popularity.desc", label: "Popularity" },
-    { value: "release_date.desc", label: "Release Date" },
-    { value: "vote_average.desc", label: "Rating" },
-  ];
-
-  const totalPages = Math.ceil(
-    (randomMovieList?.results.length || 0) / moviesPerPage
-  );
-
-  const paginatedMovies = randomMovieList?.results.slice(
-    (currentPage - 1) * moviesPerPage,
-    currentPage * moviesPerPage
-  );
+  const totalPages = 500;
 
   return (
     <AppLayout>
-      <div className="ml-16">
+      <div className="ml-4">
         <GenreButtonsContainer
           genres={genreButtonsArr}
           onGenreClick={handleGenreClick}
         />
-        <div className="flex flex-col md:flex-row justify-center mt-3 px-12 max-sm:p-0">
+        <div className="flex flex-col md:flex-row justify-center mt-3 px-4 max-sm:p-0">
           <div className="bg-white w-full lg:w-[60%] max-w-full m-5 rounded-xl relative h-96">
             {movies.length > 0 && (
               <MovieDetailsCarousel
@@ -146,81 +176,34 @@ export const MainPage = () => {
               />
             )}
           </div>
-          {reviews.length > 0 && (
+          {reviews.length > 0 && reviews[currentMovieIndex] && (
             <RandomReviewCard reviews={reviews[currentMovieIndex]} />
           )}
         </div>
-        <div className="mt-3 px-44 sm:px-10 md:px-20 lg:px-44 font-bold text-lg sm:text-xl text-center">
+        <div className="mt-3 px-4 font-bold text-lg text-center">
           Special for you
         </div>
-        {totalPages > 1 && (
-          <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={setCurrentPage}
-          />
-        )}
         {randomMovieList && randomMovieList.results && (
           <ActiveSlider movies={randomMovieList.results} />
         )}
-        <div className="flex justify-center items-center w-full mt-5">
-          <div className="bg-violet-300 h-auto w-[77%] p-4 rounded-lg shadow-md flex flex-col md:flex-row justify-center px-10 items-center space-y-4 md:space-y-0 md:space-x-4">
-            <div className="relative w-2/4">
-              <BiSearch
-                className="absolute left-3 top-3 text-gray-500"
-                size="1.5em"
-              />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={handleSearchChange}
-                placeholder="Search..."
-                className="pl-10 p-2 border bg-white w-full h-12 rounded-full"
-              />
-            </div>
-            <select
-              value={selectedGenre}
-              onChange={(e) => handleGenreClick(e.target.value)}
-              className="p-2 border rounded-full h-12 bg-white w-56"
-            >
-              {genreButtonsArr.map((genre) => (
-                <option key={genre} value={genre}>
-                  {genre}
-                </option>
-              ))}
-            </select>
-            <select
-              value={sortBy}
-              onChange={handleSortChange}
-              className="p-2 border rounded-full h-12 bg-white w-56"
-            >
-              {sortByOptions.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
-            <div className="flex items-center flex-wrap justify-center">
-              <label htmlFor="rating" className="text-gray-700">
-                Rating
-              </label>
-              <input
-                id="rating"
-                type="range"
-                min="0"
-                max="10"
-                value={rating}
-                onChange={handleRatingChange}
-                className="w-72 accent-violet-500"
-              />
-              <span>{rating}</span>
-            </div>
-          </div>
+        <div className="flex flex-col justify-center mx-auto w-[80%] md:flex-row md:space-x-4 items-center bg-violet-300 p-4 rounded-xl my-4 space-y-4 md:space-y-0">
+          <MovieSearch apiKey={API_KEY} onMovieSelect={handleMovieSelect} />
+          <FilterDropdown
+            genres={genreMap}
+            selectedGenres={selectedGenres}
+            onGenreChange={handleGenreChange}
+          />
+          <SortDropdown sortBy={sortBy} onSortChange={handleSortChange} />
+          <YearDropdown
+            selectedYears={selectedYears}
+            onYearChange={handleYearChange}
+          />
         </div>
+
         <div className="grid justify-items-center mt-5">
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 p-4 w-[81%]">
-            {paginatedMovies &&
-              paginatedMovies.map((movie: Movie) => (
+            {movies &&
+              movies.map((movie: Movie) => (
                 <FilmPreviewCard
                   key={movie.id}
                   movie={movie}
@@ -229,6 +212,11 @@ export const MainPage = () => {
               ))}
           </div>
         </div>
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={(page) => setCurrentPage(page)}
+        />
       </div>
     </AppLayout>
   );
