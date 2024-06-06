@@ -81,11 +81,11 @@ const MovieDetailsCarousel: React.FC<MovieDetailsCarouselProps> = ({
           progress >= 100 ? "opacity-100" : "opacity-0"
         }`}
       ></div>
-      <div className="absolute top-1/4 sm:top-1/3 sm:left-10 lg:left-24 xl:left-20 p-4 md:mr-15 lg:mr-24 sm:p-0 text-left z-10 text-white">
-        <h1 className="font-bold text-2xl sm:text-xl md:text-2xl lg:text-2xl xl:text-3xl">
+      <div className="absolute top-1/4 sm:top-1/3 md:text-left md:left-5 sm:left-10 lg:left-24 xl:left-20 p-4 lg:mr-24 sm:p-0 text-left z-10 text-white">
+        <h1 className="font-bold text-2xl sm:text-xl md:text-xl lg:text-2xl xl:text-3xl">
           {currentMovie.original_title}
         </h1>
-        <p className="text-base sm:text-sm md:text-lg xl:text-lg py-3 sm:py-5">
+        <p className="text-base sm:text-sm md:text-md xl:text-lg py-3 sm:py-5">
           {truncateText(currentMovie.overview, 150)}
         </p>
       </div>

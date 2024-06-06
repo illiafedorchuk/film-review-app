@@ -50,7 +50,7 @@ const FilmPreviewCard: React.FC<FilmPreviewCardProps> = ({
         <div
           className={`absolute top-0 left-0 ${getRatingBgColor(
             movie.vote_average
-          )} text-white text-sm font-semibold p-2 rounded-br-lg`}
+          )} text-white text-sm font-semibold p-2 rounded-br-lg bg-opacity-70`}
         >
           {movie.vote_average.toFixed(1)}
         </div>

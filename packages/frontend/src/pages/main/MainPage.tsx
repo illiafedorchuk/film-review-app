@@ -13,6 +13,7 @@ import Pagination from "../../components/Pagination";
 import FilterDropdown from "../../components/FilterDropdown";
 import SortDropdown from "../../components/SortDropdown"; // Import the new component
 import YearDropdown from "../../components/YearDropdown"; // Import the new component
+import Footer from "../../components/Footer";
 
 interface Movie {
   id: number;
@@ -162,13 +163,13 @@ export const MainPage = () => {
 
   return (
     <AppLayout>
-      <div className="ml-4">
+      <div className="ml-24 max-w-[640px]:ml-0 mr-4 md:h-[50%]">
         <GenreButtonsContainer
           genres={genreButtonsArr}
           onGenreClick={handleGenreClick}
         />
-        <div className="flex flex-col md:flex-row justify-center mt-3 px-4 max-sm:p-0">
-          <div className="bg-white w-full lg:w-[60%] max-w-full m-5 rounded-xl relative h-96">
+        <div className="flex flex-col md:flex-row justify-center mt-3 px-4 max-sm:p-0 ">
+          <div className="bg-white  lg:w-[56%] md:w-[78%]  max-w-full m-5 rounded-xl relative  ">
             {movies.length > 0 && (
               <MovieDetailsCarousel
                 movies={movies}
@@ -186,22 +187,26 @@ export const MainPage = () => {
         {randomMovieList && randomMovieList.results && (
           <ActiveSlider movies={randomMovieList.results} />
         )}
-        <div className="flex flex-col justify-center mx-auto w-[80%] md:flex-row md:space-x-4 items-center bg-violet-300 p-4 rounded-xl my-4 space-y-4 md:space-y-0">
-          <MovieSearch apiKey={API_KEY} onMovieSelect={handleMovieSelect} />
-          <FilterDropdown
-            genres={genreMap}
-            selectedGenres={selectedGenres}
-            onGenreChange={handleGenreChange}
-          />
-          <SortDropdown sortBy={sortBy} onSortChange={handleSortChange} />
-          <YearDropdown
-            selectedYears={selectedYears}
-            onYearChange={handleYearChange}
-          />
+        <div className="flex flex-col justify-center mx-auto w-full sm:w-[78%] space-y-4 md:space-y-0 md:grid md:grid-cols-1 lg:flex lg:flex-row bg-violet-300 p-4 rounded-xl my-4 md:gap-4">
+          <div className="w-full md:w-full lg:w-2/4 lg:mr-4 ">
+            <MovieSearch apiKey={API_KEY} onMovieSelect={handleMovieSelect} />
+          </div>
+          <div className="md:grid md:grid-cols-3 md:gap-4 lg:flex lg:space-x-4 sm:justify-between md:justify-between">
+            <FilterDropdown
+              genres={genreMap}
+              selectedGenres={selectedGenres}
+              onGenreChange={handleGenreChange}
+            />
+            <SortDropdown sortBy={sortBy} onSortChange={handleSortChange} />
+            <YearDropdown
+              selectedYears={selectedYears}
+              onYearChange={handleYearChange}
+            />
+          </div>
         </div>
 
-        <div className="grid justify-items-center mt-5">
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 p-4 w-[81%]">
+        <div className="grid justify-items-center mt-5 ">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 p-4 w-[81%] md:w-[84%]">
             {movies &&
               movies.map((movie: Movie) => (
                 <FilmPreviewCard
@@ -218,6 +223,7 @@ export const MainPage = () => {
           onPageChange={(page) => setCurrentPage(page)}
         />
       </div>
+      <Footer />
     </AppLayout>
   );
 };
