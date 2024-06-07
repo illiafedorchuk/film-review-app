@@ -39,7 +39,7 @@ const Pagination: React.FC<PaginationProps> = ({
           className={`px-3 py-1 mx-1 ${
             currentPage === i
               ? "bg-violet-400 text-white rounded-xl"
-              : "bg-gray-300 rounded-xl"
+              : "bg-gray-200 rounded-xl"
           } rounded-xl`}
           onClick={() => handlePageChange(i)}
         >
@@ -66,7 +66,7 @@ const Pagination: React.FC<PaginationProps> = ({
             className={`px-3 py-1 mx-1 ${
               currentPage === 1
                 ? "bg-violet-400 text-white rounded-xl"
-                : "bg-gray-300 rounded-xl"
+                : "bg-gray-200 rounded-xl"
             } rounded-xl`}
             onClick={() => handlePageChange(1)}
           >
@@ -83,7 +83,7 @@ const Pagination: React.FC<PaginationProps> = ({
             className={`px-3 py-1 mx-1 ${
               currentPage === totalPages
                 ? "bg-violet-400 text-white rounded-xl"
-                : "bg-gray-300 rounded-xl"
+                : "bg-gray-200 rounded-xl"
             } rounded-xl`}
             onClick={() => handlePageChange(totalPages)}
           >

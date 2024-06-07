@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+
 import React, { useEffect, useState } from "react";
 import { LinearProgress, linearProgressClasses } from "@mui/material";
 import { styled } from "@mui/system";
@@ -64,42 +65,43 @@ const MovieDetailsCarousel: React.FC<MovieDetailsCarouselProps> = ({
   const currentMovie = movies[currentIndex];
 
   const truncateText = (text: string, maxLength: number) => {
-    if (text.length > maxLength) {
-      return text.substring(0, maxLength) + "...";
-    }
-    return text;
+    return text.length > maxLength
+      ? text.substring(0, maxLength) + "..."
+      : text;
   };
 
   return (
-    <div
-      className="relative w-full h-full rounded-xl overflow-hidden cursor-pointer duration-500 shadow-2xl hover:shadow-4xl"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-    >
+    <div className="bg-white w-[690px] rounded-xl relative shadow-2xl">
       <div
-        className={`absolute inset-0 bg-black transition-opacity duration-1000 ${
-          progress >= 100 ? "opacity-100" : "opacity-0"
-        }`}
-      ></div>
-      <div className="absolute top-1/4 sm:top-1/3 md:text-left md:left-5 sm:left-10 lg:left-24 xl:left-20 p-4 lg:mr-24 sm:p-0 text-left z-10 text-white">
-        <h1 className="font-bold text-2xl sm:text-xl md:text-xl lg:text-2xl xl:text-3xl">
-          {currentMovie.original_title}
-        </h1>
-        <p className="text-base sm:text-sm md:text-md xl:text-lg py-3 sm:py-5">
-          {truncateText(currentMovie.overview, 150)}
-        </p>
+        className="relative w-full h-full rounded-xl overflow-hidden cursor-pointer duration-500"
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+      >
+        <div
+          className={`absolute inset-0 bg-black transition-opacity duration-1000 ${
+            progress >= 100 ? "opacity-100" : "opacity-0"
+          }`}
+        ></div>
+        <div className="absolute top-1/4 sm:top-1/3 text-left sm:left-10 xl:left-20 p-4 text-white">
+          <h1 className="font-bold text-2xl sm:text-xl lg:text-2xl xl:text-3xl">
+            {currentMovie.original_title}
+          </h1>
+          <p className="text-base sm:text-sm md:text-lg xl:text-lg py-3 sm:py-5">
+            {truncateText(currentMovie.overview, 150)}
+          </p>
+        </div>
+        <img
+          src={`https://image.tmdb.org/t/p/original${currentMovie.backdrop_path}`}
+          alt={currentMovie.original_title}
+          className={`w-full h-full object-cover transition-opacity duration-1000 ${
+            isHovered ? "brightness-75" : "brightness-50"
+          }`}
+          style={{ opacity: progress >= 100 ? 0 : 1 }}
+        />
+        <div className="absolute bottom-5 w-full">
+          <WhiteLinearProgress variant="determinate" value={progress} />
+        </div>
       </div>
-      <img
-        src={`https://image.tmdb.org/t/p/original${currentMovie.backdrop_path}`}
-        alt={currentMovie.original_title}
-        className={`w-full h-full object-cover filter brightness-50 transition-opacity duration-1000 ${
-          isHovered ? "brightness-10" : ""
-        }`}
-        style={{ opacity: progress >= 100 ? 0 : 1 }}
-      />
-      <div className="absolute bottom-5 w-full z-10">
-        <WhiteLinearProgress variant="determinate" value={progress} />
-      </div>{" "}
     </div>
   );
 };

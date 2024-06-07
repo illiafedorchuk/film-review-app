@@ -7,13 +7,10 @@ import ActiveSlider from "../../components/ActiveSlider";
 import RandomReviewCard from "../../components/RandomReviewCard";
 import GenreButtonsContainer from "../../components/GenreButtonsContainer";
 import MovieDetailsCarousel from "../../components/MovieDetailsCarousel";
-import FilmPreviewCard from "../../components/FilmPreviewCard";
-import MovieSearch from "../../components/MovieSearch";
-import Pagination from "../../components/Pagination";
-import FilterDropdown from "../../components/FilterDropdown";
-import SortDropdown from "../../components/SortDropdown"; // Import the new component
-import YearDropdown from "../../components/YearDropdown"; // Import the new component
 import Footer from "../../components/Footer";
+import MovieGrid from "../../components/MovieGrid";
+import Pagination from "../../components/Pagination";
+import SearchAndFilterSection from "../../components/SearchAndFilterSection";
 
 interface Movie {
   id: number;
@@ -142,10 +139,6 @@ export const MainPage = () => {
     setSelectedYears(years);
   };
 
-  const handleMovieSelect = (movie: Movie) => {
-    console.log("Selected movie:", movie);
-  };
-
   const handleGenreChange = (genreIds: number[]) => {
     setSelectedGenres(genreIds);
   };
@@ -163,65 +156,55 @@ export const MainPage = () => {
 
   return (
     <AppLayout>
-      <div className="ml-24 max-w-[640px]:ml-0 mr-4 md:h-[50%]">
+      <div className="pl-64 pr-44 w-full">
+        {" "}
+        {/* Adjusted padding */}
         <GenreButtonsContainer
           genres={genreButtonsArr}
           onGenreClick={handleGenreClick}
         />
-        <div className="flex flex-col md:flex-row justify-center mt-3 px-4 max-sm:p-0 ">
-          <div className="bg-white  lg:w-[56%] md:w-[78%]  max-w-full m-5 rounded-xl relative  ">
-            {movies.length > 0 && (
-              <MovieDetailsCarousel
-                movies={movies}
-                onMovieChange={handleMovieChange}
-              />
-            )}
-          </div>
+        <div className="flex flex-col md:flex-row mt-3 w-full gap-4">
+          {movies.length > 0 && (
+            <MovieDetailsCarousel
+              movies={movies}
+              onMovieChange={handleMovieChange}
+            />
+          )}
           {reviews.length > 0 && reviews[currentMovieIndex] && (
             <RandomReviewCard reviews={reviews[currentMovieIndex]} />
           )}
         </div>
-        <div className="mt-3 px-4 font-bold text-lg text-center">
+        <div className="mt-3 font-bold text-lg text-center w-full">
           Special for you
         </div>
         {randomMovieList && randomMovieList.results && (
-          <ActiveSlider movies={randomMovieList.results} />
+          <div className="w-full max-w-5xl">
+            <ActiveSlider movies={randomMovieList.results} />
+          </div>
         )}
-        <div className="flex flex-col justify-center mx-auto w-full sm:w-[78%] space-y-4 md:space-y-0 md:grid md:grid-cols-1 lg:flex lg:flex-row bg-violet-300 p-4 rounded-xl my-4 md:gap-4">
-          <div className="w-full md:w-full lg:w-2/4 lg:mr-4 ">
-            <MovieSearch apiKey={API_KEY} onMovieSelect={handleMovieSelect} />
-          </div>
-          <div className="md:grid md:grid-cols-3 md:gap-4 lg:flex lg:space-x-4 sm:justify-between md:justify-between">
-            <FilterDropdown
-              genres={genreMap}
-              selectedGenres={selectedGenres}
-              onGenreChange={handleGenreChange}
-            />
-            <SortDropdown sortBy={sortBy} onSortChange={handleSortChange} />
-            <YearDropdown
-              selectedYears={selectedYears}
-              onYearChange={handleYearChange}
-            />
-          </div>
+        <div className="w-full max-w-5xl">
+          <SearchAndFilterSection
+            apiKey={API_KEY}
+            genreMap={genreMap}
+            selectedGenres={selectedGenres}
+            onGenreChange={handleGenreChange}
+            sortBy={sortBy}
+            onSortChange={handleSortChange}
+            selectedYears={selectedYears}
+            onYearChange={handleYearChange}
+            onMovieSelect={function (movie: any): void {
+              throw new Error("Function not implemented.");
+            }}
+          />
         </div>
-
-        <div className="grid justify-items-center mt-5 ">
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 p-4 w-[81%] md:w-[84%]">
-            {movies &&
-              movies.map((movie: Movie) => (
-                <FilmPreviewCard
-                  key={movie.id}
-                  movie={movie}
-                  genreMap={genreMap}
-                />
-              ))}
-          </div>
+        <MovieGrid movies={movies} genreMap={genreMap} />
+        <div className="w-full max-w-5xl">
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={(page) => setCurrentPage(page)}
+          />
         </div>
-        <Pagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={(page) => setCurrentPage(page)}
-        />
       </div>
       <Footer />
     </AppLayout>

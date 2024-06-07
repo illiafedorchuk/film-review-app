@@ -11,8 +11,8 @@ import {
 const Footer = () => {
   return (
     <div className="mt-10 bg-violet-200 text-violet-600 p-8 rounded-t-3xl">
-      <div className="flex flex-wrap flex-center mt-10 w-full ">
-        <div className="ml-24 max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+      <div className="flex flex-wrap flex-center w-full">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           <div>
             <h2 className="font-bold mb-4">About me</h2>
             <p>
@@ -32,25 +32,25 @@ const Footer = () => {
           <div>
             <h2 className="text-violet-600 font-bold mb-4">Quick Links</h2>
             <ul>
-              <li className="mb-2 cursor-pointer   duration-100 hover:font-bold">
+              <li className="mb-2 cursor-pointer duration-100 hover:font-bold">
                 Home
               </li>
-              <li className="mb-2 cursor-pointer   duration-100 hover:font-bold">
+              <li className="mb-2 cursor-pointer duration-100 hover:font-bold">
                 Popular Movies
               </li>
-              <li className="mb-2 cursor-pointer   duration-100 hover:font-bold">
+              <li className="mb-2 cursor-pointer duration-100 hover:font-bold">
                 Top Rated Movies
               </li>
-              <li className="mb-2 cursor-pointer   duration-100 hover:font-bold">
+              <li className="mb-2 cursor-pointer duration-100 hover:font-bold">
                 Upcoming Movies
               </li>
-              <li className="mb-2 cursor-pointer    duration-100 hover:font-bold">
+              <li className="mb-2 cursor-pointer duration-100 hover:font-bold">
                 Contact Us
               </li>
             </ul>
           </div>
           <div>
-            <h2 className=" font-bold mb-4">Follow me</h2>
+            <h2 className="font-bold mb-4">Follow me</h2>
             <div className="flex space-x-4">
               <a
                 href="https://t.me/illyyyaa"

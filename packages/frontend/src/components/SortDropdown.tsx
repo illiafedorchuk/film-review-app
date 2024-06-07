@@ -39,7 +39,7 @@ const SortDropdown: React.FC<SortDropdownProps> = ({
   return (
     <div className="relative inline-block text-left" ref={dropdownRef}>
       <button
-        className="inline-flex justify-center rounded-xl border w-36 border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-100 focus:outline-none"
+        className="inline-flex justify-center rounded-2xl h-10 border w-36 border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-100 focus:outline-none"
         id="options-menu"
         aria-haspopup="true"
         aria-expanded="true"

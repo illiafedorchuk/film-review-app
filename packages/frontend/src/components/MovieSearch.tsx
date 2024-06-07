@@ -50,47 +50,49 @@ const MovieSearch: React.FC<MovieSearchProps> = ({ apiKey, onMovieSelect }) => {
   };
 
   return (
-    <div className="relative w-2/4 md:w-full sm:w-full">
-      <div className="flex justify-center items-center">
-        <div className="relative w-full mx-5">
-          <BiSearch
-            className="absolute left-3 top-3 text-gray-500"
-            size="1.5em"
-          />
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={handleSearchChange}
-            placeholder="Search..."
-            className="pl-10 p-2 border bg-white w-full h-12 rounded-full"
-          />
-          {isDropdownVisible && (
-            <ul className="absolute z-10 w-full bg-white border border-gray-300 rounded-md mt-1 max-h-60 overflow-y-auto">
-              {searchResults.map((movie) => (
-                <li
-                  key={movie.id}
-                  className="p-2 hover:bg-gray-200 cursor-pointer"
-                  onClick={() => handleMovieSelect(movie)}
-                >
-                  <div className="flex items-center">
-                    {movie.poster_path && (
-                      <img
-                        src={`https://image.tmdb.org/t/p/w45${movie.poster_path}`}
-                        alt={movie.title}
-                        className="w-10 h-15 mr-2"
-                      />
-                    )}
-                    <div>
-                      <p className="text-sm font-semibold">{movie.title}</p>
-                      <p className="text-xs text-gray-500">
-                        {movie.release_date}
-                      </p>
+    <div className="w-full lg:w-2/4 lg:mr-4">
+      <div className="relative w-full">
+        <div className="flex justify-center items-center">
+          <div className="relative w-full">
+            <BiSearch
+              className="absolute left-3 top-3 text-gray-500"
+              size="1.5em"
+            />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={handleSearchChange}
+              placeholder="Search..."
+              className="pl-10 p-2 border bg-white w-full h-12 rounded-full"
+            />
+            {isDropdownVisible && (
+              <ul className="absolute z-10 w-full bg-white border border-gray-300 rounded-md mt-1 max-h-60 overflow-y-auto">
+                {searchResults.map((movie) => (
+                  <li
+                    key={movie.id}
+                    className="p-2 hover:bg-gray-200 cursor-pointer"
+                    onClick={() => handleMovieSelect(movie)}
+                  >
+                    <div className="flex items-center">
+                      {movie.poster_path && (
+                        <img
+                          src={`https://image.tmdb.org/t/p/w45${movie.poster_path}`}
+                          alt={movie.title}
+                          className="w-10 h-15 mr-2"
+                        />
+                      )}
+                      <div>
+                        <p className="text-sm font-semibold">{movie.title}</p>
+                        <p className="text-xs text-gray-500">
+                          {movie.release_date}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          )}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
         </div>
       </div>
     </div>

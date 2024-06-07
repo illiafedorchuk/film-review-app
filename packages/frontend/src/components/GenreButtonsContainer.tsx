@@ -1,5 +1,3 @@
-// components/GenreButtonsContainer.tsx
-import React from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/free-mode";
@@ -14,9 +12,9 @@ const GenreButtonsContainer = ({
   onGenreClick: (genre: string) => void;
 }) => {
   return (
-    <div className="flex flex-col items-center justify-center py-5 px-2">
+    <div className="flex flex-col w-full ">
       {/* Swiper for small devices */}
-      <div className="sm:block md:hidden w-full max-md:w-[82%]">
+      <div className="sm:block md:hidden w-full">
         <Swiper
           breakpoints={{
             340: {
@@ -41,7 +39,7 @@ const GenreButtonsContainer = ({
       </div>
 
       {/* Grid layout for medium and larger devices */}
-      <div className="hidden md:grid mt-10 w-4/5 gap-4 px-4 md:grid-cols-3 lg:grid-cols-6">
+      <div className="hidden md:grid w-full gap-4 md:grid-cols-3 lg:grid-cols-6">
         {genres.map((genre) => (
           <GenreButton
             genre={genre}

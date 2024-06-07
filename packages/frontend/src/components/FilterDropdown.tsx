@@ -46,7 +46,7 @@ const FilterDropdown: React.FC<FilterDropdownProps> = ({
     <div className="relative inline-block text-left">
       <button
         onClick={toggleDropdown}
-        className="inline-flex justify-center w-36 rounded-xl border shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet-400"
+        className="inline-flex justify-center w-36 rounded-2xl border shadow-sm px-4 py-2 h-10 bg-white text-sm font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet-400"
       >
         {selectedGenreNames}
         <svg
@@ -64,14 +64,14 @@ const FilterDropdown: React.FC<FilterDropdownProps> = ({
         </svg>
       </button>
       {isOpen && (
-        <div className="origin-top-right absolute right-0 mt-2 rounded-md shadow-lg  bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50">
+        <div className="origin-top-right absolute right-0 mt-2 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50">
           <div
             className="py-1"
             role="menu"
             aria-orientation="vertical"
             aria-labelledby="options-menu"
           >
-            <div className="max-h-60 overflow-y-auto ">
+            <div className="max-h-60 overflow-y-auto">
               {Object.entries(genres).map(([id, name]) => (
                 <div
                   key={id}
@@ -82,7 +82,7 @@ const FilterDropdown: React.FC<FilterDropdownProps> = ({
                     id={`genre-${id}`}
                     checked={selectedGenres.includes(Number(id))}
                     onChange={() => handleCheckboxChange(Number(id))}
-                    className="form-checkbox h-4 w-4 text-violet-400 transition duration-150 ease-in-out "
+                    className="form-checkbox h-4 w-4 text-violet-400 transition duration-150 ease-in-out"
                   />
                   <label
                     htmlFor={`genre-${id}`}
