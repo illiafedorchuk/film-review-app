@@ -71,9 +71,9 @@ const MovieDetailsCarousel: React.FC<MovieDetailsCarouselProps> = ({
   };
 
   return (
-    <div className="bg-white w-[690px] rounded-xl relative shadow-2xl">
+    <div className="bg-white w-full rounded-xl relative shadow-2xl">
       <div
-        className="relative w-full h-full rounded-xl overflow-hidden cursor-pointer duration-500"
+        className="relative w-full h-full rounded-xl overflow-hidden cursor-pointer duration-500 "
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >

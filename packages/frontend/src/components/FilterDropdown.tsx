@@ -43,14 +43,14 @@ const FilterDropdown: React.FC<FilterDropdownProps> = ({
   const selectedGenreNames = getSelectedGenreNames();
 
   return (
-    <div className="relative inline-block text-left">
+    <div className="relative flex-grow text-left">
       <button
         onClick={toggleDropdown}
-        className="inline-flex justify-center w-36 rounded-2xl border shadow-sm px-4 py-2 h-10 bg-white text-sm font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet-400"
+        className="inline-flex justify-between items-center w-full h-14 px-4 py-2 rounded-2xl border border-gray-300 shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-violet-400"
       >
         {selectedGenreNames}
         <svg
-          className="-mr-1 ml-2 h-5 w-5"
+          className="h-5 w-5"
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 20 20"
           fill="currentColor"
@@ -64,7 +64,7 @@ const FilterDropdown: React.FC<FilterDropdownProps> = ({
         </svg>
       </button>
       {isOpen && (
-        <div className="origin-top-right absolute right-0 mt-2 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50">
+        <div className="origin-top-right absolute right-0 mt-2 w-full rounded-xl shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50">
           <div
             className="py-1"
             role="menu"

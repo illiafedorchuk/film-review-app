@@ -12,7 +12,7 @@ const GenreButtonsContainer = ({
   onGenreClick: (genre: string) => void;
 }) => {
   return (
-    <div className="flex flex-col w-full ">
+    <div className="flex flex-col w-full">
       {/* Swiper for small devices */}
       <div className="sm:block md:hidden w-full">
         <Swiper

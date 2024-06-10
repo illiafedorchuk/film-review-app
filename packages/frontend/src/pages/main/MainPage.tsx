@@ -156,14 +156,12 @@ export const MainPage = () => {
 
   return (
     <AppLayout>
-      <div className="pl-64 pr-44 w-full">
-        {" "}
-        {/* Adjusted padding */}
+      <div className="px-[10%] lg:pr-[10%] lg:pl-[15%] md:pr-[10%] md:pl-[15%] sm:pl-[15%]">
         <GenreButtonsContainer
           genres={genreButtonsArr}
           onGenreClick={handleGenreClick}
         />
-        <div className="flex flex-col md:flex-row mt-3 w-full gap-4">
+        <div className="flex flex-col md:flex-row mt-3 w-full gap-4 justify-between">
           {movies.length > 0 && (
             <MovieDetailsCarousel
               movies={movies}
@@ -178,11 +176,11 @@ export const MainPage = () => {
           Special for you
         </div>
         {randomMovieList && randomMovieList.results && (
-          <div className="w-full max-w-5xl">
+          <div className="w-full mx-auto">
             <ActiveSlider movies={randomMovieList.results} />
           </div>
         )}
-        <div className="w-full max-w-5xl">
+        <div className="w-full mx-auto">
           <SearchAndFilterSection
             apiKey={API_KEY}
             genreMap={genreMap}
@@ -198,7 +196,7 @@ export const MainPage = () => {
           />
         </div>
         <MovieGrid movies={movies} genreMap={genreMap} />
-        <div className="w-full max-w-5xl">
+        <div className="w-full mx-auto">
           <Pagination
             currentPage={currentPage}
             totalPages={totalPages}

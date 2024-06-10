@@ -39,7 +39,7 @@ const FilmPreviewCard: React.FC<FilmPreviewCardProps> = ({
 
   return (
     <div
-      className="rounded-lg w-full overflow-hidden duration-300 hover:scale-105"
+      className="rounded-lg flex flex-wrap justify-center w-full overflow-hidden duration-300 hover:scale-105"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >

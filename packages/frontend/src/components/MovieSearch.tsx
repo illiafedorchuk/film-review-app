@@ -50,7 +50,7 @@ const MovieSearch: React.FC<MovieSearchProps> = ({ apiKey, onMovieSelect }) => {
   };
 
   return (
-    <div className="w-full lg:w-2/4 lg:mr-4">
+    <div className="w-full">
       <div className="relative w-full">
         <div className="flex justify-center items-center">
           <div className="relative w-full">

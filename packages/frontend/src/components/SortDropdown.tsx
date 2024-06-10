@@ -37,9 +37,9 @@ const SortDropdown: React.FC<SortDropdownProps> = ({
     sortByOptions.find((option) => option.value === sortBy)?.label || "Sort By";
 
   return (
-    <div className="relative inline-block text-left" ref={dropdownRef}>
+    <div className="relative flex-grow" ref={dropdownRef}>
       <button
-        className="inline-flex justify-center rounded-2xl h-10 border w-36 border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-100 focus:outline-none"
+        className="inline-flex justify-between items-center w-full h-14 px-4 py-2 rounded-2xl border border-gray-300 shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-violet-400"
         id="options-menu"
         aria-haspopup="true"
         aria-expanded="true"
@@ -47,7 +47,7 @@ const SortDropdown: React.FC<SortDropdownProps> = ({
       >
         {selectedSortLabel}
         <svg
-          className="-mr-1 ml-2 h-5 w-5"
+          className="h-5 w-5"
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 20 20"
           fill="currentColor"
@@ -63,7 +63,7 @@ const SortDropdown: React.FC<SortDropdownProps> = ({
 
       {isOpen && (
         <div
-          className="origin-top-right absolute right-0 mt-2 w-56 rounded-xl shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none  z-50"
+          className="origin-top-right absolute right-0 mt-2 w-full rounded-xl shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50"
           role="menu"
           aria-orientation="vertical"
           aria-labelledby="options-menu"
@@ -78,7 +78,7 @@ const SortDropdown: React.FC<SortDropdownProps> = ({
                 }}
                 className={`${
                   sortBy === option.value ? "bg-gray-100" : ""
-                } block px-4 py-2 text-sm text-gray-700 w-full text-left rounded-md hover:bg-violet-300  z-50`}
+                } block px-4 py-2 text-sm text-gray-700 w-full text-left hover:bg-violet-300`}
                 role="menuitem"
               >
                 {option.label}

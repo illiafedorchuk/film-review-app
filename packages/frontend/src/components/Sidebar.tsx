@@ -21,11 +21,18 @@ const Sidebar = ({
 
   const toggleSidebar = useCallback(() => {
     if (isMobile) {
-      setIsSidebarVisible(!isSidebarVisible);
+      setIsSidebarVisible((prevVisible) => !prevVisible);
     } else {
       setExpanded((prevExpanded) => !prevExpanded);
     }
-  }, [isMobile, isSidebarVisible, setExpanded]);
+  }, [isMobile, setExpanded]);
+
+  const handleClickOutside = useCallback((event: MouseEvent) => {
+    const sidebar = document.getElementById("mobile-sidebar");
+    if (sidebar && !sidebar.contains(event.target as Node)) {
+      setIsSidebarVisible(false);
+    }
+  }, []);
 
   useEffect(() => {
     const handleResize = () => {
@@ -37,26 +44,37 @@ const Sidebar = ({
     };
 
     window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
+    window.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+      window.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [handleClickOutside]);
 
   return (
-    <div className="fixed z-50 top-0 left-0 ">
+    <div className="fixed z-50 top-0 left-0">
       {isMobile ? (
         <>
-          <BiChevronRight
-            className="text-4xl cursor-pointer fixed left-4 top-4 z-50"
-            onClick={toggleSidebar}
-          />
+          {!isSidebarVisible && (
+            <div className="fixed left-4 top-4 z-50 bg-violet-300 p-2 rounded-full cursor-pointer">
+              <BiChevronRight
+                className="text-white text-4xl"
+                onClick={toggleSidebar}
+              />
+            </div>
+          )}
           {isSidebarVisible && (
-            <div className="fixed top-0 bottom-0 left-0 w-[70%] p-2 overflow-y-auto text-center shadow-lg h-screen z-50 ">
+            <div
+              id="mobile-sidebar"
+              className="fixed top-4 bottom-4 left-6 w-[70%] max-w-[300px] p-4 overflow-y-auto text-center shadow-lg h-[90%] z-50 bg-violet-200 rounded-3xl"
+            >
               <SidebarContent expanded={true} toggleSidebar={toggleSidebar} />
             </div>
           )}
         </>
       ) : (
         <div
-          className={`fixed top-0 bottom-0 left-0 duration-500 p-2 overflow-y-auto text-center  bg-violet-200 h-screen z-50 rounded-r-3xl shadow-lg ${
+          className={`fixed top-0 bottom-0 left-0 duration-500 p-2 overflow-y-auto text-center bg-violet-200 h-screen z-50 rounded-r-3xl shadow-lg ${
             expanded ? "w-[200px]" : "w-[70px]"
           }`}
         >

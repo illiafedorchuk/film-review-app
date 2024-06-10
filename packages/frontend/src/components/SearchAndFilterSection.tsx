@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import React from "react";
 import MovieSearch from "./MovieSearch";
 import FilterDropdown from "./FilterDropdown";
@@ -29,9 +27,11 @@ const SearchAndFilterSection: React.FC<SearchAndFilterSectionProps> = ({
   onYearChange,
 }) => {
   return (
-    <div className="flex flex-col justify-center mx-auto w-full bg-violet-300 p-4 rounded-xl my-4">
-      <MovieSearch apiKey={apiKey} />
-      <div className="md:grid md:grid-cols-3 md:gap-4 lg:flex lg:space-x-4 pt-1 sm:justify-between md:justify-between">
+    <div className="w-full p-6 bg-violet-200 rounded-xl shadow-md max-w-7xl mx-auto my-4">
+      <div className="mb-4">
+        <MovieSearch apiKey={apiKey} />
+      </div>
+      <div className="flex flex-wrap gap-4 justify-between">
         <FilterDropdown
           genres={genreMap}
           selectedGenres={selectedGenres}
@@ -39,7 +39,7 @@ const SearchAndFilterSection: React.FC<SearchAndFilterSectionProps> = ({
         />
         <SortDropdown sortBy={sortBy} onSortChange={onSortChange} />
         <YearDropdown
-          selectedYears={selectedYears}
+          year={selectedYears.join(", ")}
           onYearChange={onYearChange}
         />
       </div>
