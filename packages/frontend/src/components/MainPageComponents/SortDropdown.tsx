@@ -1,17 +1,22 @@
 import React, { useState, useRef, useEffect } from "react";
 
-interface YearDropdownProps {
-  year: string;
-  onYearChange: (value: string) => void;
+interface SortDropdownProps {
+  sortBy: string;
+  onSortChange: (value: string) => void;
 }
 
-const YearDropdown: React.FC<YearDropdownProps> = ({ year, onYearChange }) => {
+const SortDropdown: React.FC<SortDropdownProps> = ({
+  sortBy,
+  onSortChange,
+}) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const years = Array.from({ length: 25 }, (v, i) =>
-    (2024 - i).toString()
-  ).concat("<2000");
+  const sortByOptions = [
+    { value: "popularity.desc", label: "Popularity" },
+    { value: "release_date.desc", label: "Release Date" },
+    { value: "vote_average.desc", label: "Rating" },
+  ];
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -28,16 +33,19 @@ const YearDropdown: React.FC<YearDropdownProps> = ({ year, onYearChange }) => {
     };
   }, [dropdownRef]);
 
+  const selectedSortLabel =
+    sortByOptions.find((option) => option.value === sortBy)?.label || "Sort By";
+
   return (
     <div className="relative flex-grow" ref={dropdownRef}>
       <button
-        className="inline-flex justify-between items-center w-full h-14 px-4 py-2 rounded-2xl border border-gray-300 shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-violet-400"
-        id="year-options-menu"
+        className="inline-flex justify-between items-center w-full h-12 px-4 py-2 rounded-2xl border border-gray-300 shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-violet-400"
+        id="options-menu"
         aria-haspopup="true"
         aria-expanded="true"
         onClick={() => setIsOpen(!isOpen)}
       >
-        Year {year}
+        {selectedSortLabel}
         <svg
           className="h-5 w-5"
           xmlns="http://www.w3.org/2000/svg"
@@ -58,23 +66,22 @@ const YearDropdown: React.FC<YearDropdownProps> = ({ year, onYearChange }) => {
           className="origin-top-right absolute right-0 mt-2 w-full rounded-xl shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50"
           role="menu"
           aria-orientation="vertical"
-          aria-labelledby="year-options-menu"
-          style={{ maxHeight: "200px", overflowY: "auto" }}
+          aria-labelledby="options-menu"
         >
           <div className="py-1" role="none">
-            {years.map((yearOption) => (
+            {sortByOptions.map((option) => (
               <button
-                key={yearOption}
+                key={option.value}
                 onClick={() => {
-                  onYearChange(yearOption);
+                  onSortChange(option.value);
                   setIsOpen(false);
                 }}
                 className={`${
-                  year === yearOption ? "bg-gray-100" : ""
+                  sortBy === option.value ? "bg-gray-100" : ""
                 } block px-4 py-2 text-sm text-gray-700 w-full text-left hover:bg-violet-300`}
                 role="menuitem"
               >
-                {yearOption}
+                {option.label}
               </button>
             ))}
           </div>
@@ -84,4 +91,4 @@ const YearDropdown: React.FC<YearDropdownProps> = ({ year, onYearChange }) => {
   );
 };
 
-export default YearDropdown;
+export default SortDropdown;

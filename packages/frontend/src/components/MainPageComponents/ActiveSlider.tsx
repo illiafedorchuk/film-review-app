@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-
 import React from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
@@ -18,6 +16,13 @@ interface Movie {
 const ActiveSlider = ({ movies }: { movies: Movie[] }) => {
   return (
     <div className="w-full">
+      <style>
+        {`
+          .swiper-pagination-bullet {
+            display: none;
+          }
+        `}
+      </style>
       <Swiper
         breakpoints={{
           340: {

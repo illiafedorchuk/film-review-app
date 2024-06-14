@@ -1,12 +1,11 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-
-import React, { useEffect, useState } from "react";
+/* eslint-disable no-empty-pattern */
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import { LinearProgress, linearProgressClasses } from "@mui/material";
 import { styled } from "@mui/system";
 
 interface Movie {
   id: number;
-  original_title: string;
+  title: string;
   overview: string;
   backdrop_path: string;
 }
@@ -16,7 +15,7 @@ interface MovieDetailsCarouselProps {
   onMovieChange: (index: number) => void;
 }
 
-const WhiteLinearProgress = styled(LinearProgress)(({ theme }) => ({
+const WhiteLinearProgress = styled(LinearProgress)(({}) => ({
   height: 5,
   width: "90%",
   margin: "0 auto",
@@ -36,27 +35,34 @@ const MovieDetailsCarousel: React.FC<MovieDetailsCarouselProps> = ({
   const [currentIndex, setCurrentIndex] = useState(0);
   const [progress, setProgress] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  const updateMovieIndex = useCallback(() => {
+    setCurrentIndex((prevIndex) => {
+      const nextIndex = (prevIndex + 1) % movies.length;
+      onMovieChange(nextIndex);
+      return nextIndex;
+    });
+  }, [movies.length, onMovieChange]);
 
   useEffect(() => {
-    let timer: NodeJS.Timeout;
     if (!isHovered) {
-      timer = setInterval(() => {
+      intervalRef.current = setInterval(() => {
         setProgress((prevProgress) => {
           if (prevProgress >= 100) {
-            const nextIndex = (currentIndex + 1) % movies.length;
-            setCurrentIndex(nextIndex);
-            onMovieChange(nextIndex);
+            setProgress(0);
+            updateMovieIndex();
             return 0;
           }
-          return prevProgress + 0.1; // Smaller increment for smoother animation
+          return prevProgress + 0.1;
         });
-      }, 10); // Very short interval for smooth progress
+      }, 10);
     }
 
     return () => {
-      clearInterval(timer);
+      if (intervalRef.current) clearInterval(intervalRef.current);
     };
-  }, [movies, currentIndex, onMovieChange, isHovered]);
+  }, [isHovered, updateMovieIndex]);
 
   if (!movies.length) {
     return <div>Loading...</div>;
@@ -73,7 +79,7 @@ const MovieDetailsCarousel: React.FC<MovieDetailsCarouselProps> = ({
   return (
     <div className="bg-white w-full rounded-xl relative shadow-2xl">
       <div
-        className="relative w-full h-full rounded-xl overflow-hidden cursor-pointer duration-500 "
+        className="relative w-full h-full rounded-xl overflow-hidden cursor-pointer duration-500"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
@@ -82,17 +88,31 @@ const MovieDetailsCarousel: React.FC<MovieDetailsCarouselProps> = ({
             progress >= 100 ? "opacity-100" : "opacity-0"
           }`}
         ></div>
-        <div className="absolute top-1/4 sm:top-1/3 text-left sm:left-10 xl:left-20 p-4 text-white">
-          <h1 className="font-bold text-2xl sm:text-xl lg:text-2xl xl:text-3xl">
-            {currentMovie.original_title}
-          </h1>
-          <p className="text-base sm:text-sm md:text-lg xl:text-lg py-3 sm:py-5">
-            {truncateText(currentMovie.overview, 150)}
-          </p>
+        <div
+          className={`absolute inset-0 flex items-center justify-center ${
+            !currentMovie.overview ? "text-right" : "text-left"
+          } p-4 text-white z-10`}
+          style={{
+            top: "50%",
+            transform: "translateY(-50%)",
+          }}
+        >
+          <div className="text-center">
+            <h1 className="font-bold xs:text-xs sm:text-lg md:text-lg lg:text-xl xl:text-2xl">
+              {currentMovie.title}
+            </h1>
+            <p className="py-3 hidden sm:block xs:text-xs sm:text-lg md:text-md lg:text-lg xl:text-lg">
+              {truncateText(currentMovie.overview, 150)}
+            </p>
+          </div>
         </div>
         <img
-          src={`https://image.tmdb.org/t/p/original${currentMovie.backdrop_path}`}
-          alt={currentMovie.original_title}
+          src={
+            currentMovie.backdrop_path
+              ? `https://image.tmdb.org/t/p/original${currentMovie.backdrop_path}`
+              : "https://via.placeholder.com/800x450?text=No+Image"
+          }
+          alt={currentMovie.title}
           className={`w-full h-full object-cover transition-opacity duration-1000 ${
             isHovered ? "brightness-75" : "brightness-50"
           }`}

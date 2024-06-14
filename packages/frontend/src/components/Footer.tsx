@@ -10,7 +10,7 @@ import {
 
 const Footer = () => {
   return (
-    <div className="mt-10 bg-violet-200 text-violet-600 p-8 rounded-t-3xl">
+    <div className="mt-10 md:pl-36 bg-violet-200 text-violet-600 p-8 rounded-t-3xl">
       <div className="flex flex-wrap flex-center w-full">
         <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           <div>

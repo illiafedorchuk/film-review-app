@@ -5,7 +5,8 @@ import LoginPage from "./pages/auth/LoginPage";
 import RegisterPage from "./pages/auth/RegistrationPage";
 import ResetPasswordPage from "./pages/auth/ResetPasswordPage";
 import "./index.css";
-import { MainPage } from "./pages/main/MainPage";
+import MainPage from "./pages/main/MainPage";
+import MoviePage from "./pages/movie/MoviePage"; // Import the MoviePage component
 
 const rootElement = document.getElementById("root");
 if (rootElement) {
@@ -21,6 +22,8 @@ if (rootElement) {
             path="/resetPassword/:signResetPasswordToken"
             element={<ResetPasswordPage />}
           />
+          <Route path="/movie/:movieId" element={<MoviePage />} />{" "}
+          {/* Add this route */}
         </Routes>
       </BrowserRouter>
     </React.StrictMode>

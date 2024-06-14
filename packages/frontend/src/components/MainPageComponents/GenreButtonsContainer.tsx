@@ -7,9 +7,11 @@ import GenreButton from "./GenreButton";
 const GenreButtonsContainer = ({
   genres,
   onGenreClick,
+  selectedGenre,
 }: {
-  genres: string[];
-  onGenreClick: (genre: string) => void;
+  genres: { id: number; name: string }[];
+  onGenreClick: (genreId: number) => void;
+  selectedGenre: string;
 }) => {
   return (
     <div className="flex flex-col w-full">
@@ -31,8 +33,12 @@ const GenreButtonsContainer = ({
           className="max-w-full"
         >
           {genres.map((genre) => (
-            <SwiperSlide key={genre}>
-              <GenreButton genre={genre} onClick={() => onGenreClick(genre)} />
+            <SwiperSlide key={genre.id}>
+              <GenreButton
+                genre={genre.name}
+                onClick={() => onGenreClick(genre.id)}
+                selected={selectedGenre === genre.name}
+              />
             </SwiperSlide>
           ))}
         </Swiper>
@@ -42,9 +48,10 @@ const GenreButtonsContainer = ({
       <div className="hidden md:grid w-full gap-4 md:grid-cols-3 lg:grid-cols-6">
         {genres.map((genre) => (
           <GenreButton
-            genre={genre}
-            key={genre}
-            onClick={() => onGenreClick(genre)}
+            genre={genre.name}
+            key={genre.id}
+            onClick={() => onGenreClick(genre.id)}
+            selected={selectedGenre === genre.name}
           />
         ))}
       </div>

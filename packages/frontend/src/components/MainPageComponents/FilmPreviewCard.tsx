@@ -1,7 +1,6 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState } from "react";
 import { BiBookmark, BiSolidBookmark } from "react-icons/bi"; // Import BiIcons
+import { useNavigate } from "react-router-dom";
 
 interface Movie {
   id: number;
@@ -17,18 +16,13 @@ interface FilmPreviewCardProps {
   genreMap: { [key: number]: string };
 }
 
-const FilmPreviewCard: React.FC<FilmPreviewCardProps> = ({
-  movie,
-  genreMap,
-}) => {
+const FilmPreviewCard: React.FC<FilmPreviewCardProps> = ({ movie }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [isBookmarkHovered, setIsBookmarkHovered] = useState(false);
+  const navigate = useNavigate();
 
   const releaseYear = movie.release_date
     ? new Date(movie.release_date).getFullYear()
-    : "N/A";
-  const genres = movie.genre_ids
-    ? movie.genre_ids.map((id) => genreMap[id]).join(" · ")
     : "N/A";
 
   const getRatingBgColor = (rating: number) => {
@@ -37,15 +31,24 @@ const FilmPreviewCard: React.FC<FilmPreviewCardProps> = ({
     return "bg-red-500";
   };
 
+  const handleClick = () => {
+    navigate(`/movie/${movie.id}`);
+  };
+
   return (
     <div
       className="rounded-lg flex flex-wrap justify-center w-full overflow-hidden duration-300 hover:scale-105"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
+      onClick={handleClick}
     >
       <div className="relative">
         <img
-          src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+          src={
+            movie.poster_path
+              ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
+              : "https://via.placeholder.com/200x300?text=No+Image"
+          }
           alt={movie.title}
           className="h-64 w-48 object-cover rounded-lg shadow-xl"
         />
@@ -59,7 +62,7 @@ const FilmPreviewCard: React.FC<FilmPreviewCardProps> = ({
           </div>
         )}
         <div
-          className={`absolute top-2 right-2 p-2 ${
+          className={`absolute top-1 right-2 ${
             isHovered ? "opacity-100" : "opacity-0"
           } transition-opacity duration-300`}
           onMouseEnter={() => setIsBookmarkHovered(true)}

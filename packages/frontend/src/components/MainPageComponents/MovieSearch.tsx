@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { BiSearch } from "react-icons/bi"; // Import BiIcons
 
 interface Movie {
@@ -17,6 +17,7 @@ const MovieSearch: React.FC<MovieSearchProps> = ({ apiKey, onMovieSelect }) => {
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [searchResults, setSearchResults] = useState<Movie[]>([]);
   const [isDropdownVisible, setDropdownVisible] = useState<boolean>(false);
+  const searchRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (searchQuery.length >= 3) {
@@ -49,13 +50,29 @@ const MovieSearch: React.FC<MovieSearchProps> = ({ apiKey, onMovieSelect }) => {
     setDropdownVisible(false);
   };
 
+  const handleClickOutside = (event: MouseEvent) => {
+    if (
+      searchRef.current &&
+      !searchRef.current.contains(event.target as Node)
+    ) {
+      setDropdownVisible(false);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   return (
-    <div className="w-full">
+    <div className="w-full" ref={searchRef}>
       <div className="relative w-full">
         <div className="flex justify-center items-center">
-          <div className="relative w-full">
+          <div className="relative my-auto w-full">
             <BiSearch
-              className="absolute left-3 top-3 text-gray-500"
+              className="absolute left-3 top-4 text-gray-500"
               size="1.5em"
             />
             <input
@@ -63,7 +80,7 @@ const MovieSearch: React.FC<MovieSearchProps> = ({ apiKey, onMovieSelect }) => {
               value={searchQuery}
               onChange={handleSearchChange}
               placeholder="Search..."
-              className="pl-10 p-2 border bg-white w-full h-12 rounded-full"
+              className="pl-10 p-2 border bg-white w-full h-14 rounded-full"
             />
             {isDropdownVisible && (
               <ul className="absolute z-10 w-full bg-white border border-gray-300 rounded-md mt-1 max-h-60 overflow-y-auto">

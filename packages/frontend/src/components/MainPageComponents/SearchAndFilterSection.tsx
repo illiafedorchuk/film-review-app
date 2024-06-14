@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from "react";
 import MovieSearch from "./MovieSearch";
 import FilterDropdown from "./FilterDropdown";
@@ -29,7 +30,12 @@ const SearchAndFilterSection: React.FC<SearchAndFilterSectionProps> = ({
   return (
     <div className="w-full p-6 bg-violet-200 rounded-xl shadow-md max-w-7xl mx-auto my-4">
       <div className="mb-4">
-        <MovieSearch apiKey={apiKey} />
+        <MovieSearch
+          apiKey={apiKey}
+          onMovieSelect={function (): void {
+            throw new Error("Function not implemented.");
+          }}
+        />
       </div>
       <div className="flex flex-wrap gap-4 justify-between">
         <FilterDropdown
