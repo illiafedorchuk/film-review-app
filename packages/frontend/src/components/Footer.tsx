@@ -10,7 +10,7 @@ import {
 
 const Footer = () => {
   return (
-    <div className="mt-10 md:pl-36 bg-violet-200 text-violet-600 p-8 rounded-t-3xl">
+    <div className="mt-10 md:pl-36 bg-violet-200 dark:bg-[var(--border-color)] text-violet-600 dark:text-white p-8 rounded-t-3xl">
       <div className="flex flex-wrap flex-center w-full">
         <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           <div>
@@ -30,7 +30,7 @@ const Footer = () => {
           </div>
 
           <div>
-            <h2 className="text-violet-600 font-bold mb-4">Quick Links</h2>
+            <h2 className="font-bold mb-4">Quick Links</h2>
             <ul>
               <li className="mb-2 cursor-pointer duration-100 hover:font-bold">
                 Home
@@ -57,42 +57,42 @@ const Footer = () => {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <FaTelegramPlane className="text-2xl hover:text-gray-400" />
+                <FaTelegramPlane className="text-2xl hover:text-gray-400 dark:hover:text-gray-600" />
               </a>
               <a
                 href="https://www.linkedin.com/in/yourprofile"
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <FaLinkedin className="text-2xl hover:text-gray-400" />
+                <FaLinkedin className="text-2xl hover:text-gray-400 dark:hover:text-gray-600" />
               </a>
               <a
                 href="https://twitter.com/yourprofile"
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <FaTwitter className="text-2xl hover:text-gray-400" />
+                <FaTwitter className="text-2xl hover:text-gray-400 dark:hover:text-gray-600" />
               </a>
               <a
                 href="https://github.com/yourprofile"
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <FaGithub className="text-2xl hover:text-gray-400" />
+                <FaGithub className="text-2xl hover:text-gray-400 dark:hover:text-gray-600" />
               </a>
               <a
                 href="https://facebook.com/yourprofile"
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <FaFacebook className="text-2xl hover:text-gray-400" />
+                <FaFacebook className="text-2xl hover:text-gray-400 dark:hover:text-gray-600" />
               </a>
               <a
                 href="https://instagram.com/yourprofile"
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <FaInstagram className="text-2xl hover:text-gray-400" />
+                <FaInstagram className="text-2xl hover:text-gray-400 dark:hover:text-gray-600" />
               </a>
             </div>
           </div>

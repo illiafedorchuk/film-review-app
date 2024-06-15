@@ -28,7 +28,7 @@ const SearchAndFilterSection: React.FC<SearchAndFilterSectionProps> = ({
   onYearChange,
 }) => {
   return (
-    <div className="w-full p-6 bg-violet-200 rounded-xl shadow-md max-w-7xl mx-auto my-4">
+    <div className="w-full p-6 bg-[var(--input-bg-color)] rounded-xl shadow-md max-w-7xl mx-auto my-4">
       <div className="mb-4">
         <MovieSearch
           apiKey={apiKey}

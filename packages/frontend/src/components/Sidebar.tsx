@@ -56,17 +56,14 @@ const Sidebar = ({
       {isMobile ? (
         <>
           {!isSidebarVisible && (
-            <div className="fixed left-4 top-4 z-50 bg-violet-300 p-2 rounded-full cursor-pointer">
-              <BiChevronRight
-                className="text-white text-4xl"
-                onClick={toggleSidebar}
-              />
+            <div className="fixed left-4 top-4 z-50 p-2 rounded-full cursor-pointer ">
+              <BiChevronRight className="text-4xl" onClick={toggleSidebar} />
             </div>
           )}
           {isSidebarVisible && (
             <div
               id="mobile-sidebar"
-              className="fixed top-4 bottom-4 left-6 w-[70%] max-w-[300px] p-4 overflow-y-auto text-center shadow-lg h-[90%] z-50 bg-violet-200 rounded-3xl"
+              className="fixed top-4 bottom-4 left-6 w-[70%] max-w-[300px] p-4 overflow-y-auto text-center shadow-lg h-[90%] z-50 rounded-3xl sidebar "
             >
               <SidebarContent expanded={true} toggleSidebar={toggleSidebar} />
             </div>
@@ -74,7 +71,7 @@ const Sidebar = ({
         </>
       ) : (
         <div
-          className={`fixed top-0 bottom-0 left-0 duration-500 p-2 overflow-y-auto text-center bg-violet-200 h-screen z-50 rounded-r-3xl shadow-lg ${
+          className={`fixed top-0 bottom-0 left-0 duration-500 p-2 overflow-y-auto text-center h-screen z-50 rounded-r-3xl shadow-lg sidebar  bg-[var(--input-bg-color)] ${
             expanded ? "w-[200px]" : "w-[70px]"
           }`}
         >
@@ -94,22 +91,22 @@ const SidebarContent = React.memo(
     toggleSidebar: () => void;
   }) => (
     <>
-      <div className="text-gray-100 text-xl">
+      <div className="text-[var(--sidebar-text-color)] text-xl">
         <div className="flex justify-between items-center p-2">
           {expanded ? (
             <BiChevronLeft
-              className="text-gray-800 text-4xl cursor-pointer"
+              className="text-[var(--sidebar-text-color)] text-4xl cursor-pointer"
               onClick={toggleSidebar}
             />
           ) : (
             <BiChevronRight
-              className="text-gray-800 text-4xl cursor-pointer"
+              className="text-[var(--sidebar-text-color)] text-4xl cursor-pointer"
               onClick={toggleSidebar}
             />
           )}
         </div>
       </div>
-      <hr className="my-2 text-gray-300" />
+      <hr className="my-2 text-[var(--border-color)]" />
       <SidebarItem icon={BiHome} expanded={expanded} label={"Home"} />
       <SidebarItem
         icon={BiBookmarkFill}

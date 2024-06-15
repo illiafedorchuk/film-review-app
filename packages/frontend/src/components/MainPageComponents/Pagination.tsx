@@ -38,9 +38,9 @@ const Pagination: React.FC<PaginationProps> = ({
           key={i}
           className={`px-3 py-1 mx-1 ${
             currentPage === i
-              ? "bg-violet-400 text-white rounded-xl"
-              : "bg-gray-200 rounded-xl"
-          } rounded-xl`}
+              ? "bg-[var(--link-hover-color)] text-white rounded-xl"
+              : "bg-[var(--search-bg-color)] text-[var(--text-color)] dark:bg-[var(--border-color)] dark:text-white border border-[var(--input-border-color)] rounded-xl"
+          }`}
           onClick={() => handlePageChange(i)}
         >
           {i}
@@ -54,7 +54,7 @@ const Pagination: React.FC<PaginationProps> = ({
   return (
     <div className="flex justify-center items-center my-4">
       <button
-        className="px-3 py-1 mx-1"
+        className="px-3 py-1 mx-1 bg-[var(--search-bg-color)] text-[var(--text-color)] dark:bg-[var(--border-color)] dark:text-white border border-[var(--input-border-color)] rounded-xl"
         disabled={currentPage === 1}
         onClick={() => handlePageChange(currentPage - 1)}
       >
@@ -65,26 +65,30 @@ const Pagination: React.FC<PaginationProps> = ({
           <button
             className={`px-3 py-1 mx-1 ${
               currentPage === 1
-                ? "bg-violet-400 text-white rounded-xl"
-                : "bg-gray-200 rounded-xl"
-            } rounded-xl`}
+                ? "bg-[var(--link-hover-color)] text-white rounded-xl"
+                : "bg-[var(--search-bg-color)] text-[var(--text-color)] dark:bg-[var(--border-color)] dark:text-white border border-[var(--input-border-color)] rounded-xl"
+            }`}
             onClick={() => handlePageChange(1)}
           >
             1
           </button>
-          <span className="px-3 py-1">...</span>
+          <span className="px-3 py-1 text-[var(--text-color)] dark:text-white">
+            ...
+          </span>
         </>
       )}
       {renderPageNumbers()}
       {currentPage < totalPages - 2 && (
         <>
-          <span className="px-3 py-1">...</span>
+          <span className="px-3 py-1 text-[var(--text-color)] dark:text-white">
+            ...
+          </span>
           <button
             className={`px-3 py-1 mx-1 ${
               currentPage === totalPages
-                ? "bg-violet-400 text-white rounded-xl"
-                : "bg-gray-200 rounded-xl"
-            } rounded-xl`}
+                ? "bg-[var(--link-hover-color)] text-white rounded-xl"
+                : "bg-[var(--search-bg-color)] text-[var(--text-color)] dark:bg-[var(--border-color)] dark:text-white border border-[var(--input-border-color)] rounded-xl"
+            }`}
             onClick={() => handlePageChange(totalPages)}
           >
             {totalPages}
@@ -92,7 +96,7 @@ const Pagination: React.FC<PaginationProps> = ({
         </>
       )}
       <button
-        className="px-3 py-1 mx-1"
+        className="px-3 py-1 mx-1 bg-[var(--search-bg-color)] text-[var(--text-color)] dark:bg-[var(--border-color)] dark:text-white border border-[var(--input-border-color)] rounded-xl"
         disabled={currentPage === totalPages}
         onClick={() => handlePageChange(currentPage + 1)}
       >

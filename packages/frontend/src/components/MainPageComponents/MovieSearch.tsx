@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { BiSearch } from "react-icons/bi"; // Import BiIcons
+import { BiSearch } from "react-icons/bi";
 
 interface Movie {
   id: number;
@@ -70,9 +70,9 @@ const MovieSearch: React.FC<MovieSearchProps> = ({ apiKey, onMovieSelect }) => {
     <div className="w-full" ref={searchRef}>
       <div className="relative w-full">
         <div className="flex justify-center items-center">
-          <div className="relative my-auto w-full">
+          <div className="relative my-auto w-full border  rounded-3xl">
             <BiSearch
-              className="absolute left-3 top-4 text-gray-500"
+              className="absolute left-3 top-4 dark:text-white text-black"
               size="1.5em"
             />
             <input
@@ -80,14 +80,14 @@ const MovieSearch: React.FC<MovieSearchProps> = ({ apiKey, onMovieSelect }) => {
               value={searchQuery}
               onChange={handleSearchChange}
               placeholder="Search..."
-              className="pl-10 p-2 border bg-white w-full h-14 rounded-full"
+              className="pl-10 p-2 dark:bg-[var(--border-color)] dark:text-white text-black w-full h-14 rounded-full"
             />
             {isDropdownVisible && (
-              <ul className="absolute z-10 w-full bg-white border border-gray-300 rounded-md mt-1 max-h-60 overflow-y-auto">
+              <ul className="absolute z-10 w-full bg-[var(--input-bg-color)] border border-[var(--input-border-color)] rounded-md mt-1 max-h-60 overflow-y-auto">
                 {searchResults.map((movie) => (
                   <li
                     key={movie.id}
-                    className="p-2 hover:bg-gray-200 cursor-pointer"
+                    className="p-2 hover:bg-violet-400 hover:text-white dark:hover:bg-[var(--border-color)] cursor-pointer"
                     onClick={() => handleMovieSelect(movie)}
                   >
                     <div className="flex items-center">
@@ -100,9 +100,7 @@ const MovieSearch: React.FC<MovieSearchProps> = ({ apiKey, onMovieSelect }) => {
                       )}
                       <div>
                         <p className="text-sm font-semibold">{movie.title}</p>
-                        <p className="text-xs text-gray-500">
-                          {movie.release_date}
-                        </p>
+                        <p className="text-xs ">{movie.release_date}</p>
                       </div>
                     </div>
                   </li>

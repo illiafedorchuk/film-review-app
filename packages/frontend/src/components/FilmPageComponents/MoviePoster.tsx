@@ -1,27 +1,23 @@
 import React from "react";
 
+const BASE_URL = "https://image.tmdb.org/t/p/w500";
+
 interface MoviePosterProps {
   movie: {
     poster_path: string;
-    title: string;
   };
 }
 
-function MoviePoster({ movie }: MoviePosterProps) {
-  console.log(movie);
+const MoviePoster: React.FC<MoviePosterProps> = ({ movie }) => {
   return (
-    <div>
+    <div className="w-1/3">
       <img
-        src={
-          movie.poster_path
-            ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
-            : "https://via.placeholder.com/200x300?text=No+Image"
-        }
-        alt={movie.title}
-        className="h-96 w-72 object-cover rounded-3xl shadow-xl"
+        src={`${BASE_URL}${movie.poster_path}`}
+        alt="Movie Poster"
+        className="rounded-xl shadow-lg w-full h-full object-cover"
       />
     </div>
   );
-}
+};
 
 export default MoviePoster;

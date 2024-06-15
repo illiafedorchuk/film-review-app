@@ -50,7 +50,7 @@ function PasswordField({
           placeholder={placeholder}
           id={name}
           type={showPassword ? "text" : "password"}
-          className="w-full h-12 border-2 border-gray-100 rounded-xl p-4 mt-1 bg-transparent max-sm:border-gray-200"
+          className="w-full h-12 border-2 border-[var(--border-color)] rounded-xl p-4 mt-1 bg-transparent max-sm:border-gray-200"
           value={password}
           onChange={handleInputChange}
         />

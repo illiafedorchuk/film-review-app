@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import ModalReview from "./ModalReview";
 import { BiChevronLeft, BiChevronRight } from "react-icons/bi";
 
 interface Review {
@@ -22,7 +21,6 @@ interface RandomReviewCardProps {
 
 const RandomReviewCard: React.FC<RandomReviewCardProps> = ({ reviews }) => {
   const [currentReviewIndex, setCurrentReviewIndex] = useState(0);
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [animate, setAnimate] = useState(false);
 
   const handleNextReview = () => {
@@ -43,14 +41,6 @@ const RandomReviewCard: React.FC<RandomReviewCardProps> = ({ reviews }) => {
     }, 500); // Sync with animation duration
   };
 
-  const handleOpenModal = () => {
-    setIsModalOpen(true);
-  };
-
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-  };
-
   useEffect(() => {
     if (animate) {
       setTimeout(() => setAnimate(false), 1000); // Sync with animation duration
@@ -67,17 +57,16 @@ const RandomReviewCard: React.FC<RandomReviewCardProps> = ({ reviews }) => {
 
   return (
     <>
-      <div className="ml-10 bg-violet-300 w-[280px] rounded-lg relative max-lg:hidden">
+      <div className="ml-10  w-[280px]  rounded-lg bg-[var(--link-hover-color)] relative max-lg:hidden">
         <div
-          className={`duration-300 bg-violet-200 rounded-lg w-full h-full flex flex-col items-center justify-center p-4 hover:shadow-[0_0_30px_3px_rgba(100,0,300,0.3)] cursor-pointer ${
+          className={`duration-300 bg-[var(--button-bg-color)] rounded-lg w-full h-full flex flex-col items-center justify-center p-4 hover:shadow-[0_0_30px_3px_rgba(100,0,300,0.3)] cursor-pointer ${
             animate ? "animate-full-turn" : "rotate-6 hover:rotate-0"
           }`}
-          onClick={handleOpenModal}
         >
           {reviews.length === 0 ? (
             <>
               <span className="text-6xl">😢</span>
-              <p className="text-violet-950 font-bold mb-2 text-lg">
+              <p className="text-white font-bold mb-2 text-lg">
                 We don't have a review for this film
               </p>
             </>
@@ -95,10 +84,10 @@ const RandomReviewCard: React.FC<RandomReviewCardProps> = ({ reviews }) => {
                   className="w-full h-full object-cover"
                 />
               </div>
-              <p className="text-violet-950 font-bold mb-2 text-l md:text-sm">
+              <p className="text-white font-bold mb-2 text-l md:text-sm">
                 {currentReview.author}
               </p>
-              <p className="text-violet-950 cursor-pointer mb-4 text-xs">
+              <p className="text-white cursor-pointer mb-4 text-xs">
                 {truncateContent(currentReview.content, 100)}
               </p>
               <div className="flex items-center space-x-2 text-violet-950">
@@ -108,7 +97,7 @@ const RandomReviewCard: React.FC<RandomReviewCardProps> = ({ reviews }) => {
                 >
                   <BiChevronLeft size={24} />
                 </button>
-                <span className="text-violet-950">
+                <span className="text-white">
                   {currentReviewIndex + 1} / {reviews.length}
                 </span>
                 <button
@@ -122,16 +111,6 @@ const RandomReviewCard: React.FC<RandomReviewCardProps> = ({ reviews }) => {
           )}
         </div>
       </div>
-
-      {reviews.length > 0 && (
-        <ModalReview
-          isOpen={isModalOpen}
-          onClose={handleCloseModal}
-          content={currentReview.content}
-          author={currentReview.author}
-          authorAvatar={currentReview.author_details.avatar_path}
-        />
-      )}
     </>
   );
 };

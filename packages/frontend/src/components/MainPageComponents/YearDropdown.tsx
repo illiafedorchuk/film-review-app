@@ -1,5 +1,3 @@
-// YearDropdown.tsx
-
 import React, { useState, useRef, useEffect } from "react";
 
 interface YearDropdownProps {
@@ -33,7 +31,7 @@ const YearDropdown: React.FC<YearDropdownProps> = ({ year, onYearChange }) => {
   return (
     <div className="relative flex-grow" ref={dropdownRef}>
       <button
-        className="inline-flex justify-between items-center w-full h-12 px-4 py-2 rounded-2xl border border-gray-300 shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-violet-400"
+        className="inline-flex justify-between items-center w-full h-12 px-4 py-2 dark:bg-[var(--border-color)] bg-[var(--search-bg-color)] rounded-3xl border text-[var(--text-color)] border-[var(--input-border-color)] shadow-sm text-sm font-medium focus:outline-none focus:ring-2"
         id="year-options-menu"
         aria-haspopup="true"
         aria-expanded="true"
@@ -57,7 +55,7 @@ const YearDropdown: React.FC<YearDropdownProps> = ({ year, onYearChange }) => {
 
       {isOpen && (
         <div
-          className="origin-top-right absolute right-0 mt-2 w-full rounded-xl shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50"
+          className="origin-top-right absolute right-0 mt-2 w-full rounded-xl shadow-lg bg-[var(--input-bg-color)] ring-1 ring-black ring-opacity-5 focus:outline-none z-50"
           role="menu"
           aria-orientation="vertical"
           aria-labelledby="year-options-menu"
@@ -72,8 +70,8 @@ const YearDropdown: React.FC<YearDropdownProps> = ({ year, onYearChange }) => {
                   setIsOpen(false);
                 }}
                 className={`${
-                  year === yearOption ? "bg-gray-100" : ""
-                } block px-4 py-2 text-sm text-gray-700 w-full text-left hover:bg-violet-300`}
+                  year === yearOption ? "bg-gray-100 dark:bg-gray-700" : ""
+                } block px-4 py-2 text-sm text-[var(--text-color)] w-full text-left rounded-lg hover:bg-[var(--border-color)]`}
                 role="menuitem"
               >
                 {yearOption}

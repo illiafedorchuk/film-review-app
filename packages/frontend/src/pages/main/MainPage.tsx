@@ -11,6 +11,7 @@ import Footer from "../../components/Footer";
 import MovieGrid from "../../components/MainPageComponents/MovieGrid";
 import Pagination from "../../components/MainPageComponents/Pagination";
 import SearchAndFilterSection from "../../components/MainPageComponents/SearchAndFilterSection";
+import { DarkModeProvider } from "../../components/layouts/DarkModeContext";
 
 interface Movie {
   id: number;
@@ -158,56 +159,58 @@ const MainPage: React.FC = () => {
   const totalPages = 500;
 
   return (
-    <AppLayout>
-      <div className="px-[10%] lg:pr-[10%] lg:pl-[15%] md:pr-[10%] md:pl-[15%] sm:pl-[15%] py-10">
-        <GenreButtonsContainer
-          genres={genreButtonsArr}
-          onGenreClick={handleGenreClick}
-          selectedGenre={selectedGenre}
-        />
+    <DarkModeProvider>
+      <AppLayout>
+        <div className="px-[10%] lg:pr-[10%] lg:pl-[15%] md:pr-[10%] md:pl-[15%] sm:pl-[15%] py-10">
+          <GenreButtonsContainer
+            genres={genreButtonsArr}
+            onGenreClick={handleGenreClick}
+            selectedGenre={selectedGenre}
+          />
 
-        <div className="flex flex-col md:flex-row mt-3 w-full gap-4 justify-between py-5 max-h-[440px]">
-          {moviesCarousel.length > 0 && (
-            <MovieDetailsCarousel
-              movies={moviesCarousel}
-              onMovieChange={handleMovieChange}
-            />
-          )}
-          {reviews.length > 0 && reviews[currentMovieIndex] && (
-            <RandomReviewCard reviews={reviews[currentMovieIndex]} />
-          )}
-        </div>
-
-        <div className="mt-3 font-bold text-2xl text-center w-full">
-          Special for you
-        </div>
-        {randomMovieList?.results && (
-          <div className="w-full py-5">
-            <ActiveSlider movies={randomMovieList.results} />
+          <div className="flex flex-col md:flex-row mt-3 w-full gap-4 justify-between py-5 max-h-[440px]">
+            {moviesCarousel.length > 0 && (
+              <MovieDetailsCarousel
+                movies={moviesCarousel}
+                onMovieChange={handleMovieChange}
+              />
+            )}
+            {reviews.length > 0 && reviews[currentMovieIndex] && (
+              <RandomReviewCard reviews={reviews[currentMovieIndex]} />
+            )}
           </div>
-        )}
 
-        <SearchAndFilterSection
-          apiKey={API_KEY}
-          genreMap={genreMap}
-          selectedGenres={selectedGenres}
-          onGenreChange={handleGenreChange}
-          sortBy={sortBy}
-          onSortChange={handleSortChange}
-          selectedYears={selectedYears}
-          onYearChange={handleYearChange}
-          onMovieSelect={(movie: any) => {}}
-        />
+          <div className="mt-3 font-bold text-3xl text-center w-full">
+            Special for you
+          </div>
+          {randomMovieList?.results && (
+            <div className="w-full pt-5">
+              <ActiveSlider movies={randomMovieList.results} />
+            </div>
+          )}
+          <div className="font-bold text-3xl text-center w-full">Discover</div>
+          <SearchAndFilterSection
+            apiKey={API_KEY}
+            genreMap={genreMap}
+            selectedGenres={selectedGenres}
+            onGenreChange={handleGenreChange}
+            sortBy={sortBy}
+            onSortChange={handleSortChange}
+            selectedYears={selectedYears}
+            onYearChange={handleYearChange}
+            onMovieSelect={() => {}}
+          />
 
-        <MovieGrid movies={movies} genreMap={genreMap} />
-        <Pagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={setCurrentPage}
-        />
-      </div>
-      <Footer />
-    </AppLayout>
+          <MovieGrid movies={movies} genreMap={genreMap} />
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+          />
+        </div>
+        <Footer />
+      </AppLayout>
+    </DarkModeProvider>
   );
 };
 

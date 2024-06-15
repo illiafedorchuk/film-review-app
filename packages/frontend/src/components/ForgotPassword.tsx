@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import TextInput from "./TextInput";
+import TextInput from "./AuthComponents/TextInput";
 import axios from "../lib/axios";
 
 const emailSchema = z.object({
@@ -35,10 +35,7 @@ const ForgotPasswordModal = ({ onClose }: { onClose: () => void }) => {
 
   return (
     <div className="flex w-full">
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="w-full  bg-white rounded"
-      >
+      <form onSubmit={handleSubmit(onSubmit)} className="w-full rounded">
         <div className="mb-10">
           <TextInput
             label="Email"
@@ -51,14 +48,14 @@ const ForgotPasswordModal = ({ onClose }: { onClose: () => void }) => {
         </div>
         <button
           type="submit"
-          className="bg-violet-500 hover:bg-violet-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full"
+          className="bg-violet-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full"
         >
           Reset Password
         </button>
         <div className="flex justify-center mt-4">
           <button
             type="button"
-            className=" text-violet-400 hover:text-violet-700 flex"
+            className=" text-violet-600 hover:text-violet-700 flex"
             onClick={onClose}
           >
             Back to Login

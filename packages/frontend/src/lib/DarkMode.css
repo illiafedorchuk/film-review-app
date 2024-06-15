@@ -1,0 +1,74 @@
+:root {
+  --bg-color: #f0f0f0;
+  --text-color: #333333;
+  --border-color: #cccccc;
+  --input-bg-color: #ffffff;
+  --input-border-color: #e5e7eb;
+  --link-hover-color: #833ff9d9;
+  --button-bg-color:  #a78bfa;
+  --button-text-color: #ffffff;
+  --error-bg-color: #f8d7da;
+  --error-text-color: #721c24;
+  --search-bg-color: #ffffff;
+}
+
+.dark {
+  --bg-color: #1e1e1e;
+  --text-color: #d0d0d0;
+  --border-color: #444444;
+  --input-bg-color: #2c2c2c;
+  --input-border-color: #6d6d6d;
+  --link-hover-color: #833ff9d9;
+  --button-bg-color:  #a78bfa;
+  --button-text-color: #ffffff;
+  --error-bg-color: #d32f2f;
+  --error-text-color: #ffebee;
+  --search-bg-color: #cfbfff;
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+}
+
+input, textarea {
+  background-color: var(--input-bg-color);
+  border-color: var(--input-border-color);
+  color: var(--text-color);
+}
+
+button {
+  background-color: var(--button-bg-color);
+  color: var(--button-text-color);
+}
+
+.link {
+  color: var(--link-hover-color);
+}
+
+.error {
+  background-color: var(--error-bg-color);
+  color: var(--error-text-color);
+}
+/* ImageCarousel.css */
+
+.slick-prev,
+.slick-next {
+  width: 40px;
+  height: 40px;
+  z-index: 1;
+}
+
+.slick-prev:before,
+.slick-next:before {
+  font-size: 40px;
+  color: var(--link-hover-color)!important; /* Use your violet color */
+}
+
+.slick-prev {
+  left: -50px; /* Adjust as needed */
+}
+
+.slick-next {
+  right: -50px; /* Adjust as needed */
+}

@@ -9,10 +9,10 @@ const GenreButton = ({
 }) => {
   return (
     <div
-      className={`rounded-lg py-3 text-center font-semibold cursor-pointer duration-300 whitespace-nowrap ${
+      className={`rounded-lg py-3 text-center font-semibold cursor-pointer duration-300 whitespace-nowrap text-black  ${
         selected
-          ? "bg-violet-200 text-violet-600"
-          : "bg-white hover:bg-violet-200 hover:text-violet-600"
+          ? "bg-[var(--button-bg-color)] text-white "
+          : "bg-[var(--input-bg-color)]  hover:bg-[var(--button-bg-color)] dark:text-white "
       }`}
       onClick={onClick}
     >

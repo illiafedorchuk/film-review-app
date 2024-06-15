@@ -67,7 +67,7 @@ const FilterDropdown: React.FC<FilterDropdownProps> = ({
     <div ref={dropdownRef} className="relative flex-grow text-left">
       <button
         onClick={toggleDropdown}
-        className="inline-flex justify-between items-center w-full h-12 px-4 py-2 rounded-2xl border border-gray-300 shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-violet-400"
+        className="inline-flex justify-between items-center w-full h-12 px-4 py-2 dark:bg-[var(--border-color)] rounded-3xl border text-[var(--text-color)] border-[var(--input-border-color)] shadow-sm text-sm font-medium focus:outline-none focus:ring-2"
       >
         {selectedGenreNames}
         <svg
@@ -85,7 +85,7 @@ const FilterDropdown: React.FC<FilterDropdownProps> = ({
         </svg>
       </button>
       {isOpen && (
-        <div className="origin-top-right absolute right-0 mt-2 w-full rounded-xl shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50">
+        <div className="origin-top-right absolute right-0 mt-2 w-full rounded-xl shadow-lg bg-[var(--input-bg-color)] ring-1 ring-black ring-opacity-5 focus:outline-none z-50">
           <div
             className="py-1"
             role="menu"
@@ -97,7 +97,7 @@ const FilterDropdown: React.FC<FilterDropdownProps> = ({
                 <label
                   key={id}
                   htmlFor={`genre-${id}`}
-                  className="flex items-center px-4 py-2 hover:bg-violet-300 rounded-md cursor-pointer"
+                  className="flex items-center px-4 py-2 hover:bg-[var(--border-color)] rounded-md cursor-pointer"
                 >
                   <input
                     type="checkbox"
@@ -106,7 +106,9 @@ const FilterDropdown: React.FC<FilterDropdownProps> = ({
                     onChange={() => handleCheckboxChange(Number(id))}
                     className="form-checkbox h-4 w-4 text-violet-400 transition duration-150 ease-in-out"
                   />
-                  <span className="ml-2 text-sm text-gray-700">{name}</span>
+                  <span className="ml-2 text-sm text-[var(--text-color)]">
+                    {name}
+                  </span>
                 </label>
               ))}
             </div>
