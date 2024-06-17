@@ -1,16 +1,22 @@
+/* eslint-disable @typescript-eslint/ban-types */
 import React from "react";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
-interface ImageCarouselProps {
-  images: Array<{ file_path: string }>;
+interface CarouselProps<T> {
+  title: string;
+  data: T[];
+  renderItem: (item: T) => React.ReactNode;
 }
 
-const BASE_URL = "https://image.tmdb.org/t/p/w500";
-
-const ImageCarousel: React.FC<ImageCarouselProps> = ({ images }) => {
+const Carousel = <T extends {}>({
+  title,
+  data,
+  renderItem,
+}: CarouselProps<T>) => {
   const settings = {
+    dots: false,
     infinite: true,
     speed: 500,
     slidesToShow: 4,
@@ -19,10 +25,9 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ images }) => {
       {
         breakpoint: 1024,
         settings: {
-          slidesToShow: 3,
-          slidesToScroll: 3,
+          slidesToShow: 2,
+          slidesToScroll: 2,
           infinite: true,
-          dots: true,
         },
       },
       {
@@ -45,17 +50,11 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ images }) => {
 
   return (
     <div className="mt-4">
-      <h1 className="text-center py-5 text-4xl font-bold text-violet-700">
-        Photos
-      </h1>
+      <h1 className="font-bold text-3xl text-center pb-5">{title}</h1>
       <Slider {...settings}>
-        {images.map((image, index) => (
+        {data.map((item, index) => (
           <div key={index} className="p-2">
-            <img
-              src={`${BASE_URL}${image.file_path}`}
-              alt={`Movie Image ${index + 1}`}
-              className="w-full h-auto rounded-lg object-cover"
-            />
+            {renderItem(item)}
           </div>
         ))}
       </Slider>
@@ -63,4 +62,4 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ images }) => {
   );
 };
 
-export default ImageCarousel;
+export default Carousel;

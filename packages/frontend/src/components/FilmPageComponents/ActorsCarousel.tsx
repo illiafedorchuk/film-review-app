@@ -45,7 +45,7 @@ const ActorsCarousel: React.FC<ActorsCarouselProps> = ({ actors }) => {
 
   return (
     <div className="mt-4">
-      <h2 className="text-4xl font-bold text-center">Star cast</h2>
+      <h2 className="font-bold text-3xl text-center pb-5">Star cast</h2>
       <Slider {...settings}>
         {actors.map((actor, index) => (
           <div key={index} className="p-2">

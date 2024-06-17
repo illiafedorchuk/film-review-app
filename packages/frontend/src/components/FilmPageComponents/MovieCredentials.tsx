@@ -1,8 +1,13 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ReactNode } from "react";
+import { useNavigate } from "react-router-dom";
+import Button from "./Button";
+import MovieInfo from "./MovieInfo";
 
 interface MovieCredentialsProps {
   movieDetails: {
+    original_language: string;
     genres: Array<{ name: string }>;
     tagline: ReactNode;
     original_title: string;
@@ -19,56 +24,53 @@ interface MovieCredentialsProps {
 }
 
 function MovieCredentials({ movieDetails, actorsData }: MovieCredentialsProps) {
+  const navigate = useNavigate();
+
+  const handleWatchTrailerClick = () => {
+    document.getElementById("trailer")?.scrollIntoView({ behavior: "smooth" });
+  };
+
   const director = actorsData.crew.find((person) => person.job === "Director");
   const starCast = actorsData.cast
     .slice(0, 3)
     .map((person) => person.name)
     .join(", ");
 
+  const releaseDate = new Date(movieDetails.release_date).toLocaleDateString(
+    "en-GB",
+    {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    }
+  );
+
   return (
-    <div className="pl-14 w-2/3">
+    <div className="sx:pl-0 md:pl-10 lg:pl-10 lg:w-full">
       <h1 className="font-bold text-4xl mb-2">{movieDetails.original_title}</h1>
-      <h2 className="text-xl mb-4">{movieDetails.tagline}</h2>
-      <p className="text-[var(--text-color)] mb-2">
-        <span className="font-bold text-violet-600">Genre: </span>
-        {movieDetails.genres.map((el) => el.name).join(", ")}
-      </p>
-      <p className="text-[var(--text-color)] mb-2">
-        <span className="font-bold text-violet-600">Rating IMDB:</span>{" "}
-        {Math.round(movieDetails.vote_average * 100) / 100}/10 (
-        {movieDetails.vote_count} votes)
-      </p>
-      <p className="text-[var(--text-color)] mb-2">
-        <span className="font-bold text-violet-600">Duration:</span>{" "}
-        {movieDetails.runtime} minutes
-      </p>
-      <p className="text-[var(--text-color)] mb-2">
-        <span className="font-bold text-violet-600">Director:</span>{" "}
-        {director?.name}
-      </p>
-      <p className="text-[var(--text-color)] mb-2">
-        <span className="font-bold text-violet-600">Star cast:</span> {starCast}{" "}
-        ...
-      </p>
-      <p className="text-[var(--text-color)] mb-2">
-        <span className="font-bold text-violet-600">Release Date:</span>{" "}
-        {movieDetails.release_date}
-      </p>
-      <div className="flex pt-3 space-x-4">
-        <button className="bg-violet-600 text-white px-4 py-2 rounded-full">
-          Watch Trailer
-        </button>
-        <button className="bg-[var(--input-bg-color)] text-[var(--text-color)] px-4 py-2 rounded-full border border-[var(--input-border-color)]">
-          Favourite
-        </button>
-        <button className="bg-[var(--input-bg-color)] text-[var(--text-color)] px-4 py-2 rounded-full border border-[var(--input-border-color)]">
-          Watch later
-        </button>
+      <h2 className="text-xl mb-4 text-gray-400">{movieDetails.tagline}</h2>
+      <MovieInfo
+        label="Genre: "
+        value={movieDetails.genres.map((el) => el.name).join(", ")}
+      />
+      <MovieInfo
+        label="Rating IMDB: "
+        value={`${Math.round(movieDetails.vote_average * 100) / 100}/10 (${
+          movieDetails.vote_count
+        } votes)`}
+      />
+      <MovieInfo
+        label="Original language: "
+        value={movieDetails.original_language}
+      />
+      <MovieInfo label="Duration: " value={`${movieDetails.runtime} minutes`} />
+      <MovieInfo label="Director: " value={director?.name} />
+      <MovieInfo label="Star cast: " value={`${starCast} ...`} />
+      <MovieInfo label="Release Date: " value={releaseDate} />
+      <div className="flex flex-wrap pt-3 gap-4">
+        <Button onClick={handleWatchTrailerClick}>Watch Trailer</Button>
+        <Button>Watch later</Button>
       </div>
-      <p className="pt-5 text-[var(--text-color)] mb-4">
-        <span className="font-bold text-violet-600">Overview:</span>{" "}
-        {movieDetails.overview}
-      </p>
     </div>
   );
 }
