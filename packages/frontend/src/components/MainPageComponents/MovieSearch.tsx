@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { BiSearch } from "react-icons/bi";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 
 interface Movie {
   id: number;
@@ -11,13 +12,20 @@ interface Movie {
 interface MovieSearchProps {
   apiKey: string;
   onMovieSelect: (movie: Movie) => void;
+  isActive: boolean;
 }
 
-const MovieSearch: React.FC<MovieSearchProps> = ({ apiKey, onMovieSelect }) => {
+const MovieSearch: React.FC<MovieSearchProps> = ({
+  apiKey,
+  onMovieSelect,
+  isActive,
+}) => {
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [searchResults, setSearchResults] = useState<Movie[]>([]);
   const [isDropdownVisible, setDropdownVisible] = useState<boolean>(false);
   const searchRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const navigate = useNavigate(); // Initialize useNavigate
 
   useEffect(() => {
     if (searchQuery.length >= 3) {
@@ -27,6 +35,12 @@ const MovieSearch: React.FC<MovieSearchProps> = ({ apiKey, onMovieSelect }) => {
       setDropdownVisible(false);
     }
   }, [searchQuery]);
+
+  useEffect(() => {
+    if (isActive) {
+      inputRef.current?.focus();
+    }
+  }, [isActive]);
 
   const fetchSearchResults = async () => {
     const response = await fetch(
@@ -48,6 +62,7 @@ const MovieSearch: React.FC<MovieSearchProps> = ({ apiKey, onMovieSelect }) => {
     setSearchQuery("");
     setSearchResults([]);
     setDropdownVisible(false);
+    navigate(`/movie/${movie.id}`); // Redirect to the movie page
   };
 
   const handleClickOutside = (event: MouseEvent) => {
@@ -70,12 +85,13 @@ const MovieSearch: React.FC<MovieSearchProps> = ({ apiKey, onMovieSelect }) => {
     <div className="w-full" ref={searchRef}>
       <div className="relative w-full">
         <div className="flex justify-center items-center">
-          <div className="relative my-auto w-full border  rounded-3xl">
+          <div className="relative my-auto w-full rounded-3xl">
             <BiSearch
               className="absolute left-3 top-4 dark:text-white text-black"
               size="1.5em"
             />
             <input
+              ref={inputRef}
               type="text"
               value={searchQuery}
               onChange={handleSearchChange}
@@ -87,7 +103,7 @@ const MovieSearch: React.FC<MovieSearchProps> = ({ apiKey, onMovieSelect }) => {
                 {searchResults.map((movie) => (
                   <li
                     key={movie.id}
-                    className="p-2 hover:bg-violet-400 hover:text-white dark:hover:bg-[var(--border-color)] cursor-pointer"
+                    className="p-2 hover:bg-violet-400 hover:text-white dark:hover:bg-[var(--border-color)] cursor-pointer text-left"
                     onClick={() => handleMovieSelect(movie)}
                   >
                     <div className="flex items-center">
@@ -100,7 +116,7 @@ const MovieSearch: React.FC<MovieSearchProps> = ({ apiKey, onMovieSelect }) => {
                       )}
                       <div>
                         <p className="text-sm font-semibold">{movie.title}</p>
-                        <p className="text-xs ">{movie.release_date}</p>
+                        <p className="text-xs">{movie.release_date}</p>
                       </div>
                     </div>
                   </li>

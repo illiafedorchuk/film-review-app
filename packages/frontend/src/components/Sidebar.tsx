@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState, useEffect, useCallback } from "react";
 import {
   BiHome,
@@ -8,9 +9,11 @@ import {
   BiChevronLeft,
   BiMoon,
   BiSun,
+  BiSearch,
 } from "react-icons/bi";
 import SidebarItem from "./SidebarItem";
 import { useDarkMode } from "./layouts/DarkModeContext";
+import MovieSearch from "./MainPageComponents/MovieSearch";
 
 const Sidebar = ({
   expanded = false,
@@ -21,21 +24,30 @@ const Sidebar = ({
 }) => {
   const [isMobile, setIsMobile] = useState(window.innerWidth < 640);
   const [isSidebarVisible, setIsSidebarVisible] = useState(false);
+  const [isSearchActive, setIsSearchActive] = useState(false);
 
   const toggleSidebar = useCallback(() => {
     if (isMobile) {
       setIsSidebarVisible((prevVisible) => !prevVisible);
     } else {
       setExpanded((prevExpanded) => !prevExpanded);
+      setIsSearchActive(false); // Reset search active state when manually toggling sidebar
     }
   }, [isMobile, setExpanded]);
 
-  const handleClickOutside = useCallback((event: MouseEvent) => {
-    const sidebar = document.getElementById("mobile-sidebar");
-    if (sidebar && !sidebar.contains(event.target as Node)) {
-      setIsSidebarVisible(false);
-    }
-  }, []);
+  const handleClickOutside = useCallback(
+    (event: MouseEvent) => {
+      const sidebar = document.getElementById("sidebar");
+      if (sidebar && !sidebar.contains(event.target as Node)) {
+        setIsSidebarVisible(false);
+        if (!isMobile && expanded) {
+          setExpanded(false);
+          setIsSearchActive(false);
+        }
+      }
+    },
+    [isMobile, expanded, setExpanded]
+  );
 
   useEffect(() => {
     const handleResize = () => {
@@ -54,12 +66,19 @@ const Sidebar = ({
     };
   }, [handleClickOutside]);
 
+  const handleSearchClick = () => {
+    if (!expanded) {
+      setExpanded(true);
+    }
+    setIsSearchActive(true);
+  };
+
   return (
-    <div className="fixed z-50 top-0 left-0">
+    <div className="fixed z-50 top-0 left-0" id="sidebar">
       {isMobile ? (
         <>
           {!isSidebarVisible && (
-            <div className="fixed left-4 top-4 z-50 p-2 rounded-full cursor-pointer bg-violet-600">
+            <div className="fixed left-4 top-4 z-50 p-2 rounded-full cursor-pointer bg-purple-600">
               <BiChevronRight
                 className="text-4xl text-white"
                 onClick={toggleSidebar}
@@ -69,19 +88,29 @@ const Sidebar = ({
           {isSidebarVisible && (
             <div
               id="mobile-sidebar"
-              className="fixed top-4 bottom-4 left-6 w-[70%] max-w-[300px] p-4 overflow-y-auto text-center shadow-lg h-[90%] z-50 rounded-3xl sidebar bg-[var(--input-bg-color)]"
+              className="fixed top-0 bottom-0 left-0 w-[70%] max-w-[300px] p-4 overflow-y-auto text-center shadow-lg h-full z-50 rounded-r-3xl bg-[var(--input-bg-color)]"
             >
-              <SidebarContent expanded={true} toggleSidebar={toggleSidebar} />
+              <SidebarContent
+                expanded={true}
+                toggleSidebar={toggleSidebar}
+                isSearchActive={isSearchActive}
+                handleSearchClick={handleSearchClick}
+              />
             </div>
           )}
         </>
       ) : (
         <div
-          className={`fixed top-0 bottom-0 left-0 duration-500 p-2 overflow-y-auto text-center h-screen z-50 rounded-r-3xl shadow-lg sidebar  bg-[var(--input-bg-color)] ${
-            expanded ? "w-[200px]" : "w-[70px]"
+          className={`fixed top-0 bottom-0 left-0 duration-500 p-4 overflow-y-auto text-center h-screen z-50 rounded-r-3xl shadow-lg bg-[var(--input-bg-color)] ${
+            expanded ? "w-[240px]" : "w-[80px]"
           }`}
         >
-          <SidebarContent expanded={expanded} toggleSidebar={toggleSidebar} />
+          <SidebarContent
+            expanded={expanded}
+            toggleSidebar={toggleSidebar}
+            isSearchActive={isSearchActive}
+            handleSearchClick={handleSearchClick}
+          />
         </div>
       )}
     </div>
@@ -92,56 +121,117 @@ const SidebarContent = React.memo(
   ({
     expanded,
     toggleSidebar,
+    isSearchActive,
+    handleSearchClick,
   }: {
     expanded: boolean;
     toggleSidebar: () => void;
+    isSearchActive: boolean;
+    handleSearchClick: () => void;
   }) => {
     const { isDarkMode, toggleDarkMode } = useDarkMode();
+    const user = {
+      avatarUrl: "https://via.placeholder.com/48",
+      nickname: "Username",
+      uniqueCode: "#12345",
+    };
+
+    const handleCodeClick = () => {
+      navigator.clipboard.writeText(user.uniqueCode);
+    };
 
     return (
-      <>
-        <div className="text-[var(--sidebar-text-color)] text-xl">
-          <div className="flex justify-between items-center p-2">
+      <div className="flex flex-col h-full">
+        <div className="flex justify-between items-center p-2 text-[var(--text-color)]">
+          {expanded ? (
+            <BiChevronLeft
+              className="text-[var(--text-color)] text-4xl cursor-pointer"
+              onClick={toggleSidebar}
+            />
+          ) : (
+            <BiChevronRight
+              className="text-4xl cursor-pointer"
+              onClick={toggleSidebar}
+            />
+          )}
+        </div>
+        <hr className="my-2 border-gray-300" />
+        <div className="flex flex-col flex-1">
+          <div className="py-5">
+            <div className="flex mb-4">
+              <img
+                src={user.avatarUrl}
+                alt="User Avatar"
+                className="w-12 h-12 rounded-full object-cover"
+              />
+              {expanded && (
+                <div className="flex flex-col ml-2">
+                  <span className="font-bold">{user.nickname}</span>
+                  <span
+                    className="text-sm text-left text-gray-500 cursor-pointer"
+                    onClick={handleCodeClick}
+                  >
+                    {user.uniqueCode}
+                  </span>
+                </div>
+              )}
+            </div>
             {expanded ? (
-              <BiChevronLeft
-                className="text-[var(--sidebar-text-color)] text-4xl cursor-pointer"
-                onClick={toggleSidebar}
+              <MovieSearch
+                apiKey={`25827bdb07a5e10047fca31922e36d9e`}
+                onMovieSelect={function (): void {
+                  throw new Error("Function not implemented.");
+                }}
+                isActive={isSearchActive}
               />
             ) : (
-              <BiChevronRight
-                className="text-[var(--sidebar-text-color)] text-4xl cursor-pointer"
-                onClick={toggleSidebar}
+              <SidebarItem
+                icon={BiSearch}
+                label={""}
+                expanded={false}
+                onClick={handleSearchClick}
+              />
+            )}
+            <nav className="flex-1">
+              <SidebarItem icon={BiHome} expanded={expanded} label={"Home"} />
+              <SidebarItem
+                icon={BiBookmarkFill}
+                expanded={expanded}
+                label={"Bookmark"}
+              />
+              <SidebarItem
+                icon={BiEnvelope}
+                expanded={expanded}
+                label={"Messages"}
+              />
+            </nav>
+          </div>
+        </div>
+        <div className="flex flex-col">
+          <div className="mt-auto">
+            {isDarkMode ? (
+              <SidebarItem
+                icon={BiSun}
+                expanded={expanded}
+                label={"Dark mode"}
+                onClick={toggleDarkMode}
+              />
+            ) : (
+              <SidebarItem
+                icon={BiMoon}
+                expanded={expanded}
+                label={"Light mode"}
+                onClick={toggleDarkMode}
               />
             )}
           </div>
+          <SidebarItem
+            icon={BiArrowFromLeft}
+            expanded={expanded}
+            label={"Exit"}
+          />
         </div>
-        <hr className="my-2 text-[var(--border-color)]" />
-        <a href="http://localhost:5173/"><SidebarItem icon={BiHome} expanded={expanded} label={"Home"} /></a>
-
-        <SidebarItem
-          icon={BiBookmarkFill}
-          expanded={expanded}
-          label={"Bookmark"}
-        />
-        <SidebarItem icon={BiEnvelope} expanded={expanded} label={"Messages"} />
-        <SidebarItem
-          icon={BiArrowFromLeft}
-          expanded={expanded}
-          label={"Exit"}
-        />
-        <div className="flex justify-center mt-4">
-          <button
-            onClick={toggleDarkMode}
-            className="flex items-center justify-center w-10 h-10 rounded-full text-[var(--sidebar-text-color)] "
-          >
-            {isDarkMode ? (
-              <BiSun className="text-xl" />
-            ) : (
-              <BiMoon className="text-xl" />
-            )}
-          </button>
-        </div>
-      </>
+      </div>
     );
   }
 );

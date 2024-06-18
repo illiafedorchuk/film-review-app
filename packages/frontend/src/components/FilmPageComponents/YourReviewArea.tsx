@@ -6,7 +6,7 @@ interface ReviewProps {
 
 const YourReviewArea: React.FC<ReviewProps> = ({ rating }) => {
   return (
-    <div className="relative  pl-0 py-10 md:pl-14 lg:w-[70%] md:w-full">
+    <div className="relative  pl-0 py-10 md:pl-14 lg:w-[70%] md:w-full  cursor-pointer ">
       <div className=" rounded-lg bg-violet-500">
         <div className="rounded-lg bg-[var(--link-hover-color)] relative transform rotate-3 hover:rotate-0 transition-transform duration-300">
           <div className="bg-[var(--button-bg-color)] rounded-lg w-full h-full flex flex-col items-center justify-center p-4 shadow-lg hover:shadow-[0_0_30px_3px_rgba(100,0,300,0.3)]">

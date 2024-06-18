@@ -37,9 +37,9 @@ const SortDropdown: React.FC<SortDropdownProps> = ({
     sortByOptions.find((option) => option.value === sortBy)?.label || "Sort By";
 
   return (
-    <div className="relative flex-grow" ref={dropdownRef}>
+    <div className="relative flex-grow " ref={dropdownRef}>
       <button
-        className="inline-flex justify-between items-center w-full h-12 px-4 py-2 dark:bg-[var(--border-color)] bg-[var(--search-bg-color)] rounded-3xl border text-[var(--text-color)] border-[var(--input-border-color)] shadow-sm text-sm font-medium focus:outline-none focus:ring-2"
+        className="inline-flex justify-between items-center w-full h-12 px-4 py-2 dark:bg-[var(--border-color)] rounded-3xl border text-[var(--text-color)] border-[var(--input-border-color)] shadow-sm text-sm font-medium focus:outline-none focus:ring-2 bg-[var(--input-border-color)]"
         id="options-menu"
         aria-haspopup="true"
         aria-expanded="true"
@@ -63,7 +63,7 @@ const SortDropdown: React.FC<SortDropdownProps> = ({
 
       {isOpen && (
         <div
-          className="origin-top-right absolute right-0 mt-2 w-full rounded-xl shadow-lg bg-[var(--input-bg-color)] ring-1 ring-black ring-opacity-5 focus:outline-none z-50"
+          className="origin-top-right absolute right-0 mt-2 w-full rounded-xl  shadow-lg bg-[var(--input-bg-color)] ring-1 ring-black ring-opacity-5 focus:outline-none z-50"
           role="menu"
           aria-orientation="vertical"
           aria-labelledby="options-menu"

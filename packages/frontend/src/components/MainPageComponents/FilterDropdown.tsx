@@ -67,7 +67,7 @@ const FilterDropdown: React.FC<FilterDropdownProps> = ({
     <div ref={dropdownRef} className="relative flex-grow text-left">
       <button
         onClick={toggleDropdown}
-        className="inline-flex justify-between items-center w-full h-12 px-4 py-2 dark:bg-[var(--border-color)] rounded-3xl border text-[var(--text-color)] border-[var(--input-border-color)] shadow-sm text-sm font-medium focus:outline-none focus:ring-2"
+        className="inline-flex justify-between items-center w-full h-12 px-4 py-2 dark:bg-[var(--border-color)] rounded-3xl border text-[var(--text-color)] border-[var(--input-border-color)] shadow-sm text-sm font-medium focus:outline-none focus:ring-2 bg-[var(--input-border-color)]"
       >
         {selectedGenreNames}
         <svg
