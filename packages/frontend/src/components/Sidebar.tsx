@@ -136,8 +136,14 @@ const SidebarContent = React.memo(
       uniqueCode: "#12345",
     };
 
+    const [copiedMessageVisible, setCopiedMessageVisible] = useState(false);
+
     const handleCodeClick = () => {
       navigator.clipboard.writeText(user.uniqueCode);
+      setCopiedMessageVisible(true);
+      setTimeout(() => {
+        setCopiedMessageVisible(false);
+      }, 3000);
     };
 
     return (
@@ -167,12 +173,16 @@ const SidebarContent = React.memo(
               {expanded && (
                 <div className="flex flex-col ml-2">
                   <span className="font-bold">{user.nickname}</span>
-                  <span
-                    className="text-sm text-left text-gray-500 cursor-pointer"
-                    onClick={handleCodeClick}
-                  >
-                    {user.uniqueCode}
-                  </span>
+                  {copiedMessageVisible ? (
+                    <span className="text-sm text-gray-500">ID copied</span>
+                  ) : (
+                    <span
+                      className="text-sm text-left text-gray-500 cursor-pointer"
+                      onClick={handleCodeClick}
+                    >
+                      {user.uniqueCode}
+                    </span>
+                  )}
                 </div>
               )}
             </div>

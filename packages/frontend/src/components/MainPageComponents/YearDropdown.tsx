@@ -31,7 +31,7 @@ const YearDropdown: React.FC<YearDropdownProps> = ({ year, onYearChange }) => {
   return (
     <div className="relative flex-grow" ref={dropdownRef}>
       <button
-        className="inline-flex justify-between items-center w-full h-12 px-4 py-2 dark:bg-[var(--border-color)] bg-[var(--search-bg-color)] rounded-3xl border text-[var(--text-color)] border-[var(--input-border-color)] shadow-sm text-sm font-medium focus:outline-none focus:ring-2 bg-[var(--input-border-color)]"
+        className="inline-flex justify-between items-center w-full h-12 px-4 py-2 dark:bg-[var(--border-color)] rounded-3xl border text-[var(--text-color)] border-[var(--input-border-color)] shadow-sm text-sm font-medium focus:outline-none focus:ring-2 bg-[var(--input-border-color)]"
         id="year-options-menu"
         aria-haspopup="true"
         aria-expanded="true"
@@ -66,7 +66,7 @@ const YearDropdown: React.FC<YearDropdownProps> = ({ year, onYearChange }) => {
               <button
                 key={yearOption}
                 onClick={() => {
-                  onYearChange([yearOption]); // Pass yearOption in an array
+                  onYearChange(yearOption); // Pass yearOption as a single string
                   setIsOpen(false);
                 }}
                 className={`${

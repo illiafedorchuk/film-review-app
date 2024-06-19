@@ -96,7 +96,7 @@ const MovieSearch: React.FC<MovieSearchProps> = ({
               value={searchQuery}
               onChange={handleSearchChange}
               placeholder="Search..."
-              className="pl-10 p-2 dark:bg-[var(--border-color)] dark:text-white text-black w-full h-14 rounded-full"
+              className="pl-10 p-2 bg-[var(--input-border-color)] dark:text-white dark:bg-[var(--border-color)] text-black w-full h-14 rounded-full"
             />
             {isDropdownVisible && (
               <ul className="absolute z-10 w-full bg-[var(--input-bg-color)] border border-[var(--input-border-color)] rounded-md mt-1 max-h-60 overflow-y-auto">
