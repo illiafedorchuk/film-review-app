@@ -1,28 +1,45 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState } from "react";
 import { BiSolidStar } from "react-icons/bi";
-import ReviewModal from "./ReviewModal";
+import ReviewModal from "./ReviewModal/ReviewModal";
 
 interface ReviewProps {
   rating?: number;
+  details?: any;
 }
 
-const YourReviewArea: React.FC<ReviewProps> = ({ rating }) => {
+const YourReviewArea: React.FC<ReviewProps> = ({ rating, details }) => {
   const [isModalOpen, setModalOpen] = useState(false);
-  const BASE_URL = "https://image.tmdb.org/t/p/w500";
+  const handleClose = () => setModalOpen(false);
+  console.log(details);
+
   const movieDetails = {
-    title: "Movie Title",
-    backdrop_path: "/path/to/backdrop.jpg",
-    poster_path: "/path/to/poster.jpg",
+    title: details.title,
+    backdropUrl: `https://image.tmdb.org/t/p/original${details.backdrop_path}`, // Replace with actual URL
+    posterUrl: `https://image.tmdb.org/t/p/original${details.poster_path}`, // Replace with actual URL
+    review: {
+      ratings: {
+        Atmosphere: 8,
+        Plot: 7,
+        Puzzles: 9,
+        Action: 6,
+        Purity: 7,
+        Team: 8,
+      },
+      text: "Great movie! Highly recommended.",
+    },
   };
+
+  const hasReview = rating && rating > 0;
 
   return (
     <div className="relative pl-0 py-10 md:pl-14 lg:w-[70%] md:w-full cursor-pointer">
       {isModalOpen && (
         <ReviewModal
-          title={movieDetails.title}
-          backdropUrl={`${BASE_URL}${movieDetails.backdrop_path}`}
-          posterUrl={`${BASE_URL}${movieDetails.poster_path}`}
-          onClose={() => setModalOpen(false)}
+          open={isModalOpen}
+          onClose={handleClose}
+          hasReview={hasReview || false}
+          movieDetails={movieDetails}
         />
       )}
       <div
@@ -33,7 +50,7 @@ const YourReviewArea: React.FC<ReviewProps> = ({ rating }) => {
           <div className="bg-[var(--button-bg-color)] rounded-lg w-full h-full flex flex-col items-center justify-center p-4 shadow-lg hover:shadow-[0_0_30px_3px_rgba(100,0,300,0.3)]">
             <h1 className="text-lg font-bold mb-2 text-white">Your Review</h1>
             <div className="flex items-center mb-2">
-              {rating && rating > 0 ? (
+              {hasReview ? (
                 <>
                   <span className="text-lg font-semibold text-white">
                     You mark this film

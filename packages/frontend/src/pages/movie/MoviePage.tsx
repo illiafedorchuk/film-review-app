@@ -136,7 +136,7 @@ function MoviePage() {
                 movieDetails={movieDetails}
                 actorsData={actorsData}
               />
-              <YourReviewArea rating={0} />
+              <YourReviewArea rating={5} details={movieDetails} />
             </div>
           </div>
           <div className="pt-5 text-[var(--text-color)] mb-4">
