@@ -10,8 +10,8 @@ const COLORS = ["#833ff9d9", "#ffffff00"];
 
 const ReviewChart: React.FC<ReviewChartProps> = ({ score, label }) => {
   return (
-    <div className="flex flex-col items-center xs:flex-row xs:items-center xs:justify-between mb-4">
-      <PieChart width={120} height={120}>
+    <div className="flex flex-col items-center bg-[var(--input-bg-color)] rounded-lg p-4">
+      <PieChart width={133} height={133}>
         <Pie
           data={[
             { name: "Score", value: score },
@@ -33,8 +33,8 @@ const ReviewChart: React.FC<ReviewChartProps> = ({ score, label }) => {
           ))}
         </Pie>
         <text
-          x={60}
-          y={60}
+          x={65}
+          y={65}
           textAnchor="middle"
           dominantBaseline="middle"
           fill="#7C3AED"
@@ -43,7 +43,7 @@ const ReviewChart: React.FC<ReviewChartProps> = ({ score, label }) => {
           {score}/10
         </text>
       </PieChart>
-      <p className="mt-2 xs:mt-0 xs:ml-4">{label}</p>
+      <p className="mt-2 text-center font-semibold">{label}</p>
     </div>
   );
 };

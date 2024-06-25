@@ -19,14 +19,14 @@ const YourReviewArea: React.FC<ReviewProps> = ({ rating, details }) => {
     posterUrl: `https://image.tmdb.org/t/p/original${details.poster_path}`, // Replace with actual URL
     review: {
       ratings: {
-        Atmosphere: 8,
+        Cast: 8,
         Plot: 7,
-        Puzzles: 9,
-        Action: 6,
-        Purity: 7,
-        Team: 8,
+        Direction: 9,
+        Cinematography: 6,
+        "Writing/Script": 7,
+        "Themes/Idea": 8,
       },
-      text: "Great movie! Highly recommended.",
+      text: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quis adipisci assumenda nesciunt delectus eligendi porro nisi doloribus quo libero maxime numquam officia, sapiente id fugit repellat, nulla dolores nemo veniam. Lorem ipsum dolor sit amet consectetur adipisicing elit. Placeat ab soluta voluptas consequatur hic libero laboriosam nemo sed eum. Voluptatibus eius repellat officiis animi ullam odit corporis ipsam. Dolor, iusto.",
     },
   };
 

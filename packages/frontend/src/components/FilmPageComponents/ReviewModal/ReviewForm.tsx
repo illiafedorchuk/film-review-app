@@ -4,17 +4,30 @@ import CustomSlider from "./CustomSlider";
 interface ReviewFormProps {
   backdropUrl: string;
   posterUrl: string;
+  title: string;
+  initialRatings?: { [key: string]: number };
+  initialText?: string;
+  onSubmit: (ratings: { [key: string]: number }, text: string) => void;
 }
 
-const ReviewForm: React.FC<ReviewFormProps> = ({ backdropUrl, posterUrl }) => {
-  const [ratings, setRatings] = useState({
+const ReviewForm: React.FC<ReviewFormProps> = ({
+  backdropUrl,
+  posterUrl,
+  title,
+  initialRatings = {
     Atmosphere: 4,
     Plot: 7,
     Puzzles: 6,
     Action: 4,
     Purity: 4,
     Team: 4,
-  });
+  },
+  initialText = "", // Initialize initialText
+  onSubmit,
+}) => {
+  const [ratings, setRatings] = useState(initialRatings);
+  const [text, setText] = useState(initialText);
+  const [textLength, setTextLength] = useState(initialText.length);
 
   const handleRatingChange = (key: string, value: number) => {
     setRatings((prevRatings) => ({
@@ -23,27 +36,46 @@ const ReviewForm: React.FC<ReviewFormProps> = ({ backdropUrl, posterUrl }) => {
     }));
   };
 
+  const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const value = e.target.value;
+    if (value.length <= 500) {
+      setText(value);
+      setTextLength(value.length);
+    }
+  };
+
+  const handleSubmit = () => {
+    onSubmit(ratings, text);
+  };
+
   return (
     <>
-      <div
-        className="w-full h-44 bg-cover bg-center mb-4 rounded-md"
-        style={{ backgroundImage: `url(${backdropUrl})` }}
-      >
-        <div className="w-24 h-36 bg-cover bg-center mt-4 ml-4 rounded-md shadow-lg" style={{ backgroundImage: `url(${posterUrl})` }}></div>
+      <div className="relative mb-4">
+        <img
+          src={backdropUrl}
+          alt=""
+          className="rounded-xl w-full h-48 sm:h-64 md:h-72 lg:h-96 bg-cover bg-center brightness-50"
+        />
+        <div className="absolute top-1/2 left-10 transform -translate-y-1/2 flex items-center">
+          <img
+            src={posterUrl}
+            alt=""
+            className="w-24 h-32 sm:w-32 sm:h-44 md:w-36 md:h-52 lg:w-48 lg:h-64 bg-cover bg-center rounded-md shadow-lg"
+          />
+          <h1 className="text-white text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold ml-4">
+            {title}
+          </h1>
+        </div>
       </div>
-      <p className="mb-4">Your feedback</p>
-      <textarea
-        className="w-full h-40 mb-4 p-3 rounded-2xl focus:outline-none focus:ring-2 resize-none"
-        placeholder="Write your review..."
-        style={{
-          backgroundColor: "var(--input-bg-color)",
-          borderColor: "var(--input-border-color)",
-          color: "var(--text-color)",
-        }}
-      ></textarea>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+      <h1 className="text-3xl font-bold text-center my-5">
+        Rate <span className="text-violet-600"> this movie</span>
+      </h1>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-6 font-semibold">
         {Object.keys(ratings).map((key) => (
-          <div key={key} className="flex flex-col items-center mb-4">
+          <div
+            key={key}
+            className="flex flex-col items-center mb-4 bg-[var(--input-bg-color)] rounded-xl p-5"
+          >
             <p className="mb-2 pb-6">{key}</p>
             <CustomSlider
               value={ratings[key as keyof typeof ratings]}
@@ -68,7 +100,27 @@ const ReviewForm: React.FC<ReviewFormProps> = ({ backdropUrl, posterUrl }) => {
           </div>
         ))}
       </div>
-      <button className="bg-violet-500 text-white py-2 px-4 rounded-md w-full mt-4">
+      <h1 className="mb-4 text-2xl font-bold text-center">
+        Additional <span className="text-violet-600">Information</span>
+      </h1>
+      <div className="h-48">
+        <textarea
+          className="w-full h-40 mb-2 p-3 rounded-2xl focus:outline-none focus:ring-2 resize-none"
+          placeholder="Write your review..."
+          value={text}
+          onChange={handleTextChange}
+          style={{
+            backgroundColor: "var(--input-bg-color)",
+            borderColor: "var(--input-border-color)",
+            color: "var(--text-color)",
+          }}
+        ></textarea>
+      </div>
+      <p className="text-right mb-4">{textLength}/500</p>
+      <button
+        className="bg-violet-500 text-white py-2 px-4 rounded-md w-full mt-4"
+        onClick={handleSubmit}
+      >
         Give feedback
       </button>
     </>
