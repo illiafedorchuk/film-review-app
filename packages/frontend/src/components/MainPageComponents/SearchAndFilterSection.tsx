@@ -12,8 +12,8 @@ interface SearchAndFilterSectionProps {
   onGenreChange: (genreIds: number[]) => void;
   sortBy: string;
   onSortChange: (value: string) => void;
-  selectedYears: string[];
-  onYearChange: (years: string[]) => void;
+  selectedYear: string;
+  onYearChange: (year: string) => void;
   onMovieSelect: (movie: any) => void;
 }
 
@@ -24,17 +24,17 @@ const SearchAndFilterSection: React.FC<SearchAndFilterSectionProps> = ({
   onGenreChange,
   sortBy,
   onSortChange,
-  selectedYears,
+  selectedYear,
   onYearChange,
+  onMovieSelect, // Make sure this is passed as a prop
 }) => {
   return (
     <div className="w-full p-6 bg-[var(--input-bg-color)] rounded-xl shadow-md max-w-7xl mx-auto my-4">
       <div className="mb-4">
         <MovieSearch
           apiKey={apiKey}
-          onMovieSelect={function (): void {
-            throw new Error("Function not implemented.");
-          }}
+          onMovieSelect={onMovieSelect} // Use the passed onMovieSelect prop
+          isActive={false}
         />
       </div>
       <div className="flex flex-wrap gap-4 justify-between">
@@ -44,10 +44,7 @@ const SearchAndFilterSection: React.FC<SearchAndFilterSectionProps> = ({
           onGenreChange={onGenreChange}
         />
         <SortDropdown sortBy={sortBy} onSortChange={onSortChange} />
-        <YearDropdown
-          year={selectedYears.join(", ")}
-          onYearChange={onYearChange}
-        />
+        <YearDropdown selectedYear={selectedYear} onYearChange={onYearChange} />
       </div>
     </div>
   );

@@ -12,16 +12,17 @@ import MovieGrid from "../../components/MainPageComponents/MovieGrid";
 import Pagination from "../../components/MainPageComponents/Pagination";
 import SearchAndFilterSection from "../../components/MainPageComponents/SearchAndFilterSection";
 import { DarkModeProvider } from "../../components/layouts/DarkModeContext";
+import { useNavigate } from "react-router-dom";
 
 interface Movie {
   id: number;
-  title?: string;
-  poster_path?: string;
+  title: string;
+  poster_path: string;
   release_date?: string;
   vote_average?: number;
   genre_ids?: number[];
-  overview?: string;
-  backdrop_path?: string;
+  overview: string;
+  backdrop_path: string;
 }
 
 const API_KEY = "25827bdb07a5e10047fca31922e36d9e";
@@ -66,7 +67,8 @@ const MainPage: React.FC = () => {
   const [selectedGenre, setSelectedGenre] = useState<string>("🍿All");
   const [sortBy, setSortBy] = useState<string>("popularity.desc");
   const [selectedGenres, setSelectedGenres] = useState<number[]>([]);
-  const [selectedYears, setSelectedYears] = useState<string[]>([]);
+  const [selectedYear, setSelectedYear] = useState<string>("");
+  const navigate = useNavigate();
 
   const { data: popularMoviesData } = useApiGet(
     `https://api.themoviedb.org/3/movie/popular?api_key=${API_KEY}`
@@ -75,19 +77,15 @@ const MainPage: React.FC = () => {
   const fetchMovies = async (
     page: number,
     genreIds: number[],
-    selectedYears: string[]
+    selectedYear: string
   ) => {
     const genreQuery =
       genreIds.length > 0 ? `&with_genres=${genreIds.join(",")}` : "";
     const yearQuery =
-      selectedYears.length > 0
-        ? selectedYears
-            .map((year) =>
-              year === "<2000"
-                ? "&primary_release_date.lte=1999-12-31"
-                : `&primary_release_year=${year}`
-            )
-            .join("")
+      selectedYear === "<2000"
+        ? "&primary_release_date.lte=1999-12-31"
+        : selectedYear
+        ? `&primary_release_year=${selectedYear}`
         : "";
     const response = await fetch(
       `https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&page=${page}&sort_by=${sortBy}${genreQuery}${yearQuery}`
@@ -100,17 +98,17 @@ const MainPage: React.FC = () => {
       const movieData = await fetchMovies(
         currentPage,
         selectedGenres,
-        selectedYears
+        selectedYear
       );
       setMovies(movieData.results);
     };
     getMovies();
-  }, [currentPage, selectedGenres, sortBy, selectedYears]);
+  }, [currentPage, selectedGenres, sortBy, selectedYear]);
 
   useEffect(() => {
     const getMoviesForCarousel = async () => {
       if (selectedGenres.length > 0) {
-        const movieData = await fetchMovies(1, selectedGenres, []);
+        const movieData = await fetchMovies(1, selectedGenres, "");
         setMoviesCarousel(movieData.results.slice(0, 8));
       } else if (popularMoviesData?.results) {
         setMoviesCarousel(popularMoviesData.results.slice(0, 8));
@@ -152,9 +150,13 @@ const MainPage: React.FC = () => {
 
   const handleSortChange = (value: string) => setSortBy(value);
 
-  const handleYearChange = (years: string[]) => setSelectedYears(years);
+  const handleYearChange = (year: string) => setSelectedYear(year);
 
   const handleGenreChange = (genreIds: number[]) => setSelectedGenres(genreIds);
+
+  const handleMovieSelect = (movie: Movie) => {
+    navigate(`/movie/${movie.id}`);
+  };
 
   const totalPages = 500;
 
@@ -196,9 +198,9 @@ const MainPage: React.FC = () => {
             onGenreChange={handleGenreChange}
             sortBy={sortBy}
             onSortChange={handleSortChange}
-            selectedYears={selectedYears}
+            selectedYear={selectedYear}
             onYearChange={handleYearChange}
-            onMovieSelect={() => {}}
+            onMovieSelect={handleMovieSelect}
           />
 
           <MovieGrid movies={movies} genreMap={genreMap} />

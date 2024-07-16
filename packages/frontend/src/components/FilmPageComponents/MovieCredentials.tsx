@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { ReactNode } from "react";
+import { ReactNode, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Button from "./Button";
 import MovieInfo from "./MovieInfo";
@@ -30,6 +30,10 @@ function MovieCredentials({ movieDetails, actorsData }: MovieCredentialsProps) {
     document.getElementById("trailer")?.scrollIntoView({ behavior: "smooth" });
   };
 
+  function handleWatchLaterClick() {
+    setWatchLater((prev) => !prev);
+  }
+  const [watchLater, setWatchLater] = useState(false);
   const director = actorsData.crew.find((person) => person.job === "Director");
   const starCast = actorsData.cast
     .slice(0, 3)
@@ -69,7 +73,9 @@ function MovieCredentials({ movieDetails, actorsData }: MovieCredentialsProps) {
       <MovieInfo label="Release Date: " value={releaseDate} />
       <div className="flex flex-wrap pt-3 gap-4">
         <Button onClick={handleWatchTrailerClick}>Watch Trailer</Button>
-        <Button>Watch later</Button>
+        <Button watchLater={watchLater} onClick={handleWatchLaterClick}>
+          Watch later
+        </Button>
       </div>
     </div>
   );

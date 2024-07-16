@@ -7,6 +7,8 @@ import ResetPasswordPage from "./pages/auth/ResetPasswordPage";
 import "./index.css";
 import MainPage from "./pages/main/MainPage";
 import MoviePage from "./pages/movie/MoviePage";
+import ProfilePage from "./pages/profile/ProfilePage";
+import RatedMovies from "./pages/movieLists/RatedMoviesPage";
 
 const rootElement = document.getElementById("root");
 if (rootElement) {
@@ -23,6 +25,8 @@ if (rootElement) {
             element={<ResetPasswordPage />}
           />
           <Route path="/movie/:movieId" element={<MoviePage />} />{" "}
+          <Route path="profile/me" element={<ProfilePage />} />
+          <Route path="profile/me/ratedMovies" element={<RatedMovies />} />
         </Routes>
       </BrowserRouter>
     </React.StrictMode>

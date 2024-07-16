@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { BiSearch } from "react-icons/bi";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { useNavigate } from "react-router-dom";
 
 interface Movie {
   id: number;
@@ -25,7 +25,7 @@ const MovieSearch: React.FC<MovieSearchProps> = ({
   const [isDropdownVisible, setDropdownVisible] = useState<boolean>(false);
   const searchRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
-  const navigate = useNavigate(); // Initialize useNavigate
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (searchQuery.length >= 3) {

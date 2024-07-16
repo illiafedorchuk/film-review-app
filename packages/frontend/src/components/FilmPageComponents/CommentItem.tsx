@@ -37,7 +37,14 @@ const CommentItem: React.FC<CommentItemProps> = ({
           {timestamp}
         </span>
       </div>
-      <p className="mt-2 break-words" style={{ color: "var(--text-color)" }}>
+      <p
+        className="mt-2 break-words"
+        style={{
+          color: "var(--text-color)",
+          wordBreak: "break-word",
+          whiteSpace: "pre-wrap",
+        }}
+      >
         {text}
       </p>
       <div className="flex items-center mt-2 space-x-4">

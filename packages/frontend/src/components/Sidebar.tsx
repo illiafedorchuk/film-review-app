@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState, useEffect, useCallback } from "react";
 import {
@@ -14,6 +15,7 @@ import {
 import SidebarItem from "./SidebarItem";
 import { useDarkMode } from "./layouts/DarkModeContext";
 import MovieSearch from "./MainPageComponents/MovieSearch";
+import { useNavigate } from "react-router-dom";
 
 const Sidebar = ({
   expanded = false,
@@ -25,6 +27,7 @@ const Sidebar = ({
   const [isMobile, setIsMobile] = useState(window.innerWidth < 640);
   const [isSidebarVisible, setIsSidebarVisible] = useState(false);
   const [isSearchActive, setIsSearchActive] = useState(false);
+  const navigate = useNavigate(); // Initialize useNavigate
 
   const toggleSidebar = useCallback(() => {
     if (isMobile) {
@@ -73,6 +76,10 @@ const Sidebar = ({
     setIsSearchActive(true);
   };
 
+  const handleMovieSelect = (movie: any) => {
+    navigate(`/movie/${movie.id}`);
+  };
+
   return (
     <div className="fixed z-50 top-0 left-0" id="sidebar">
       {isMobile ? (
@@ -95,6 +102,7 @@ const Sidebar = ({
                 toggleSidebar={toggleSidebar}
                 isSearchActive={isSearchActive}
                 handleSearchClick={handleSearchClick}
+                onMovieSelect={handleMovieSelect}
               />
             </div>
           )}
@@ -110,6 +118,7 @@ const Sidebar = ({
             toggleSidebar={toggleSidebar}
             isSearchActive={isSearchActive}
             handleSearchClick={handleSearchClick}
+            onMovieSelect={handleMovieSelect}
           />
         </div>
       )}
@@ -123,11 +132,13 @@ const SidebarContent = React.memo(
     toggleSidebar,
     isSearchActive,
     handleSearchClick,
+    onMovieSelect,
   }: {
     expanded: boolean;
     toggleSidebar: () => void;
     isSearchActive: boolean;
     handleSearchClick: () => void;
+    onMovieSelect: (movie: any) => void;
   }) => {
     const { isDarkMode, toggleDarkMode } = useDarkMode();
     const user = {
@@ -189,9 +200,7 @@ const SidebarContent = React.memo(
             {expanded ? (
               <MovieSearch
                 apiKey={`25827bdb07a5e10047fca31922e36d9e`}
-                onMovieSelect={function (): void {
-                  throw new Error("Function not implemented.");
-                }}
+                onMovieSelect={onMovieSelect}
                 isActive={isSearchActive}
               />
             ) : (
@@ -203,7 +212,9 @@ const SidebarContent = React.memo(
               />
             )}
             <nav className="flex-1">
-              <SidebarItem icon={BiHome} expanded={expanded} label={"Home"} />
+              <a href="/">
+                <SidebarItem icon={BiHome} expanded={expanded} label={"Home"} />
+              </a>
               <SidebarItem
                 icon={BiBookmarkFill}
                 expanded={expanded}

@@ -1,11 +1,14 @@
 import React, { useState, useRef, useEffect } from "react";
 
 interface YearDropdownProps {
-  year: string;
-  onYearChange: (value: string) => void;
+  selectedYear: string;
+  onYearChange: (year: string) => void;
 }
 
-const YearDropdown: React.FC<YearDropdownProps> = ({ year, onYearChange }) => {
+const YearDropdown: React.FC<YearDropdownProps> = ({
+  selectedYear,
+  onYearChange,
+}) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -28,6 +31,11 @@ const YearDropdown: React.FC<YearDropdownProps> = ({ year, onYearChange }) => {
     };
   }, [dropdownRef]);
 
+  const handleYearClick = (year: string) => {
+    onYearChange(year);
+    setIsOpen(false);
+  };
+
   return (
     <div className="relative flex-grow" ref={dropdownRef}>
       <button
@@ -37,7 +45,7 @@ const YearDropdown: React.FC<YearDropdownProps> = ({ year, onYearChange }) => {
         aria-expanded="true"
         onClick={() => setIsOpen(!isOpen)}
       >
-        Year {year}
+        Year {selectedYear || "Select Year"}
         <svg
           className="h-5 w-5"
           xmlns="http://www.w3.org/2000/svg"
@@ -65,12 +73,11 @@ const YearDropdown: React.FC<YearDropdownProps> = ({ year, onYearChange }) => {
             {years.map((yearOption) => (
               <button
                 key={yearOption}
-                onClick={() => {
-                  onYearChange(yearOption); // Pass yearOption as a single string
-                  setIsOpen(false);
-                }}
+                onClick={() => handleYearClick(yearOption)}
                 className={`${
-                  year === yearOption ? "bg-gray-100 dark:bg-gray-700" : ""
+                  selectedYear === yearOption
+                    ? "bg-gray-100 dark:bg-gray-700"
+                    : ""
                 } block px-4 py-2 text-sm text-[var(--text-color)] w-full text-left rounded-lg hover:bg-[var(--border-color)]`}
                 role="menuitem"
               >

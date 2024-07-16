@@ -11,7 +11,7 @@ const COLORS = ["#833ff9d9", "#ffffff00"];
 const ReviewChart: React.FC<ReviewChartProps> = ({ score, label }) => {
   return (
     <div className="flex flex-col items-center bg-[var(--input-bg-color)] rounded-lg p-4">
-      <PieChart width={133} height={133}>
+      <PieChart width={120} height={120}>
         <Pie
           data={[
             { name: "Score", value: score },
