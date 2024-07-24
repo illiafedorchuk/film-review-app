@@ -41,8 +41,7 @@ const LoginPage = () => {
   const onSubmit: SubmitHandler<LoginPageFields> = async (data) => {
     try {
       const response = await axios.post("/auth/login", data);
-      console.log(response.data);
-      alert("Login successful!");
+
       reset(); // Reset the form after successful login
       setError(null); // Clear any previous errors
     } catch (error: any) {

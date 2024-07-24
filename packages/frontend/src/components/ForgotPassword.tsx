@@ -27,7 +27,6 @@ const ForgotPasswordModal = ({ onClose }: { onClose: () => void }) => {
   const onSubmit = async (data: ForgotPasswordFormFields) => {
     try {
       const response = await axios.post("/auth/forgotPassword", data);
-      alert("Password reset link sent to your email!");
     } catch (error) {
       console.error("Error during form submission:", error);
     }

@@ -1,3 +1,5 @@
+import exp from "constants";
+
 export interface User {
   id: string;
   name: string;
@@ -32,4 +34,32 @@ export interface iCustomError extends Error {
 export interface ExtendedRequest extends Request {
   user?: User;
   cookies: { [key: string]: string };
+}
+
+export interface Movie {
+  id: string;
+  movie_id: number;
+  title: string;
+  poster_path: string;
+  release_date: string;
+  vote_average: number;
+  genre_ids: string;
+}
+
+export interface Review {
+  id: number;
+  movieId: number;
+  userId: number;
+  rating: number;
+  comment: string;
+  criteriaRatings: {
+    cast: number;
+    plot: number;
+    direction: number;
+    cinematography: number;
+    writing: number;
+    themes: number;
+  };
+  createdAt: Date;
+  updatedAt: Date;
 }

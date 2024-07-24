@@ -221,7 +221,6 @@ class AuthController {
     async (req: Request, res: Response): Promise<Response | void> => {
       const { signResetPasswordToken } = req.params; // Verify that 'token' is correctly extracted from params
       const { password } = req.body; // Assuming you're also receiving 'password' in the request body
-      console.log(signResetPasswordToken);
       try {
         // Verify the token
         const decoded: any = jwt.verify(

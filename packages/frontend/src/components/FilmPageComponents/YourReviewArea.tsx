@@ -11,7 +11,7 @@ interface ReviewProps {
 const YourReviewArea: React.FC<ReviewProps> = ({ rating, details }) => {
   const [isModalOpen, setModalOpen] = useState(false);
   const handleClose = () => setModalOpen(false);
-  console.log(details);
+
 
   const movieDetails = {
     title: details.title,

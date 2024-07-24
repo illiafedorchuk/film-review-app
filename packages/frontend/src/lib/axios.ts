@@ -4,6 +4,9 @@ import Axios from "axios";
 const axios = Axios.create({
   baseURL: "http://localhost:3000",
   withCredentials: true,
+  headers: {
+    "Content-Type": "application/json",
+  },
 });
 
 // Request interceptor to handle or modify requests before they are sent
@@ -13,7 +16,6 @@ axios.interceptors.request.use(async (config) => {
   // config.headers['Content-Type'] = 'application/json';
 
   // Log the request config before sending it
-  console.log("Sending request:", config);
 
   return config;
 });
@@ -22,7 +24,6 @@ axios.interceptors.request.use(async (config) => {
 axios.interceptors.response.use(
   (response) => {
     // Handle a successful response
-    console.log("Received successful response:", response);
     return response;
   },
   async (error) => {

@@ -44,8 +44,7 @@ const ResetPasswordPage = () => {
         `/auth/resetPassword/${signResetPasswordToken}`, // Use the extracted token in the URL
         data
       );
-      console.log(response.data);
-      alert("Reset successful!");
+
       reset();
     } catch (error: any) {
       console.error("Error resetting password:", error);

@@ -45,7 +45,6 @@ const ReviewModal: React.FC<ReviewModalProps> = ({
     ratings: { [key: string]: number },
     text: string
   ) => {
-    console.log(ratings);
     setCurrentRatings(ratings);
     setReviewText(text);
     setIsEditing(false);

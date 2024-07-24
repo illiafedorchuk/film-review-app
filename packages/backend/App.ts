@@ -1,11 +1,12 @@
 import express, { Express } from "express";
 import dotenv from "dotenv";
-import userRouter from "./src/Users/userRouter";
-import authRouter from "./src/Auth/authRouter";
 import cookieParser from "cookie-parser";
 import cors from "cors";
-// Import the global error handler
+
+import userRouter from "./src/Users/userRouter";
+import authRouter from "./src/Auth/authRouter";
 import { globalErrorHandler } from "./src/Utils/ErrorController"; // Adjust the path as necessary
+import movieRouter from "./src/Movies/movieRouter";
 
 const app: Express = express();
 const apiKey = process.env.API_KEY;
@@ -21,7 +22,8 @@ app.use(
 // Setup routes
 app.use("/api", userRouter);
 app.use("/auth", authRouter);
-
+app.use("/movie", movieRouter);
+app.use("/user", userRouter);
 // Use the global error handler as the last middleware
 app.use(globalErrorHandler);
 

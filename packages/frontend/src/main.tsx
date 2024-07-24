@@ -8,7 +8,8 @@ import "./index.css";
 import MainPage from "./pages/main/MainPage";
 import MoviePage from "./pages/movie/MoviePage";
 import ProfilePage from "./pages/profile/ProfilePage";
-import RatedMovies from "./pages/movieLists/RatedMoviesPage";
+import RatedMoviesPage from "./pages/movieLists/RatedMoviesPage";
+import WatchlistPage from "./pages/watchlistPage/WatchlistPage"; // Import the WatchlistPage component
 
 const rootElement = document.getElementById("root");
 if (rootElement) {
@@ -26,7 +27,8 @@ if (rootElement) {
           />
           <Route path="/movie/:movieId" element={<MoviePage />} />{" "}
           <Route path="profile/me" element={<ProfilePage />} />
-          <Route path="profile/me/ratedMovies" element={<RatedMovies />} />
+          <Route path="profile/me/ratedMovies" element={<RatedMoviesPage />} />
+          <Route path="profile/me/watchlist" element={<WatchlistPage />} />
         </Routes>
       </BrowserRouter>
     </React.StrictMode>

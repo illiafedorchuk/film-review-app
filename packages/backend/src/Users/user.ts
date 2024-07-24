@@ -8,6 +8,7 @@ export class User {
   static findByIdAndUpdate(_id: any, arg1: { refreshToken: any }) {
     throw new Error("Method not implemented.");
   }
+
   @PrimaryGeneratedColumn()
   id!: number;
 
@@ -34,4 +35,13 @@ export class User {
 
   @Column({ default: () => "CURRENT_TIMESTAMP", onUpdate: "CURRENT_TIMESTAMP" })
   updatedAt!: Date;
+
+  @Column("simple-array", { nullable: true })
+  bookmarkedMovies!: number[];
+
+  @Column("simple-array", { nullable: true })
+  ratedMovies!: number[];
+
+  @Column("simple-array", { nullable: true })
+  watchLaterMovies!: number[];
 }

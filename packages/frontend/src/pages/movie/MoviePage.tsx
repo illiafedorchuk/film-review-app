@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useParams, Link } from "react-router-dom";
-import { useApiGet } from "../../hooks/useApi";
+import React from "react";
+import { useParams } from "react-router-dom";
+
 import MoviePoster from "../../components/FilmPageComponents/MoviePoster";
 import AppLayout from "../../components/layouts/AppLayout";
 import { DarkModeProvider } from "../../components/layouts/DarkModeContext";
@@ -10,10 +11,10 @@ import TrailerVideo from "../../components/FilmPageComponents/TrailerVideo";
 import Comments from "../../components/FilmPageComponents/Comments";
 import FastReaction from "../../components/FilmPageComponents/FastReaction";
 import YourReviewArea from "../../components/FilmPageComponents/YourReviewArea";
-import Carousel from "../../components/FilmPageComponents/Carousel";
-
-const BASE_URL = "https://image.tmdb.org/t/p/w500";
-const PLACEHOLDER_URL = "https://via.placeholder.com/500x275";
+import ActiveSlider from "../../components/MainPageComponents/ActiveSlider";
+import { PLACEHOLDER_URL } from "../../lib/constants";
+import { useMovieDetails } from "../../hooks/useMovieDetails";
+import { useMovieTrailers } from "../../hooks/useMovieTrailers";
 
 const sampleComments = [
   {
@@ -36,42 +37,40 @@ const sampleComments = [
   },
 ];
 
-const API_KEY = "25827bdb07a5e10047fca31922e36d9e";
+const MoviePage: React.FC = () => {
+  const { movieId: id } = useParams<{ movieId: string }>();
+  const movieId = parseInt(id!, 10);
 
-function MoviePage() {
-  const { movieId } = useParams<{ movieId: string }>();
+  const {
+    movieDetails,
+    actorsData,
+    movieImages,
+    movieVideos,
+    similarMovies,
+    loading: movieDetailsLoading,
+  } = useMovieDetails(movieId);
+  const {
+    trailers,
+    loading: trailersLoading,
+    error: trailersError,
+  } = useMovieTrailers(movieDetails?.id || null);
 
-  const { data: actorsData, isLoading: actorsLoading } = useApiGet(
-    `https://api.themoviedb.org/3/movie/${movieId}/credits?api_key=${API_KEY}`
-  );
-  const { data: movieDetails, isLoading: detailsLoading } = useApiGet(
-    `https://api.themoviedb.org/3/movie/${movieId}?api_key=${API_KEY}`
-  );
-  const { data: movieImages, isLoading: imagesLoading } = useApiGet(
-    `https://api.themoviedb.org/3/movie/${movieId}/images?api_key=${API_KEY}`
-  );
-  const { data: movieVideos, isLoading: videosLoading } = useApiGet(
-    `https://api.themoviedb.org/3/movie/${movieId}/videos?api_key=${API_KEY}`
-  );
-  const { data: similar, isLoading: similarLoading } = useApiGet(
-    `https://api.themoviedb.org/3/movie/${movieId}/similar?api_key=${API_KEY}`
-  );
+  const similarMoviesWithDefaults = similarMovies.map((movie) => ({
+    ...movie,
+    title: movie.original_title,
+  }));
 
-  const findTrailerKey = (data: any): string | null => {
-    if (!data || !data.results) return null;
-    const trailer = data.results.find((video: any) => video.type === "Trailer");
+  const findTrailerKey = (trailers: any[]): string | null => {
+    if (!trailers || trailers.length === 0) return null;
+    const trailer = trailers.find(
+      (video: any) => video.type === "Trailer" && video.site === "YouTube"
+    );
     return trailer ? trailer.key : null;
   };
 
-  const trailerKey = findTrailerKey(movieVideos);
+  const trailerKey = findTrailerKey(trailers);
 
-  if (
-    detailsLoading ||
-    actorsLoading ||
-    imagesLoading ||
-    videosLoading ||
-    similarLoading
-  ) {
+  if (movieDetailsLoading || trailersLoading) {
     return <div className="text-center py-20">Loading...</div>;
   }
 
@@ -80,47 +79,11 @@ function MoviePage() {
     !actorsData ||
     !movieImages ||
     !movieVideos ||
-    !similar
+    !similarMovies ||
+    trailersError
   ) {
     return <div className="text-center py-20">Failed to load data</div>;
   }
-
-  const renderImage = (image: { file_path: string }) => (
-    <img
-      src={image.file_path ? `${BASE_URL}${image.file_path}` : PLACEHOLDER_URL}
-      alt="Movie Image"
-      className="w-full h-auto rounded-lg object-cover"
-    />
-  );
-
-  const renderRecommendation = (recommendation: {
-    title: string;
-    backdrop_path: string;
-    id: number;
-    vote_average: number;
-    release_date: string;
-  }) => (
-    <Link to={`/movie/${recommendation.id}`}>
-      <img
-        src={
-          recommendation.backdrop_path
-            ? `${BASE_URL}${recommendation.backdrop_path}`
-            : PLACEHOLDER_URL
-        }
-        alt={recommendation.title}
-        className="w-full h-auto rounded-lg object-cover"
-      />
-      <div className="h-16 flex items-center justify-center">
-        <h3 className="text-center text-xl font-bold leading-tight overflow-hidden overflow-ellipsis">
-          {recommendation.title}
-        </h3>
-      </div>
-      <p className="text-center text-gray-500">{recommendation.release_date}</p>
-      <p className="text-center text-yellow-500">
-        {Math.floor(recommendation.vote_average * 100) / 100}
-      </p>
-    </Link>
-  );
 
   return (
     <DarkModeProvider>
@@ -133,8 +96,11 @@ function MoviePage() {
             </div>
             <div className="md:col-span-2 flex flex-col justify-between">
               <MovieCredentials
-                movieDetails={movieDetails}
-                actorsData={actorsData}
+                movieDetails={{
+                  ...movieDetails,
+                  runtime: movieDetails.runtime || 0,
+                }}
+                actorsData={{ cast: actorsData, crew: [] }}
               />
               <YourReviewArea rating={5} details={movieDetails} />
             </div>
@@ -145,7 +111,7 @@ function MoviePage() {
               {movieDetails.overview}
             </p>
           </div>
-          <ActorsCarousel actors={actorsData.cast} />
+          <ActorsCarousel actors={actorsData} />
           {trailerKey && (
             <div id="trailer" className="my-2">
               <h2 className="font-bold text-3xl text-center pb-5">
@@ -154,21 +120,29 @@ function MoviePage() {
               <TrailerVideo trailerKey={trailerKey} />
             </div>
           )}
-          <Carousel
-            title="Photos"
-            data={movieImages.backdrops}
-            renderItem={renderImage}
+          <h1 className="text-4xl font-bold text-center py-6">Images</h1>
+          <ActiveSlider
+            movies={movieImages.map((image) => ({
+              id: image.file_path,
+              title: "",
+              overview: "",
+              backdrop_path: image.file_path,
+            }))}
           />
-          <Carousel
-            title="Recommendations"
-            data={similar.results}
-            renderItem={renderRecommendation}
+          <h1 className="text-4xl font-bold text-center py-6">
+            Similar movies
+          </h1>
+          <ActiveSlider
+            movies={similarMoviesWithDefaults.map((movie) => ({
+              ...movie,
+              backdrop_path: movie.backdrop_path ?? PLACEHOLDER_URL,
+            }))}
           />
           <Comments comments={sampleComments} commentsPerPage={5} />
         </div>
       </AppLayout>
     </DarkModeProvider>
   );
-}
+};
 
 export default MoviePage;

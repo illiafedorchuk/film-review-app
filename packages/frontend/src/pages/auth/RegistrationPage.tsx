@@ -39,8 +39,6 @@ const RegisterPage = () => {
         email: data.email,
         password: data.password,
       });
-      console.log(response.data);
-      alert("Signup successful!");
       reset();
       setError(null);
     } catch (error: any) {
@@ -81,6 +79,7 @@ const RegisterPage = () => {
                   error={errors.password}
                   placeholder="Password"
                   register={register}
+                  type={""}
                 />
                 <PasswordField
                   name="confirmPassword"
@@ -88,6 +87,7 @@ const RegisterPage = () => {
                   error={errors.confirmPassword}
                   placeholder="Confirm Password"
                   register={register}
+                  type={""}
                 />
                 <button
                   disabled={isSubmitting}

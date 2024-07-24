@@ -1,4 +1,3 @@
-import React from "react";
 import { DarkModeProvider } from "../../components/layouts/DarkModeContext";
 import AppLayout from "../../components/layouts/AppLayout";
 import MoviePlate from "../../components/RatedMoviesComponents/MoviePlate";

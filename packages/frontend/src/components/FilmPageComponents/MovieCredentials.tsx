@@ -1,16 +1,20 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { ReactNode, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
 import Button from "./Button";
 import MovieInfo from "./MovieInfo";
+import {
+  addWatchLaterMovie,
+  removeWatchLaterMovie,
+  fetchWatchlist,
+} from "../../lib/api"; // Adjust the path as needed
 
 interface MovieCredentialsProps {
   movieDetails: {
+    id: number;
     original_language: string;
-    genres: Array<{ name: string }>;
-    tagline: ReactNode;
+    genres: Array<{ id: number; name: string }>;
+    tagline: string;
     original_title: string;
+    poster_path: string;
     overview: string;
     release_date: string;
     vote_average: number;
@@ -21,19 +25,56 @@ interface MovieCredentialsProps {
     crew: Array<{ name: string; job: string }>;
     cast: Array<{ name: string }>;
   };
+  token: string;
 }
 
-function MovieCredentials({ movieDetails, actorsData }: MovieCredentialsProps) {
-  const navigate = useNavigate();
+const MovieCredentials = ({
+  movieDetails,
+  actorsData,
+  token,
+}: MovieCredentialsProps) => {
+  const [watchLater, setWatchLater] = useState(false);
+
+  // Function to fetch the watchlist and check if the movie is in it
+  const checkWatchlist = async () => {
+    try {
+      const data = await fetchWatchlist(token);
+      console.log(data);
+      const watchlist = data.watchLaterMovies;
+      if (watchlist.includes(movieDetails.id.toString())) {
+        setWatchLater(true);
+      }
+    } catch (error) {
+      console.error("Failed to fetch watchlist", error);
+    }
+  };
+
+  useEffect(() => {
+    checkWatchlist();
+  }, []);
 
   const handleWatchTrailerClick = () => {
     document.getElementById("trailer")?.scrollIntoView({ behavior: "smooth" });
   };
 
-  function handleWatchLaterClick() {
-    setWatchLater((prev) => !prev);
-  }
-  const [watchLater, setWatchLater] = useState(false);
+  const handleDeleteLaterClick = async () => {
+    await removeWatchLaterMovie(movieDetails.id, token);
+    setWatchLater(false);
+  };
+
+  const handleAddLaterClick = async () => {
+    const movie = {
+      id: movieDetails.id,
+      title: movieDetails.original_title,
+      poster_path: movieDetails.poster_path,
+      release_date: movieDetails.release_date,
+      vote_average: movieDetails.vote_average,
+      genre_ids: movieDetails.genres.map((genre) => genre.id),
+    };
+    await addWatchLaterMovie(movie, token);
+    setWatchLater(true);
+  };
+
   const director = actorsData.crew.find((person) => person.job === "Director");
   const starCast = actorsData.cast
     .slice(0, 3)
@@ -73,12 +114,19 @@ function MovieCredentials({ movieDetails, actorsData }: MovieCredentialsProps) {
       <MovieInfo label="Release Date: " value={releaseDate} />
       <div className="flex flex-wrap pt-3 gap-4">
         <Button onClick={handleWatchTrailerClick}>Watch Trailer</Button>
-        <Button watchLater={watchLater} onClick={handleWatchLaterClick}>
-          Watch later
-        </Button>
+
+        {watchLater ? (
+          <Button watchLater={watchLater} onClick={handleDeleteLaterClick}>
+            Remove from Watch Later
+          </Button>
+        ) : (
+          <Button watchLater={watchLater} onClick={handleAddLaterClick}>
+            Watch Later
+          </Button>
+        )}
       </div>
     </div>
   );
-}
+};
 
 export default MovieCredentials;

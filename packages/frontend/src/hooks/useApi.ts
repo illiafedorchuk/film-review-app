@@ -1,8 +1,8 @@
 import useSWR from "swr";
 
-export function useApiGet(url: string, params = {}, send = true) {
+export function useApiGet<T>(url: string, params = {}, send = true) {
   const queryParams = new URLSearchParams(params).toString();
-  const { data, error, mutate } = useSWR(
+  const { data, error, mutate } = useSWR<T>(
     send ? url + (queryParams ? `?${queryParams}` : "") : null,
     async () => {
       try {
