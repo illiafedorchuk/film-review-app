@@ -7,4 +7,5 @@ router.post("/bookmark", MovieController.bookMovie);
 router.put("/unbookmark", MovieController.unbookMovie);
 router.post("/add-watchlist", MovieController.addWatchlist);
 router.put("/remove-watchlist", MovieController.removeWatchLater);
+router.post("/add", MovieController.addMovieToDatabase);
 export default router;

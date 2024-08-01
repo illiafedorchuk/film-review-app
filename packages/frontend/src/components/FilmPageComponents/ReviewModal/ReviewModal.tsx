@@ -8,14 +8,17 @@ interface ReviewModalProps {
   onClose: () => void;
   hasReview: boolean;
   movieDetails: {
+    movie_Id: number;
     title: string;
     backdropUrl: string;
     posterUrl: string;
     review?: {
       ratings: { [key: string]: number };
       text: string;
+      rating: number;
     };
   };
+  token: string;
 }
 
 const ReviewModal: React.FC<ReviewModalProps> = ({
@@ -23,16 +26,17 @@ const ReviewModal: React.FC<ReviewModalProps> = ({
   onClose,
   hasReview,
   movieDetails,
+  token,
 }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [currentRatings, setCurrentRatings] = useState(
     movieDetails.review?.ratings || {
-      Atmosphere: 4,
-      Plot: 7,
-      Puzzles: 6,
-      Action: 4,
-      Purity: 4,
-      Team: 4,
+      Cast: 5,
+      Plot: 5,
+      Direction: 5,
+      Cinematography: 5,
+      "Writing/Script": 5,
+      "Themes/Idea": 5,
     }
   );
   const [reviewText, setReviewText] = useState(movieDetails.review?.text || "");
@@ -66,6 +70,7 @@ const ReviewModal: React.FC<ReviewModalProps> = ({
             </div>
             {hasReview && !isEditing ? (
               <ReviewDetails
+                movie_Id={movieDetails.movie_Id}
                 backdropUrl={movieDetails.backdropUrl}
                 posterUrl={movieDetails.posterUrl}
                 ratings={currentRatings}
@@ -75,12 +80,14 @@ const ReviewModal: React.FC<ReviewModalProps> = ({
               />
             ) : (
               <ReviewForm
+                movie_Id={movieDetails.movie_Id}
                 backdropUrl={movieDetails.backdropUrl}
                 posterUrl={movieDetails.posterUrl}
                 title={movieDetails.title}
                 initialRatings={currentRatings}
                 initialText={reviewText}
                 onSubmit={handleFormSubmit}
+                token={token}
               />
             )}
           </div>

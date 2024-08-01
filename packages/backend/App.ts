@@ -2,7 +2,7 @@ import express, { Express } from "express";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import cors from "cors";
-
+import reviewRoter from "./src/Review/reviewRouter";
 import userRouter from "./src/Users/userRouter";
 import authRouter from "./src/Auth/authRouter";
 import { globalErrorHandler } from "./src/Utils/ErrorController"; // Adjust the path as necessary
@@ -24,6 +24,7 @@ app.use("/api", userRouter);
 app.use("/auth", authRouter);
 app.use("/movie", movieRouter);
 app.use("/user", userRouter);
+app.use("/review", reviewRoter);
 // Use the global error handler as the last middleware
 app.use(globalErrorHandler);
 

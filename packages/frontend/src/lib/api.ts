@@ -140,7 +140,9 @@ export const unbookmarkMovie = async (movieId: number, token: string) => {
   const response = await axios.put(
     `http://localhost:3000/movie/unbookmovie`, // Ensure this matches your backend route
     {
-      data: { movie_id: movieId },
+      movie_id: movieId,
+    },
+    {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -194,5 +196,95 @@ export const fetchWatchlist = async (token: string) => {
     },
     withCredentials: true,
   });
+  return response.data;
+};
+
+export const createReview = async (
+  movieId: number,
+  rating: number,
+  comment: string,
+  criteriaRatings: { [key: string]: number },
+  token: string
+) => {
+  const response = await axios.post(
+    `http://localhost:3000/review/add-review`,
+    {
+      movieId,
+      rating,
+      comment,
+      criteriaRatings,
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      withCredentials: true,
+    }
+  );
+  return response.data;
+};
+
+export const fetchUserReview = async (movieId: number, token: string) => {
+  try {
+    const response = await axios.get(
+      `http://localhost:3000/review/get-user-review/${movieId}`, // Correctly passes movieId
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        withCredentials: true,
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Failed to fetch user review:", error);
+    throw new Error("Failed to fetch user review");
+  }
+};
+
+export const updateReview = async (
+  movieId: number,
+  rating: number,
+  comment: string,
+  criteriaRatings: { [key: string]: number },
+  token: string
+) => {
+  const response = await axios.patch(
+    `http://localhost:3000/review/update-review`, // Correct endpoint
+    {
+      movieId,
+      rating,
+      comment,
+      criteriaRatings,
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      withCredentials: true,
+    }
+  );
+  return response.data;
+};
+
+export const addMovieToDatabase = async (movie: any, token: string) => {
+  const response = await axios.post(
+    `http://localhost:3000/movie/add`, // Ensure this matches your backend route
+    {
+      movie_id: movie.id,
+      title: movie.title,
+      poster_path: movie.poster_path,
+      release_date: movie.release_date,
+      vote_average: movie.vote_average,
+      genre_ids: movie.genre_ids,
+    },
+    {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      withCredentials: true,
+    }
+  );
   return response.data;
 };

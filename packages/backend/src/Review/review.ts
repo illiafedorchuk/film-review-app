@@ -12,7 +12,7 @@ export class Review {
   id!: number;
 
   @Column()
-  movieId!: number;
+  movie_id!: number;
 
   @Column()
   userId!: number;
@@ -27,7 +27,7 @@ export class Review {
     themes: number;
   };
 
-  @Column()
+  @Column("decimal", { precision: 3, scale: 1 })
   rating!: number;
 
   @Column("text")

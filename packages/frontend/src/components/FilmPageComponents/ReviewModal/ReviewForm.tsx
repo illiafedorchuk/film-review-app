@@ -1,29 +1,27 @@
 import React, { useState } from "react";
 import CustomSlider from "./CustomSlider";
+import { createReview, updateReview } from "../../../lib/api";
 
 interface ReviewFormProps {
+  movie_Id: number;
   backdropUrl: string;
   posterUrl: string;
   title: string;
-  initialRatings?: { [key: string]: number };
-  initialText?: string;
+  initialRatings: { [key: string]: number };
+  initialText: string;
   onSubmit: (ratings: { [key: string]: number }, text: string) => void;
+  token: string;
 }
 
 const ReviewForm: React.FC<ReviewFormProps> = ({
+  movie_Id,
   backdropUrl,
   posterUrl,
   title,
-  initialRatings = {
-    Atmosphere: 4,
-    Plot: 7,
-    Puzzles: 6,
-    Action: 4,
-    Purity: 4,
-    Team: 4,
-  },
-  initialText = "", // Initialize initialText
+  initialRatings,
+  initialText,
   onSubmit,
+  token,
 }) => {
   const [ratings, setRatings] = useState(initialRatings);
   const [text, setText] = useState(initialText);
@@ -44,8 +42,52 @@ const ReviewForm: React.FC<ReviewFormProps> = ({
     }
   };
 
-  const handleSubmit = () => {
-    onSubmit(ratings, text);
+  const handleSubmit = async () => {
+    try {
+      const criteriaRatings = {
+        Cast: ratings["Cast"],
+        Plot: ratings["Plot"],
+        Direction: ratings["Direction"],
+        Cinematography: ratings["Cinematography"],
+        "Writing/Script": ratings["Writing/Script"],
+        "Themes/Idea": ratings["Themes/Idea"],
+      };
+      console.log("Review criteria ratings:", criteriaRatings);
+
+      const overallRating =
+        Object.values(criteriaRatings).reduce((a, b) => a + b, 0) /
+        Object.values(criteriaRatings).length;
+
+      console.log("Overall Rating:", overallRating);
+      console.log("Movie ID:", movie_Id);
+
+      if (
+        initialText === "" &&
+        Object.values(initialRatings).every((v) => v === 5)
+      ) {
+        // Create a new review if initial text is empty and all initial ratings are default
+        await createReview(
+          movie_Id,
+          overallRating,
+          text,
+          criteriaRatings,
+          token
+        );
+      } else {
+        // Update existing review
+        await updateReview(
+          movie_Id,
+          overallRating,
+          text,
+          criteriaRatings,
+          token
+        );
+      }
+
+      onSubmit(ratings, text);
+    } catch (error) {
+      console.error("Failed to submit review:", error);
+    }
   };
 
   return (

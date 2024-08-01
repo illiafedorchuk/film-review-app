@@ -1,8 +1,9 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useRef } from "react";
-import { toPng } from "html-to-image";
 import ReviewChart from "./ReviewChart";
 
 interface ReviewDetailsProps {
+  movie_Id: number;
   ratings: { [key: string]: number };
   text: string;
   backdropUrl: string;
@@ -12,37 +13,23 @@ interface ReviewDetailsProps {
 }
 
 const ReviewDetails: React.FC<ReviewDetailsProps> = ({
-  ratings,
+  movie_Id,
+  ratings = {},
   text,
   backdropUrl,
   posterUrl,
   title,
   onEdit,
 }) => {
+  console.log("id:", movie_Id);
   const backdropFullUrl = "https://image.tmdb.org/t/p/original" + backdropUrl;
   const posterFullUrl = "https://image.tmdb.org/t/p/original" + posterUrl;
 
   const averageScore =
     Object.values(ratings).reduce((sum, value) => sum + value, 0) /
-    Object.keys(ratings).length;
+    (Object.keys(ratings).length || 1); // Prevent division by zero
 
   const reviewRef = useRef<HTMLDivElement>(null);
-
-  const handleDownload = () => {
-    if (reviewRef.current) {
-      toPng(reviewRef.current)
-        .then((dataUrl) => {
-          const link = document.createElement("a");
-          link.download = "review.png";
-          link.href = dataUrl;
-          link.click();
-        })
-        .catch((error) => {
-          console.error("oops, something went wrong!", error);
-        });
-    }
-  };
-
   return (
     <div ref={reviewRef}>
       <div className="relative mb-4">
@@ -86,20 +73,13 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = ({
           </div>
         </div>
       </div>
-      <div className="flex justify-end gap-5">
-        <button
-          className="bg-violet-500 text-white py-2 px-4 rounded-md"
-          onClick={handleDownload}
-        >
-          Download
-        </button>
-        <button
-          className="bg-violet-500 text-white py-2 px-4 rounded-md"
-          onClick={onEdit}
-        >
-          Edit
-        </button>
-      </div>
+
+      <button
+        className="bg-violet-500 text-white py-2 px-4 rounded-md"
+        onClick={onEdit}
+      >
+        Edit
+      </button>
     </div>
   );
 };

@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-
+import { useCookies } from "react-cookie";
+import { addMovieToDatabase } from "../../lib/api";
 import MoviePoster from "../../components/FilmPageComponents/MoviePoster";
 import AppLayout from "../../components/layouts/AppLayout";
 import { DarkModeProvider } from "../../components/layouts/DarkModeContext";
@@ -41,6 +42,13 @@ const MoviePage: React.FC = () => {
   const { movieId: id } = useParams<{ movieId: string }>();
   const movieId = parseInt(id!, 10);
 
+  // Use cookies to get the access token
+  const [cookies] = useCookies(["accessToken"]);
+  const token = cookies.accessToken;
+
+  // State to prevent multiple adds
+  const [isMovieAdded, setIsMovieAdded] = useState<boolean>(false);
+
   const {
     movieDetails,
     actorsData,
@@ -49,6 +57,7 @@ const MoviePage: React.FC = () => {
     similarMovies,
     loading: movieDetailsLoading,
   } = useMovieDetails(movieId);
+
   const {
     trailers,
     loading: trailersLoading,
@@ -69,6 +78,23 @@ const MoviePage: React.FC = () => {
   };
 
   const trailerKey = findTrailerKey(trailers);
+
+  // Automatically add movie to the database on component mount
+  useEffect(() => {
+    const addMovie = async () => {
+      if (movieDetails && !isMovieAdded && token) {
+        try {
+          const response = await addMovieToDatabase(movieDetails, token);
+          console.log(response.message); // Log success message
+          setIsMovieAdded(true); // Set the flag to prevent further additions
+        } catch (error) {
+          console.error("Failed to add movie:", error);
+        }
+      }
+    };
+
+    addMovie();
+  }, [movieDetails, token, isMovieAdded]); // Dependency on isMovieAdded prevents repeated addition
 
   if (movieDetailsLoading || trailersLoading) {
     return <div className="text-center py-20">Loading...</div>;
@@ -91,7 +117,7 @@ const MoviePage: React.FC = () => {
         <div className="px-[6%] sm:pl-[15%] sm:pr-[5%] md:pl-[13%] lg:pl-[15%] lg:pr-[10%] md:pr-[5%] py-10">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-14 ">
             <div className="flex flex-col space-y-4">
-              <MoviePoster movie={movieDetails} />
+              <MoviePoster movie={movieDetails} token={""} />
               <FastReaction />
             </div>
             <div className="md:col-span-2 flex flex-col justify-between">
@@ -101,6 +127,7 @@ const MoviePage: React.FC = () => {
                   runtime: movieDetails.runtime || 0,
                 }}
                 actorsData={{ cast: actorsData, crew: [] }}
+                token={""}
               />
               <YourReviewArea rating={5} details={movieDetails} />
             </div>

@@ -1,36 +1,71 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { BiSolidStar } from "react-icons/bi";
 import ReviewModal from "./ReviewModal/ReviewModal";
+import { fetchUserReview } from "../../lib/api";
 
 interface ReviewProps {
-  rating?: number;
-  details?: any;
+  details: any;
+  token: string;
 }
 
-const YourReviewArea: React.FC<ReviewProps> = ({ rating, details }) => {
+const YourReviewArea: React.FC<ReviewProps> = ({ details, token }) => {
   const [isModalOpen, setModalOpen] = useState(false);
+  const [userReview, setUserReview] = useState<any>(null);
+  const [hasRated, setHasRated] = useState<boolean>(false);
+
+  useEffect(() => {
+    const loadUserReview = async () => {
+      try {
+        const reviews = await fetchUserReview(details.id, token);
+        if (reviews && reviews.length > 0) {
+          const review = reviews[0];
+          setUserReview({
+            ratings: review.criteriaRatings || {},
+            text: review.comment || "",
+            rating: review.rating || 0,
+          });
+          setHasRated(true);
+        } else {
+          // Initialize with default ratings
+          setUserReview({
+            ratings: {
+              Cast: 5,
+              Plot: 5,
+              Direction: 5,
+              Cinematography: 5,
+              "Writing/Script": 5,
+              "Themes/Idea": 5,
+            },
+            text: "",
+            rating: 0,
+          });
+          setHasRated(false);
+        }
+        console.log("User Review Loaded:", reviews); // Debug log
+      } catch (error) {
+        console.error("Error loading user review:", error);
+        setUserReview({
+          ratings: {
+            Cast: 5,
+            Plot: 5,
+            Direction: 5,
+            Cinematography: 5,
+            "Writing/Script": 5,
+            "Themes/Idea": 5,
+          },
+          text: "",
+          rating: 0,
+        });
+        setHasRated(false);
+      }
+    };
+
+    loadUserReview();
+  }, [details.id, token]);
+
   const handleClose = () => setModalOpen(false);
 
-
-  const movieDetails = {
-    title: details.title,
-    backdropUrl: `https://image.tmdb.org/t/p/original${details.backdrop_path}`, // Replace with actual URL
-    posterUrl: `https://image.tmdb.org/t/p/original${details.poster_path}`, // Replace with actual URL
-    review: {
-      ratings: {
-        Cast: 8,
-        Plot: 7,
-        Direction: 9,
-        Cinematography: 6,
-        "Writing/Script": 7,
-        "Themes/Idea": 8,
-      },
-      text: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quis adipisci assumenda nesciunt delectus eligendi porro nisi doloribus quo libero maxime numquam officia, sapiente id fugit repellat, nulla dolores nemo veniam. Lorem ipsum dolor sit amet consectetur adipisicing elit. Placeat ab soluta voluptas consequatur hic libero laboriosam nemo sed eum. Voluptatibus eius repellat officiis animi ullam odit corporis ipsam. Dolor, iusto.",
-    },
-  };
-
-  const hasReview = rating && rating > 0;
+  const userRating = userReview?.rating || 0;
 
   return (
     <div className="relative pl-0 py-10 md:pl-14 lg:w-[70%] md:w-full cursor-pointer">
@@ -38,8 +73,15 @@ const YourReviewArea: React.FC<ReviewProps> = ({ rating, details }) => {
         <ReviewModal
           open={isModalOpen}
           onClose={handleClose}
-          hasReview={hasReview || false}
-          movieDetails={movieDetails}
+          hasReview={hasRated}
+          movieDetails={{
+            movie_Id: details.id,
+            title: details.title,
+            backdropUrl: `https://image.tmdb.org/t/p/original${details.backdrop_path}`,
+            posterUrl: `https://image.tmdb.org/t/p/original${details.poster_path}`,
+            review: userReview,
+          }}
+          token={token}
         />
       )}
       <div
@@ -50,13 +92,13 @@ const YourReviewArea: React.FC<ReviewProps> = ({ rating, details }) => {
           <div className="bg-[var(--button-bg-color)] rounded-lg w-full h-full flex flex-col items-center justify-center p-4 shadow-lg hover:shadow-[0_0_30px_3px_rgba(100,0,300,0.3)]">
             <h1 className="text-lg font-bold mb-2 text-white">Your Review</h1>
             <div className="flex items-center mb-2">
-              {hasReview ? (
+              {hasRated ? (
                 <>
                   <span className="text-lg font-semibold text-white">
-                    You mark this film
+                    You rated this film
                   </span>
                   <span className="font-bold text-xl ml-2 text-yellow-300">
-                    {rating}
+                    {userRating.toFixed(1)}
                   </span>
                   <span className="ml-1 text-xl font-bold text-yellow-300">
                     / 10
@@ -65,7 +107,7 @@ const YourReviewArea: React.FC<ReviewProps> = ({ rating, details }) => {
                 </>
               ) : (
                 <span className="text-xl text-white font-bold">
-                  Click here to review!
+                  You haven't rated this film yet.
                 </span>
               )}
             </div>
