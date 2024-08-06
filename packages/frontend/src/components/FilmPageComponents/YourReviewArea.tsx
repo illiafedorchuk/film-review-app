@@ -1,9 +1,11 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useEffect } from "react";
 import { BiSolidStar } from "react-icons/bi";
 import ReviewModal from "./ReviewModal/ReviewModal";
 import { fetchUserReview } from "../../lib/api";
 
 interface ReviewProps {
+  rating: number;
   details: any;
   token: string;
 }
@@ -65,7 +67,10 @@ const YourReviewArea: React.FC<ReviewProps> = ({ details, token }) => {
 
   const handleClose = () => setModalOpen(false);
 
-  const userRating = userReview?.rating || 0;
+  const userRating =
+    typeof userReview?.rating === "number"
+      ? userReview.rating
+      : parseFloat(userReview?.rating || "0");
 
   return (
     <div className="relative pl-0 py-10 md:pl-14 lg:w-[70%] md:w-full cursor-pointer">
@@ -77,8 +82,11 @@ const YourReviewArea: React.FC<ReviewProps> = ({ details, token }) => {
           movieDetails={{
             movie_Id: details.id,
             title: details.title,
+            release_date: details.release_date,
             backdropUrl: `https://image.tmdb.org/t/p/original${details.backdrop_path}`,
+            vote_average: details.vote_average,
             posterUrl: `https://image.tmdb.org/t/p/original${details.poster_path}`,
+            genre_ids: [],
             review: userReview,
           }}
           token={token}

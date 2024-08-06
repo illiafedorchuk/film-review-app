@@ -10,8 +10,11 @@ interface ReviewModalProps {
   movieDetails: {
     movie_Id: number;
     title: string;
+    release_date: string;
     backdropUrl: string;
+    vote_average: number;
     posterUrl: string;
+    genre_ids: number[];
     review?: {
       ratings: { [key: string]: number };
       text: string;
@@ -88,6 +91,10 @@ const ReviewModal: React.FC<ReviewModalProps> = ({
                 initialText={reviewText}
                 onSubmit={handleFormSubmit}
                 token={token}
+                releaseDate={movieDetails.release_date}
+                voteAverage={movieDetails.vote_average}
+                genreIds={[...movieDetails.genre_ids]}
+                hasExistingReview={hasReview}
               />
             )}
           </div>

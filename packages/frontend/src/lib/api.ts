@@ -204,6 +204,11 @@ export const createReview = async (
   rating: number,
   comment: string,
   criteriaRatings: { [key: string]: number },
+  title: string,
+  posterPath: string,
+  releaseDate: string,
+  voteAverage: number,
+  genreIds: number[],
   token: string
 ) => {
   const response = await axios.post(
@@ -213,6 +218,11 @@ export const createReview = async (
       rating,
       comment,
       criteriaRatings,
+      title,
+      poster_path: posterPath,
+      release_date: releaseDate,
+      vote_average: voteAverage,
+      genre_ids: genreIds,
     },
     {
       headers: {

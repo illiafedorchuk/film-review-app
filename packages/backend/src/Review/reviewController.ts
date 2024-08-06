@@ -8,7 +8,17 @@ import { Movie } from "../Movies/movie";
 
 export class ReviewController {
   static createReview = catchAsync(async (req: Request, res: Response) => {
-    const { movieId, rating, comment, criteriaRatings } = req.body;
+    const {
+      movieId,
+      rating,
+      comment,
+      criteriaRatings,
+      title,
+      poster_path,
+      release_date,
+      vote_average,
+      genre_ids,
+    } = req.body;
 
     const token = req.cookies.accessToken;
     if (!token) {
@@ -39,12 +49,25 @@ export class ReviewController {
     }
 
     const movieRepository = AppDataSource.getRepository(Movie);
-    const movie = await movieRepository.findOne({
+    let movie = await movieRepository.findOne({
       where: { movie_id: parseInt(movieId) },
     });
+
     if (!movie) {
-      console.log("Movie not found");
-      return res.status(404).json({ message: "Movie not found" });
+      console.log("Movie not found, adding to the database.");
+      // If the movie does not exist, add it to the database
+      movie = movieRepository.create({
+        movie_id: movieId,
+        title,
+        poster_path: poster_path.startsWith("https://")
+          ? poster_path.replace("https://image.tmdb.org/t/p/original", "")
+          : poster_path, // Strip full URL if present
+        release_date,
+        vote_average,
+        genre_ids,
+      });
+      await movieRepository.save(movie);
+      console.log("Movie added:", movie);
     }
 
     const reviewRepository = AppDataSource.getRepository(Review);
@@ -68,15 +91,6 @@ export class ReviewController {
   });
 
   static getUserReview = catchAsync(async (req: Request, res: Response) => {
-    const {
-      movie_id,
-      title,
-      poster_path,
-      release_date,
-      vote_average,
-      genre_ids,
-    } = req.body;
-
     const movieId = parseInt(req.params.movieId); // Ensure correct parsing
     const token = req.cookies.accessToken;
 
@@ -97,16 +111,6 @@ export class ReviewController {
     }
 
     const userId = decoded.id;
-
-    const movieRepository = AppDataSource.getRepository(Movie);
-    const movie = await movieRepository.findOne({
-      where: { movie_id: movieId }, // Use `id` if that's the primary key
-    });
-
-    if (!movie) {
-      console.log("Movie not found");
-      return res.status(404).json({ message: "Movie not found" });
-    }
 
     const reviewRepository = AppDataSource.getRepository(Review);
     const reviews = await reviewRepository.find({

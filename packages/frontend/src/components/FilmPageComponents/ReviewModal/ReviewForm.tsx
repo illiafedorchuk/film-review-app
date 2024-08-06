@@ -1,16 +1,24 @@
 import React, { useState } from "react";
 import CustomSlider from "./CustomSlider";
-import { createReview, updateReview } from "../../../lib/api";
+import {
+  createReview,
+  updateReview,
+  addMovieToDatabase,
+} from "../../../lib/api";
 
 interface ReviewFormProps {
   movie_Id: number;
   backdropUrl: string;
   posterUrl: string;
   title: string;
+  releaseDate: string;
+  voteAverage: number;
+  genreIds: number[];
   initialRatings: { [key: string]: number };
   initialText: string;
   onSubmit: (ratings: { [key: string]: number }, text: string) => void;
   token: string;
+  hasExistingReview: boolean; // New prop to indicate if a review already exists
 }
 
 const ReviewForm: React.FC<ReviewFormProps> = ({
@@ -18,10 +26,14 @@ const ReviewForm: React.FC<ReviewFormProps> = ({
   backdropUrl,
   posterUrl,
   title,
+  releaseDate,
+  voteAverage,
+  genreIds,
   initialRatings,
   initialText,
   onSubmit,
   token,
+  hasExistingReview,
 }) => {
   const [ratings, setRatings] = useState(initialRatings);
   const [text, setText] = useState(initialText);
@@ -61,12 +73,25 @@ const ReviewForm: React.FC<ReviewFormProps> = ({
       console.log("Overall Rating:", overallRating);
       console.log("Movie ID:", movie_Id);
 
-      if (
-        initialText === "" &&
-        Object.values(initialRatings).every((v) => v === 5)
-      ) {
-        // Create a new review if initial text is empty and all initial ratings are default
-        await createReview(
+      // Ensure the movie is in the database
+      await addMovieToDatabase(
+        {
+          id: movie_Id,
+          title,
+          poster_path: posterUrl.replace(
+            "https://image.tmdb.org/t/p/original",
+            ""
+          ),
+          release_date: releaseDate,
+          vote_average: voteAverage,
+          genre_ids: genreIds,
+        },
+        token
+      );
+
+      if (hasExistingReview) {
+        // Update existing review if it exists
+        await updateReview(
           movie_Id,
           overallRating,
           text,
@@ -74,12 +99,17 @@ const ReviewForm: React.FC<ReviewFormProps> = ({
           token
         );
       } else {
-        // Update existing review
-        await updateReview(
+        // Create a new review if no existing review
+        await createReview(
           movie_Id,
           overallRating,
           text,
           criteriaRatings,
+          title,
+          posterUrl.replace("https://image.tmdb.org/t/p/original", ""),
+          releaseDate,
+          voteAverage,
+          genreIds,
           token
         );
       }
@@ -121,7 +151,7 @@ const ReviewForm: React.FC<ReviewFormProps> = ({
             <p className="mb-2 pb-6">{key}</p>
             <CustomSlider
               value={ratings[key as keyof typeof ratings]}
-              onChange={(e, value) => handleRatingChange(key, value as number)}
+              onChange={(_, value) => handleRatingChange(key, value as number)}
               step={1}
               min={1}
               max={10}
