@@ -61,6 +61,7 @@ export class CommentController {
     const commentRepository = AppDataSource.getRepository(Comment);
     const comments = await commentRepository.find({
       where: { movie_id: parseInt(movieId) },
+      relations: ["user"], // Ensure user details are fetched
     });
 
     return res.status(200).json({ comments });
@@ -69,7 +70,6 @@ export class CommentController {
   static likeComment = catchAsync(async (req: Request, res: Response) => {
     const { commentId } = req.params;
     const token = req.cookies.accessToken;
-
     if (!token) {
       return res.status(401).json({ message: "Unauthorized" });
     }
@@ -94,18 +94,18 @@ export class CommentController {
       return res.status(404).json({ message: "Comment not found" });
     }
 
-    // Check if user already liked the comment
     if (comment.user_likes.includes(userId)) {
-      return res
-        .status(400)
-        .json({ message: "User has already liked this comment" });
+      // Remove user from likes if present
+      comment.user_likes = comment.user_likes.filter((id) => id !== userId);
+    } else {
+      // Remove user from dislikes if present
+      comment.user_dislikes = comment.user_dislikes.filter(
+        (id) => id !== userId
+      );
+      // Add user to likes
+      comment.user_likes.push(userId);
     }
 
-    // Remove user from dislikes if present
-    comment.user_dislikes = comment.user_dislikes.filter((id) => id !== userId);
-
-    // Add user to likes
-    comment.user_likes.push(userId);
     comment.like_count = comment.user_likes.length;
     comment.dislike_count = comment.user_dislikes.length;
 
@@ -113,13 +113,12 @@ export class CommentController {
 
     return res
       .status(200)
-      .json({ message: "Like added", like_count: comment.like_count });
+      .json({ message: "Like toggled", like_count: comment.like_count });
   });
 
   static dislikeComment = catchAsync(async (req: Request, res: Response) => {
     const { commentId } = req.params;
     const token = req.cookies.accessToken;
-
     if (!token) {
       return res.status(401).json({ message: "Unauthorized" });
     }
@@ -144,25 +143,46 @@ export class CommentController {
       return res.status(404).json({ message: "Comment not found" });
     }
 
-    // Check if user already disliked the comment
     if (comment.user_dislikes.includes(userId)) {
-      return res
-        .status(400)
-        .json({ message: "User has already disliked this comment" });
+      // Remove user from dislikes if present
+      comment.user_dislikes = comment.user_dislikes.filter(
+        (id) => id !== userId
+      );
+    } else {
+      // Remove user from likes if present
+      comment.user_likes = comment.user_likes.filter((id) => id !== userId);
+      // Add user to dislikes
+      comment.user_dislikes.push(userId);
     }
 
-    // Remove user from likes if present
-    comment.user_likes = comment.user_likes.filter((id) => id !== userId);
-
-    // Add user to dislikes
-    comment.user_dislikes.push(userId);
     comment.like_count = comment.user_likes.length;
     comment.dislike_count = comment.user_dislikes.length;
 
     await commentRepository.save(comment);
 
-    return res
-      .status(200)
-      .json({ message: "Dislike added", dislike_count: comment.dislike_count });
+    return res.status(200).json({
+      message: "Dislike toggled",
+      dislike_count: comment.dislike_count,
+    });
   });
+
+  static getCommentLikesAndDislike = catchAsync(
+    async (req: Request, res: Response) => {
+      const { commentId } = req.params;
+
+      const commentRepository = AppDataSource.getRepository(Comment);
+      const comment = await commentRepository.findOne({
+        where: { id: parseInt(commentId) },
+      });
+
+      if (!comment) {
+        return res.status(404).json({ message: "Comment not found" });
+      }
+
+      return res.status(200).json({
+        like_count: comment.like_count,
+        dislike_count: comment.dislike_count,
+      });
+    }
+  );
 }

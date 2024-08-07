@@ -1,18 +1,22 @@
+// Comments.tsx
 import React, { useState, useEffect } from "react";
 import CommentItem from "./CommentItem";
 import CommentForm from "./CommentForm";
 import Pagination from "./Pagination";
-import { fetchComments } from "../../lib/api";
+import { fetchComments } from "../../lib/api"; // Import from your API file
 
 interface Comment {
   id: number;
   movie_id: number;
-  name: string;
-  avatarUrl: string;
-  timestamp: string;
   text: string;
   likes: number;
   dislikes: number;
+  createdAt: string; // Added timestamp field
+  user: {
+    id: number;
+    name: string;
+    avatarUrl: string;
+  };
 }
 
 interface CommentsProps {
@@ -27,19 +31,14 @@ const Comments: React.FC<CommentsProps> = ({
   commentsPerPage,
 }) => {
   const [currentPage, setCurrentPage] = useState(1);
-  const [commentData, setCommentData] = useState<Comment[]>([]); // Ensure this is an array
+  const [commentData, setCommentData] = useState<Comment[]>([]);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const loadComments = async () => {
       try {
-        const fetchedComments = await fetchComments(movieId, token);
-        if (Array.isArray(fetchedComments)) {
-          // Check if fetchedComments is an array
-          setCommentData(fetchedComments);
-        } else {
-          throw new Error("Fetched data is not an array");
-        }
+        const fetchedComments = await fetchComments(movieId, token); // Use the fetchComments function
+        setCommentData(fetchedComments); // Update state with fetched comments
       } catch (error) {
         setError("Failed to load comments. Please try again later.");
         console.error(error); // Log error for debugging
@@ -88,17 +87,17 @@ const Comments: React.FC<CommentsProps> = ({
         ) : (
           currentComments.map((comment) => (
             <CommentItem
-              token={token}
               key={comment.id}
               id={comment.id}
-              name={comment.name}
-              avatarUrl={comment.avatarUrl}
-              timestamp={comment.timestamp}
+              name={comment.user.name}
+              avatarUrl={comment.user.avatarUrl}
+              timestamp={new Date(comment.createdAt).toLocaleString()}
               text={comment.text}
               likes={comment.likes}
               dislikes={comment.dislikes}
               onLike={handleLike}
               onDislike={handleDislike}
+              token={token} // Pass token to CommentItem
             />
           ))
         )}

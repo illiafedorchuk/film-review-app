@@ -2,6 +2,7 @@ import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
 import { ReactionType } from "../Interfaces/types";
 @Entity("users")
 export class User {
+  [x: string]: any;
   static findById(userId: string) {
     throw new Error("Method not implemented.");
   }

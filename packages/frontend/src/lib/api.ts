@@ -381,3 +381,42 @@ export const createComment = async (
     throw new Error("Failed to create comment");
   }
 };
+
+export const likeCommentApi = async (commentId: number, token: string) => {
+  const response = await axios.post(
+    `http://localhost:3000/comment/${commentId}/like`,
+    {},
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  return response.data.like_count;
+};
+
+// API function to dislike a comment
+export const dislikeCommentApi = async (commentId: number, token: string) => {
+  const response = await axios.post(
+    `http://localhost:3000/comment/${commentId}/dislike`,
+    {},
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  return response.data.dislike_count;
+};
+
+export const fetchLikesAndDislikes = async (commentId: number) => {
+  try {
+    const response = await axios.get(
+      `http://localhost:3000/comment/${commentId}/getLikesAndDislikes`
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Failed to fetch likes and dislikes:", error);
+    throw new Error("Failed to fetch likes and dislikes");
+  }
+};

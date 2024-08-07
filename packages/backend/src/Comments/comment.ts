@@ -1,4 +1,11 @@
-import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  JoinColumn,
+} from "typeorm";
+import { User } from "../Users/user";
 
 @Entity("comments")
 export class Comment {
@@ -31,4 +38,8 @@ export class Comment {
 
   @Column("int", { array: true, default: () => "ARRAY[]::INTEGER[]" })
   user_dislikes!: number[];
+
+  @ManyToOne(() => User, (user) => user.comments)
+  @JoinColumn({ name: "userId" })
+  user!: User;
 }

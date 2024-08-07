@@ -1,6 +1,56 @@
-import React, { useState } from "react";
+// CommentItem.tsx
+
+import React, { useEffect, useState } from "react";
 import { BiLike, BiDislike } from "react-icons/bi";
-import axios from "axios";
+import {
+  fetchLikesAndDislikes,
+  likeCommentApi,
+  dislikeCommentApi,
+} from "../../lib/api";
+
+export const useLikeComment = (token: string) => {
+  const [likeCount, setLikeCount] = useState<number | null>(null);
+  const [liked, setLiked] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const likeComment = async (commentId: number) => {
+    if (liked) return; // Prevent multiple likes
+
+    try {
+      const like_count = await likeCommentApi(commentId, token);
+      setLikeCount(like_count);
+      setLiked(true);
+      setError(null);
+    } catch (err) {
+      console.error("Failed to like the comment:", err);
+      setError("Failed to like the comment");
+    }
+  };
+
+  return { likeCount, liked, error, likeComment, setLiked };
+};
+
+export const useDislikeComment = (token: string) => {
+  const [dislikeCount, setDislikeCount] = useState<number | null>(null);
+  const [disliked, setDisliked] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const dislikeComment = async (commentId: number) => {
+    if (disliked) return; // Prevent multiple dislikes
+
+    try {
+      const dislike_count = await dislikeCommentApi(commentId, token);
+      setDislikeCount(dislike_count);
+      setDisliked(true);
+      setError(null);
+    } catch (err) {
+      console.error("Failed to dislike the comment:", err);
+      setError("Failed to dislike the comment");
+    }
+  };
+
+  return { dislikeCount, disliked, error, dislikeComment, setDisliked };
+};
 
 interface CommentItemProps {
   id: number;
@@ -12,7 +62,7 @@ interface CommentItemProps {
   dislikes: number;
   onLike: (id: number) => void;
   onDislike: (id: number) => void;
-  token: string; // Pass the token to the component
+  token: string;
 }
 
 const CommentItem: React.FC<CommentItemProps> = ({
@@ -27,52 +77,56 @@ const CommentItem: React.FC<CommentItemProps> = ({
   onDislike,
   token,
 }) => {
-  const [currentLikes, setCurrentLikes] = useState(likes);
-  const [currentDislikes, setCurrentDislikes] = useState(dislikes);
-  const [liked, setLiked] = useState(false);
-  const [disliked, setDisliked] = useState(false);
+  const [currentLikes, setCurrentLikes] = useState<number>(likes);
+  const [currentDislikes, setCurrentDislikes] = useState<number>(dislikes);
+  const { likeCount, liked, likeComment, setLiked } = useLikeComment(token);
+  const { dislikeCount, disliked, dislikeComment, setDisliked } =
+    useDislikeComment(token);
+
+  useEffect(() => {
+    const loadLikesAndDislikes = async () => {
+      try {
+        const { like_count, dislike_count } = await fetchLikesAndDislikes(id);
+        setCurrentLikes(like_count);
+        setCurrentDislikes(dislike_count);
+      } catch (err) {
+        console.error("Failed to fetch likes and dislikes:", err);
+      }
+    };
+
+    loadLikesAndDislikes();
+  }, [id]);
+
+  useEffect(() => {
+    if (likeCount !== null) {
+      setCurrentLikes(likeCount);
+    }
+  }, [likeCount]);
+
+  useEffect(() => {
+    if (dislikeCount !== null) {
+      setCurrentDislikes(dislikeCount);
+    }
+  }, [dislikeCount]);
 
   const handleLike = async () => {
-    if (liked) return; // Prevent multiple likes
-    try {
-      const response = await axios.post(
-        `http://localhost:3000/comment/${id}/like`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${token}`, // Include token in headers
-          },
-        }
-      );
-      setCurrentLikes(response.data.like_count);
-      setLiked(true);
-      setDisliked(false);
-      onLike(id);
-    } catch (error) {
-      console.error("Failed to like the comment:", error);
-    }
+    await likeComment(id);
+    onLike(id);
+    setLiked(false);
+    setDisliked(false);
+    const { like_count, dislike_count } = await fetchLikesAndDislikes(id);
+    setCurrentLikes(like_count);
+    setCurrentDislikes(dislike_count);
   };
 
   const handleDislike = async () => {
-    console.log("token" + token);
-    if (disliked) return; // Prevent multiple dislikes
-    try {
-      const response = await axios.post(
-        `http://localhost:3000/comment/${id}/dislike`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${token}`, // Include token in headers
-          },
-        }
-      );
-      setCurrentDislikes(response.data.dislike_count);
-      setDisliked(true);
-      setLiked(false);
-      onDislike(id);
-    } catch (error) {
-      console.error("Failed to dislike the comment:", error);
-    }
+    await dislikeComment(id);
+    onDislike(id);
+    setLiked(false);
+    setDisliked(false);
+    const { like_count, dislike_count } = await fetchLikesAndDislikes(id);
+    setCurrentLikes(like_count);
+    setCurrentDislikes(dislike_count);
   };
 
   return (
