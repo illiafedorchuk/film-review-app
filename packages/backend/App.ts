@@ -5,6 +5,7 @@ import cors from "cors";
 import reviewRoter from "./src/Review/reviewRouter";
 import userRouter from "./src/Users/userRouter";
 import authRouter from "./src/Auth/authRouter";
+import commentRouter from "./src/Comments/commentRouter";
 import { globalErrorHandler } from "./src/Utils/ErrorController"; // Adjust the path as necessary
 import movieRouter from "./src/Movies/movieRouter";
 
@@ -25,6 +26,7 @@ app.use("/auth", authRouter);
 app.use("/movie", movieRouter);
 app.use("/user", userRouter);
 app.use("/review", reviewRoter);
+app.use("/comment", commentRouter);
 // Use the global error handler as the last middleware
 app.use(globalErrorHandler);
 

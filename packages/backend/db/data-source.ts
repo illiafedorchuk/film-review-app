@@ -4,6 +4,7 @@ import { DataSource } from "typeorm";
 import { User } from "../src/Users/user";
 import { Movie } from "../src/Movies/movie";
 import { Review } from "../src/Review/review";
+import { Comment } from "../src/Comments/comment";
 
 dotenv.config({ path: "./config.env" });
 console.log(process.env.POSTGRES_HOST);
@@ -15,6 +16,6 @@ export const AppDataSource = new DataSource({
   username: process.env.POSTGRES_USER,
   password: process.env.POSTGRES_PASSWORD,
   database: process.env.POSTGRES_DB,
-  entities: [User, Movie, Review],
+  entities: [User, Movie, Review, Comment],
   synchronize: true,
 });

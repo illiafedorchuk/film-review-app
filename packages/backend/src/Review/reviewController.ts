@@ -5,6 +5,7 @@ import catchAsync from "../Utils/CatchAsync";
 import jwt from "jsonwebtoken";
 import { Review } from "./review";
 import { Movie } from "../Movies/movie";
+import { FindOptionsWhere } from "typeorm";
 
 export class ReviewController {
   static createReview = catchAsync(async (req: Request, res: Response) => {
@@ -31,7 +32,6 @@ export class ReviewController {
       decoded = jwt.verify(token, process.env.JWT_ACCESS_TOKEN_KEY!) as {
         id: string;
       };
-      console.log("Token decoded:", decoded);
     } catch (error) {
       console.log("Token verification failed:", error);
       return res.status(401).json({ message: "Invalid token" });
@@ -50,7 +50,7 @@ export class ReviewController {
 
     const movieRepository = AppDataSource.getRepository(Movie);
     let movie = await movieRepository.findOne({
-      where: { movie_id: parseInt(movieId) },
+      where: { movie_id: parseInt(movieId) } as FindOptionsWhere<Movie>,
     });
 
     if (!movie) {
@@ -104,7 +104,6 @@ export class ReviewController {
       decoded = jwt.verify(token, process.env.JWT_ACCESS_TOKEN_KEY!) as {
         id: string;
       };
-      console.log("Token decoded:", decoded);
     } catch (error) {
       console.log("Token verification failed:", error);
       return res.status(401).json({ message: "Invalid token" });
@@ -116,7 +115,6 @@ export class ReviewController {
     const reviews = await reviewRepository.find({
       where: { movie_id: movieId, userId: parseInt(userId) },
     });
-    console.log("Reviews found:", reviews);
     res.status(200).json(reviews);
   });
 
@@ -134,7 +132,6 @@ export class ReviewController {
       decoded = jwt.verify(token, process.env.JWT_ACCESS_TOKEN_KEY!) as {
         id: string;
       };
-      console.log("Token decoded:", decoded);
     } catch (error) {
       console.log("Token verification failed:", error);
       return res.status(401).json({ message: "Invalid token" });

@@ -4,8 +4,8 @@ import { Movie } from "./movie";
 import { User } from "../Users/user";
 import catchAsync from "../Utils/CatchAsync";
 import jwt from "jsonwebtoken";
-
-type ReactionType = "like" | "love" | "smile" | "wow" | "sad" | "angry";
+import { ReactionType, FastReactionKey } from "../Interfaces/types";
+import { FindOptionsWhere } from "typeorm";
 
 export class MovieController {
   // Method to add a movie to the database
@@ -48,8 +48,6 @@ export class MovieController {
         return res.status(404).json({ message: "User not found" });
       }
 
-      console.log("User found:", user);
-
       // Get movie repository
       const movieRepository = AppDataSource.getRepository(Movie);
 
@@ -66,7 +64,6 @@ export class MovieController {
           genre_ids,
         });
         await movieRepository.save(movie);
-        console.log("Movie saved:", movie);
 
         res
           .status(200)
@@ -117,8 +114,6 @@ export class MovieController {
       return res.status(404).json({ message: "User not found" });
     }
 
-    console.log("User found:", user);
-
     // Get movie repository
     const movieRepository = AppDataSource.getRepository(Movie);
 
@@ -135,7 +130,6 @@ export class MovieController {
         genre_ids,
       });
       await movieRepository.save(movie);
-      console.log("Movie saved:", movie);
     } else {
     }
 
@@ -234,8 +228,6 @@ export class MovieController {
       return res.status(404).json({ message: "User not found" });
     }
 
-    console.log("User found:", user);
-
     // Get movie repository
     const movieRepository = AppDataSource.getRepository(Movie);
 
@@ -271,7 +263,6 @@ export class MovieController {
 
   static removeWatchLater = catchAsync(async (req: Request, res: Response) => {
     const { movie_id } = req.body;
-    console.log("Received movie_id:", movie_id); // Debug log
 
     // Extract access token from cookies
     const token = req.cookies.accessToken;
@@ -301,20 +292,11 @@ export class MovieController {
       return res.status(404).json({ message: "User not found" });
     }
 
-    console.log(
-      "User's watchLaterMovies before removal:",
-      user.watchLaterMovies
-    ); // Debug log
-
     // Update user's watchLaterMovies list
     user.watchLaterMovies = user.watchLaterMovies.filter(
       (movie) => movie != movie_id
     );
 
-    console.log(
-      "User's watchLaterMovies after removal:",
-      user.watchLaterMovies
-    ); // Debug log
 
     await userRepository.save(user);
 
@@ -324,7 +306,8 @@ export class MovieController {
   });
 
   static addFastReaction = catchAsync(async (req: Request, res: Response) => {
-    const { movie_id, reactionType } = req.body;
+    const { movieId } = req.params;
+    const { reactionType } = req.body;
 
     // Extract access token from cookies
     const token = req.cookies.accessToken;
@@ -356,7 +339,9 @@ export class MovieController {
 
     // Get movie repository
     const movieRepository = AppDataSource.getRepository(Movie);
-    const movie = await movieRepository.findOne({ where: { movie_id } });
+    const movie = await movieRepository.findOne({
+      where: { movie_id: parseInt(movieId) } as FindOptionsWhere<Movie>, // Correct typing here
+    });
 
     if (!movie) {
       return res.status(404).json({ message: "Movie not found" });
@@ -371,24 +356,40 @@ export class MovieController {
       angry_count: 0,
     };
 
-    if (userReactionExists(user, movie_id)) {
+    const reactionKey: FastReactionKey =
+      `${reactionType}_count` as FastReactionKey;
+
+    if (MovieController.userReactionExists(user, parseInt(movieId))) {
       // If the user already reacted, remove the previous reaction
-      const previousReactionType = getPreviousReaction(user, movie_id);
+      const previousReactionType = MovieController.getPreviousReaction(
+        user,
+        parseInt(movieId)
+      );
       if (previousReactionType) {
-        fastReactions[`${previousReactionType}_count`]--;
+        const previousReactionKey: FastReactionKey =
+          `${previousReactionType}_count` as FastReactionKey;
+        fastReactions[previousReactionKey]--;
       }
       if (previousReactionType === reactionType) {
         // If the reaction is the same, unset the reaction
-        removeUserReaction(user, movie_id);
+        MovieController.removeUserReaction(user, parseInt(movieId));
       } else {
         // Otherwise, set the new reaction
-        setUserReaction(user, movie_id, reactionType);
-        fastReactions[`${reactionType}_count`]++;
+        MovieController.setUserReaction(
+          user,
+          parseInt(movieId),
+          reactionType as ReactionType
+        );
+        fastReactions[reactionKey]++;
       }
     } else {
       // Add new reaction
-      setUserReaction(user, movie_id, reactionType);
-      fastReactions[`${reactionType}_count`]++;
+      MovieController.setUserReaction(
+        user,
+        parseInt(movieId),
+        reactionType as ReactionType
+      );
+      fastReactions[reactionKey]++;
     }
 
     movie.fastReactions = fastReactions;
@@ -398,33 +399,55 @@ export class MovieController {
     return res.status(200).json(movie.fastReactions);
   });
 
-  // Helper methods to manage user's reactions
+  static getReaction = catchAsync(async (req: Request, res: Response) => {
+    const { movieId } = req.params;
 
-  static userReactionExists(user: User, movie_id: number): boolean {
-    return user.reactions && movie_id in user.reactions;
+    // Get movie repository
+    const movieRepository = AppDataSource.getRepository(Movie);
+    const movie = await movieRepository.findOne({
+      where: { movie_id: parseInt(movieId) } as FindOptionsWhere<Movie>, // Correct typing here
+    });
+
+    if (!movie) {
+      return res.status(404).json({ message: "Movie not found" });
+    }
+
+    return res.status(200).json(
+      movie.fastReactions || {
+        like_count: 0,
+        love_count: 0,
+        smile_count: 0,
+        wow_count: 0,
+        sad_count: 0,
+        angry_count: 0,
+      }
+    );
+  });
+
+  // Helper methods to manage user's reactions
+  static userReactionExists(user: User, movieId: number): boolean {
+    return user.reactions && movieId in user.reactions;
   }
 
-  static getPreviousReaction(
-    user: User,
-    movie_id: number
-  ): ReactionType | null {
-    return user.reactions ? user.reactions[movie_id] : null;
+  static getPreviousReaction(user: User, movieId: number): ReactionType | null {
+    return user.reactions ? user.reactions[movieId] : null;
   }
 
   static setUserReaction(
     user: User,
-    movie_id: number,
+    movieId: number,
     reactionType: ReactionType
   ) {
     if (!user.reactions) {
       user.reactions = {};
     }
-    user.reactions[movie_id] = reactionType;
+    user.reactions[movieId] = reactionType;
   }
 
-  static removeUserReaction(user: User, movie_id: number) {
+  static removeUserReaction(user: User, movieId: number) {
     if (user.reactions) {
-      delete user.reactions[movie_id];
+      delete user.reactions[movieId];
     }
   }
+
 }

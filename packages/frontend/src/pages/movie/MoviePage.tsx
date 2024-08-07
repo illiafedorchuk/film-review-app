@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import React from "react";
 import { useParams } from "react-router-dom";
 import MoviePoster from "../../components/FilmPageComponents/MoviePoster";
 import AppLayout from "../../components/layouts/AppLayout";
@@ -6,38 +7,20 @@ import { DarkModeProvider } from "../../components/layouts/DarkModeContext";
 import MovieCredentials from "../../components/FilmPageComponents/MovieCredentials";
 import ActorsCarousel from "../../components/FilmPageComponents/ActorsCarousel";
 import TrailerVideo from "../../components/FilmPageComponents/TrailerVideo";
-import Comments from "../../components/FilmPageComponents/Comments";
 import FastReaction from "../../components/FilmPageComponents/FastReaction";
 import YourReviewArea from "../../components/FilmPageComponents/YourReviewArea";
 import ActiveSlider from "../../components/MainPageComponents/ActiveSlider";
 import { PLACEHOLDER_URL } from "../../lib/constants";
 import { useMovieDetails } from "../../hooks/useMovieDetails";
 import { useMovieTrailers } from "../../hooks/useMovieTrailers";
-
-const sampleComments = [
-  {
-    id: 1,
-    name: "John Doe",
-    avatarUrl: "https://via.placeholder.com/48",
-    timestamp: "2 hours ago",
-    text: "Great movie! Highly recommended.",
-    likes: 0,
-    dislikes: 0,
-  },
-  {
-    id: 2,
-    name: "Jane Smith",
-    avatarUrl: "https://via.placeholder.com/48",
-    timestamp: "1 day ago",
-    text: "I loved the acting and the storyline.",
-    likes: 0,
-    dislikes: 0,
-  },
-];
+import Comments from "../../components/FilmPageComponents/Comments";
 
 const MoviePage: React.FC = () => {
   const { movieId: id } = useParams<{ movieId: string }>();
   const movieId = parseInt(id!, 10);
+
+  // Add your authentication logic to obtain the token
+  const token = ""; // Replace with logic to get the user's token
 
   const {
     movieDetails,
@@ -90,8 +73,8 @@ const MoviePage: React.FC = () => {
         <div className="px-[6%] sm:pl-[15%] sm:pr-[5%] md:pl-[13%] lg:pl-[15%] lg:pr-[10%] md:pr-[5%] py-10">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-14 ">
             <div className="flex flex-col space-y-4">
-              <MoviePoster movie={movieDetails} token={""} />
-              <FastReaction movieId={movieId} token={""} />
+              <MoviePoster movie={movieDetails} token={token} />
+              <FastReaction movieId={movieId} token={token} />
             </div>
             <div className="md:col-span-2 flex flex-col justify-between">
               <MovieCredentials
@@ -100,9 +83,9 @@ const MoviePage: React.FC = () => {
                   runtime: movieDetails.runtime || 0,
                 }}
                 actorsData={{ cast: actorsData, crew: [] }}
-                token={""}
+                token={token}
               />
-              <YourReviewArea rating={5} details={movieDetails} token={""} />
+              <YourReviewArea rating={5} details={movieDetails} token={token} />
             </div>
           </div>
           <div className="pt-5 text-[var(--text-color)] mb-4">
@@ -138,7 +121,7 @@ const MoviePage: React.FC = () => {
               backdrop_path: movie.backdrop_path ?? PLACEHOLDER_URL,
             }))}
           />
-          <Comments comments={sampleComments} commentsPerPage={5} />
+          <Comments movieId={movieId} token={token} commentsPerPage={5} />
         </div>
       </AppLayout>
     </DarkModeProvider>

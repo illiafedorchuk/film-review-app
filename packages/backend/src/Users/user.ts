@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
-
+import { ReactionType } from "../Interfaces/types";
 @Entity("users")
 export class User {
   static findById(userId: string) {
@@ -44,4 +44,7 @@ export class User {
 
   @Column("simple-array", { nullable: true })
   watchLaterMovies!: number[];
+
+  @Column("json", { nullable: true })
+  reactions!: { [movieId: number]: ReactionType };
 }

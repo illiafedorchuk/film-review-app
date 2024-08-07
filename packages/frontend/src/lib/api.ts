@@ -298,3 +298,86 @@ export const addMovieToDatabase = async (movie: any, token: string) => {
   );
   return response.data;
 };
+
+export const fetchMovieReactions = async (movieId: number, token: string) => {
+  try {
+    const response = await axios.get(
+      `http://localhost:3000/movie/${movieId}/reactions`,
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error("Failed to fetch movie reactions:", error);
+    throw new Error("Failed to fetch movie reactions");
+  }
+};
+
+// Add or update a reaction for a movie
+export const addFastReaction = async (
+  movieId: number,
+  reactionType: string | null,
+  token: string
+) => {
+  try {
+    const response = await axios.post(
+      `http://localhost:3000/movie/${movieId}/react`,
+      { reactionType },
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Failed to update reaction:", error);
+    throw new Error("Failed to update reaction");
+  }
+};
+
+export const fetchComments = async (movieId: number, token: string) => {
+  try {
+    const response = await axios.get(
+      `http://localhost:3000/comment/${movieId}`,
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+
+    // Log the entire response to check its structure
+    console.log("API Response:", response.data);
+
+    // Assume response.data is an object and comments are inside a field named `comments`
+    if (Array.isArray(response.data)) {
+      return response.data;
+    } else if (response.data && Array.isArray(response.data.comments)) {
+      return response.data.comments;
+    } else {
+      throw new Error("Fetched data is not an array");
+    }
+  } catch (error) {
+    console.error("Failed to fetch comments:", error);
+    throw new Error("Failed to fetch comments");
+  }
+};
+
+export const createComment = async (
+  movieId: number,
+  token: string,
+  text: string
+) => {
+  try {
+    const response = await axios.post(
+      `http://localhost:3000/comment/${movieId}/create`,
+      { text },
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Failed to create comment:", error);
+    throw new Error("Failed to create comment");
+  }
+};

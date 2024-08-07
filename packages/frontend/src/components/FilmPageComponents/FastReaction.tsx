@@ -1,7 +1,8 @@
 // FastReactions.tsx
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import { fetchMovieReactions, addFastReaction } from "../../lib/api";
 
+// Define available reactions
 const reactions = [
   { emoji: "👍", label: "like" },
   { emoji: "❤️", label: "love" },
@@ -30,36 +31,34 @@ const FastReaction: React.FC<FastReactionProps> = ({ movieId, token }) => {
   });
 
   useEffect(() => {
-    // Fetch initial reaction counts from the server
-    axios
-      .get(`/api/movies/${movieId}/reactions`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      .then((response) => {
-        setReactionCounts(response.data);
-      })
-      .catch((error) => {
-        console.error("Failed to fetch reactions:", error);
-      });
+    const loadReactions = async () => {
+      try {
+        console.log("Fetching reactions for movieId:", movieId);
+        const data = await fetchMovieReactions(movieId, token);
+        console.log("Fetched reaction counts:", data);
+        setReactionCounts(data);
+      } catch (error) {
+        console.error("Failed to load reactions:", error);
+      }
+    };
+
+    loadReactions();
   }, [movieId, token]);
 
-  const handleReactionClick = (reactionType: string) => {
-    const currentReaction = userReaction;
-    const newReaction = currentReaction === reactionType ? null : reactionType;
-
-    axios
-      .post(
-        `/api/movies/${movieId}/react`,
-        { reactionType: newReaction },
-        { headers: { Authorization: `Bearer ${token}` } }
-      )
-      .then((response) => {
-        setUserReaction(newReaction);
-        setReactionCounts(response.data);
-      })
-      .catch((error) => {
-        console.error("Failed to update reaction:", error);
-      });
+  const handleReactionClick = async (reactionType: string) => {
+    try {
+      console.log("Adding reaction:", reactionType);
+      const newReactionCounts = await addFastReaction(
+        movieId,
+        reactionType,
+        token
+      );
+      console.log("Updated reaction counts:", newReactionCounts);
+      setUserReaction(reactionType === userReaction ? null : reactionType);
+      setReactionCounts(newReactionCounts);
+    } catch (error) {
+      console.error("Failed to update reaction:", error);
+    }
   };
 
   return (
@@ -76,7 +75,10 @@ const FastReaction: React.FC<FastReactionProps> = ({ movieId, token }) => {
             >
               {reaction.emoji}
             </button>
-            <div className="text-sm">{reactionCounts[reaction.label]}</div>
+            {/* Display counter below each reaction */}
+            <div className="text-sm mt-1">
+              {reactionCounts[`${reaction.label}_count`] || 0}
+            </div>
           </div>
         ))}
       </div>

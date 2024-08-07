@@ -63,3 +63,12 @@ export interface Review {
   createdAt: Date;
   updatedAt: Date;
 }
+
+export type ReactionType = "like" | "love" | "smile" | "wow" | "sad" | "angry";
+export type FastReactionKey =
+  | "like_count"
+  | "love_count"
+  | "smile_count"
+  | "wow_count"
+  | "sad_count"
+  | "angry_count";

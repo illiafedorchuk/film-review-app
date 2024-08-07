@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import CommentItem from "./CommentItem";
 import CommentForm from "./CommentForm";
 import Pagination from "./Pagination";
+import { fetchComments } from "../../lib/api";
 
 interface Comment {
   id: number;
+  movie_id: number;
   name: string;
   avatarUrl: string;
   timestamp: string;
@@ -14,34 +16,38 @@ interface Comment {
 }
 
 interface CommentsProps {
-  comments: Comment[];
+  movieId: number;
+  token: string;
   commentsPerPage: number;
 }
 
-const Comments: React.FC<CommentsProps> = ({ comments, commentsPerPage }) => {
-  const [newComment, setNewComment] = useState("");
+const Comments: React.FC<CommentsProps> = ({
+  movieId,
+  token,
+  commentsPerPage,
+}) => {
   const [currentPage, setCurrentPage] = useState(1);
-  const [commentData, setCommentData] = useState(comments);
+  const [commentData, setCommentData] = useState<Comment[]>([]); // Ensure this is an array
+  const [error, setError] = useState<string | null>(null);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setNewComment(e.target.value);
-  };
+  useEffect(() => {
+    const loadComments = async () => {
+      try {
+        const fetchedComments = await fetchComments(movieId, token);
+        if (Array.isArray(fetchedComments)) {
+          // Check if fetchedComments is an array
+          setCommentData(fetchedComments);
+        } else {
+          throw new Error("Fetched data is not an array");
+        }
+      } catch (error) {
+        setError("Failed to load comments. Please try again later.");
+        console.error(error); // Log error for debugging
+      }
+    };
 
-  const handlePostComment = () => {
-    if (newComment.trim()) {
-      const newCommentData = {
-        id: commentData.length + 1,
-        name: "New User",
-        avatarUrl: "https://via.placeholder.com/48",
-        timestamp: new Date().toLocaleString(),
-        text: newComment,
-        likes: 0,
-        dislikes: 0,
-      };
-      setCommentData([...commentData, newCommentData]);
-      setNewComment("");
-    }
-  };
+    loadComments();
+  }, [movieId, token]);
 
   const handleLike = (id: number) => {
     setCommentData((prevComments) =>
@@ -77,29 +83,30 @@ const Comments: React.FC<CommentsProps> = ({ comments, commentsPerPage }) => {
     >
       <h2 className="text-3xl font-extrabold mb-6">Comments</h2>
       <div className="space-y-6">
-        {currentComments.map((comment) => (
-          <CommentItem
-            key={comment.id}
-            id={comment.id}
-            name={comment.name}
-            avatarUrl={comment.avatarUrl}
-            timestamp={comment.timestamp}
-            text={comment.text}
-            likes={comment.likes}
-            dislikes={comment.dislikes}
-            onLike={handleLike}
-            onDislike={handleDislike}
-          />
-        ))}
+        {error ? (
+          <p className="text-red-500">{error}</p>
+        ) : (
+          currentComments.map((comment) => (
+            <CommentItem
+              token={token}
+              key={comment.id}
+              id={comment.id}
+              name={comment.name}
+              avatarUrl={comment.avatarUrl}
+              timestamp={comment.timestamp}
+              text={comment.text}
+              likes={comment.likes}
+              dislikes={comment.dislikes}
+              onLike={handleLike}
+              onDislike={handleDislike}
+            />
+          ))
+        )}
       </div>
-      <CommentForm
-        newComment={newComment}
-        onInputChange={handleInputChange}
-        onPostComment={handlePostComment}
-      />
+      <CommentForm movieId={movieId} token={token} />
       <div className="mt-6 flex justify-center">
         <Pagination
-          totalComments={comments.length}
+          totalComments={commentData.length}
           commentsPerPage={commentsPerPage}
           paginate={paginate}
           currentPage={currentPage}
