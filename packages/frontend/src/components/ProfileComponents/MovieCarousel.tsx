@@ -7,6 +7,7 @@ import "slick-carousel/slick/slick-theme.css";
 
 interface Movie {
   id: number;
+  movie_id: number;
   title?: string;
   poster_path?: string;
   release_date?: string;

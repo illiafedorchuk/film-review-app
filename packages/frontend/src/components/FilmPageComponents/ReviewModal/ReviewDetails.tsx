@@ -1,37 +1,38 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useRef } from "react";
+import React from "react";
 import ReviewChart from "./ReviewChart";
 
 interface ReviewDetailsProps {
   movie_Id: number;
+  reviewId: number;
   ratings: { [key: string]: number };
   text: string;
   backdropUrl: string;
   posterUrl: string;
   title: string;
   onEdit: () => void;
+  onDelete: () => void; // Add the onDelete prop
 }
 
 const ReviewDetails: React.FC<ReviewDetailsProps> = ({
-  movie_Id,
   ratings = {},
   text,
   backdropUrl,
   posterUrl,
   title,
   onEdit,
+  onDelete, // Destructure the onDelete prop
 }) => {
-  console.log("id:", movie_Id);
   const backdropFullUrl = "https://image.tmdb.org/t/p/original" + backdropUrl;
   const posterFullUrl = "https://image.tmdb.org/t/p/original" + posterUrl;
 
+  
   const averageScore =
     Object.values(ratings).reduce((sum, value) => sum + value, 0) /
-    (Object.keys(ratings).length || 1); // Prevent division by zero
+    (Object.keys(ratings).length || 1);
 
-  const reviewRef = useRef<HTMLDivElement>(null);
   return (
-    <div ref={reviewRef}>
+    <div>
       <div className="relative mb-4">
         <img
           src={backdropFullUrl}
@@ -61,7 +62,7 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = ({
         <div className="w-full sm:w-2/3 mt-4 sm:mt-0 bg-[var(--input-bg-color)] p-3 rounded-lg max-h-48 overflow-y-auto">
           <h2 className="text-xl font-bold mb-2 ">Your Review</h2>
           <p className="break-words">
-            {text || "Cmon bro, write there something..."}{" "}
+            {text || "Cmon bro, write there something..."}
           </p>
         </div>
         <div className="w-full sm:w-1/3 flex flex-col items-center justify-center md:ml-4 mt-10 rotate-6">
@@ -73,13 +74,20 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = ({
           </div>
         </div>
       </div>
-
-      <button
-        className="bg-violet-500 text-white py-2 px-4 rounded-md"
-        onClick={onEdit}
-      >
-        Edit
-      </button>
+      <div className="flex justify-between">
+        <button
+          className="bg-violet-500 text-white py-2 px-4 rounded-md"
+          onClick={onEdit}
+        >
+          Edit
+        </button>
+        <button
+          className="bg-red-500 text-white py-2 px-4 rounded-md mr-4"
+          onClick={onDelete} // Trigger delete action here
+        >
+          Delete
+        </button>
+      </div>
     </div>
   );
 };

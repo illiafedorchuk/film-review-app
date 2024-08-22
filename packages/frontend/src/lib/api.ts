@@ -420,3 +420,104 @@ export const fetchLikesAndDislikes = async (commentId: number) => {
     throw new Error("Failed to fetch likes and dislikes");
   }
 };
+
+export const deleteCommentApi = async (commentId: number, token: string) => {
+  const response = await axios.delete(
+    `http://localhost:3000/comment/${commentId}/delete`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  return response.data;
+};
+
+// API call to fetch the current user's information
+export const fetchCurrentUser = async (token: string) => {
+  try {
+    const response = await axios.get("http://localhost:3000/user/me", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      withCredentials: true, // Ensure cookies are sent with the request
+    });
+    return response.data; // Returns { id, name, avatarUrl, isAdmin }
+  } catch (error) {
+    console.error("Failed to fetch current user:", error);
+    throw new Error("Failed to fetch current user");
+  }
+};
+
+export const fetchWatchLaterMovies = async (token: string) => {
+  try {
+    const response = await axios.get(
+      `http://localhost:3000/movie/getWatchLaterMovies`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        withCredentials: true,
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Failed to fetch current user:", error);
+    throw new Error("Failed to fetch current user");
+  }
+};
+
+export const fetchRatedMovies = async (token: string) => {
+  try {
+    const response = await axios.get(
+      `http://localhost:3000/movie/getRatedMovies`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        withCredentials: true,
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Failed to fetch current user:", error);
+    throw new Error("Failed to fetch current user");
+  }
+};
+
+export const fetchBookmarkedMovies = async (token: string) => {
+  try {
+    const response = await axios.get(
+      `http://localhost:3000/movie/getBookmarkedMovies`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        withCredentials: true,
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Failed to fetch current user:", error);
+    throw new Error("Failed to fetch current user");
+  }
+};
+
+export const deleteReview = async (reviewId: number, token: string) => {
+  try {
+    const response = await axios.delete(
+      `http://localhost:3000/review/delete-review/${reviewId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        withCredentials: true, // Include cookies in the request
+      }
+    );
+
+    return response.data; // Return the response data
+  } catch (error) {
+    console.error("Failed to delete review:", error);
+    throw new Error("Failed to delete review");
+  }
+};

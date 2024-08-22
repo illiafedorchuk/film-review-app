@@ -1,10 +1,12 @@
-// Watchlist.tsx
-import React from "react";
+import React, { useEffect, useState } from "react";
 import FilmCard from "./FilmCard";
 import MovieCarousel from "./MovieCarousel";
+import { fetchWatchLaterMovies } from "../../lib/api";
+import { useNavigate } from "react-router-dom";
 
 interface Movie {
   id: number;
+  movie_id: number;
   title?: string;
   poster_path?: string;
   release_date?: string;
@@ -12,52 +14,59 @@ interface Movie {
   genre_ids?: number[];
 }
 
-const watchlist: Movie[] = [
-  {
-    id: 4,
-    title: "Avatar",
-    poster_path: "/6EiRUJpuoeQPghrs3YNktfnqOVh.jpg",
-  },
-  {
-    id: 5,
-    title: "Avengers: Endgame",
-    poster_path: "/or06FN3Dka5tukK1e9sl16pB3iy.jpg",
-  },
-  {
-    id: 6,
-    title: "The Matrix",
-    poster_path: "/f89U3ADr1oiB1s9GkdPOEpXUk5H.jpg",
-  },
-  {
-    id: 7,
-    title: "Inception",
-    poster_path: "/qJ2tW6WMUDux911r6m7haRef0WH.jpg",
-  },
-  {
-    id: 8,
-    title: "Interstellar",
-    poster_path: "/gEU2QniE6E77NI6lCU6MxlNBvIx.jpg",
-  },
-  {
-    id: 9,
-    title: "The Dark Knight",
-    poster_path: "/qOd3JgQLp1nA4BWak8cMB8Kmcda.jpg",
-  },
-];
+const Watchlist: React.FC<{ token: string }> = ({ token }) => {
+  const [watchlist, setWatchlist] = useState<Movie[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
+  useEffect(() => {
+    const loadWatchlist = async () => {
+      try {
+        const data = await fetchWatchLaterMovies(token);
+        setWatchlist(data.watchLaterMovies);
+      } catch (error) {
+        setError("Failed to load watchlist. Please try again later.");
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-const Watchlist: React.FC = () => {
+    loadWatchlist();
+  }, [token]);
+
+  if (loading) {
+    return <p className="text-center">Loading your watchlist...</p>;
+  }
+
+  if (error) {
+    return <p className="text-red-500 text-center">{error}</p>;
+  }
+
+  const handleShowMore = () => {
+    navigate("/profile/me/watchlist");
+  };
+
   return (
     <div className="mt-6 w-full bg-[var(--input-bg-color)] p-6 rounded-xl shadow-lg">
       <h2 className="text-xl font-bold mb-4">Watchlist</h2>
       {watchlist.length > 0 ? (
         <>
-          <div className="hidden lg:grid grid-cols-5 gap-4">
+          <div className="hidden lg:grid grid-cols-6 gap-4">
             {watchlist.slice(0, 5).map((movie) => (
               <FilmCard key={movie.id} movie={movie} />
             ))}
           </div>
           <div className="lg:hidden">
             <MovieCarousel movies={watchlist.slice(0, 5)} />
+          </div>
+          <div className="flex justify-end">
+            <button
+              className="text-violet-500 hover:underline"
+              onClick={handleShowMore}
+            >
+              Show more →
+            </button>
           </div>
         </>
       ) : (

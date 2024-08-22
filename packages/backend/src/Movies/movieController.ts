@@ -5,7 +5,8 @@ import { User } from "../Users/user";
 import catchAsync from "../Utils/CatchAsync";
 import jwt from "jsonwebtoken";
 import { ReactionType, FastReactionKey } from "../Interfaces/types";
-import { FindOptionsWhere } from "typeorm";
+import { FindOptionsWhere, In } from "typeorm";
+import { Review } from "../Review/review";
 
 export class MovieController {
   // Method to add a movie to the database
@@ -297,7 +298,6 @@ export class MovieController {
       (movie) => movie != movie_id
     );
 
-
     await userRepository.save(user);
 
     res
@@ -450,4 +450,152 @@ export class MovieController {
     }
   }
 
+  static getWatchLaterMovies = catchAsync(
+    async (req: Request, res: Response) => {
+      const token = req.cookies.accessToken;
+      if (!token) {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
+
+      let decoded;
+      try {
+        decoded = jwt.verify(token, process.env.JWT_ACCESS_TOKEN_KEY!) as {
+          id: string;
+        };
+      } catch (error) {
+        return res.status(401).json({ message: "Invalid token" });
+      }
+
+      const userId = decoded.id;
+
+      const userRepository = AppDataSource.getRepository(User);
+      const user = await userRepository.findOne({
+        where: { id: parseInt(userId) },
+      });
+
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      const movieRepository = AppDataSource.getRepository(Movie);
+
+      // Fetch full movie details using the findBy method and In operator
+      const watchLaterMovies = await movieRepository.findBy({
+        movie_id: In(user.watchLaterMovies),
+      });
+
+      return res.status(200).json({
+        watchLaterMovies,
+      });
+    }
+  );
+
+  static getRatedMovies = catchAsync(async (req: Request, res: Response) => {
+    const token = req.cookies.accessToken;
+    if (!token) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    let decoded;
+    try {
+      decoded = jwt.verify(token, process.env.JWT_ACCESS_TOKEN_KEY!) as {
+        id: string;
+      };
+    } catch (error) {
+      console.error("Token verification failed:", error);
+      return res.status(401).json({ message: "Invalid token" });
+    }
+
+    const userId = decoded.id;
+
+    // Find the user
+    const userRepository = AppDataSource.getRepository(User);
+    const user = await userRepository.findOne({
+      where: { id: parseInt(userId) },
+    });
+
+    if (!user) {
+      console.error("User not found");
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Check if user has rated movies
+    if (!user.ratedMovies || user.ratedMovies.length === 0) {
+      console.log("User has no rated movies");
+      return res.status(200).json({ ratedMovies: [] });
+    }
+
+    const movieRepository = AppDataSource.getRepository(Movie);
+
+    try {
+      // Fetch full movie details and user ratings using a join between Movie and Review
+      const ratedMovies = await movieRepository
+        .createQueryBuilder("movie")
+        .innerJoinAndSelect(
+          "review",
+          "review",
+          "review.movie_id = movie.movie_id AND review.userId = :userId",
+          { userId }
+        )
+        .select([
+          "movie.movie_id",
+          "movie.title",
+          "movie.poster_path",
+          "review.rating AS movieRating",
+        ])
+        .where("movie.movie_id IN (:...movieIds)", {
+          movieIds: user.ratedMovies,
+        })
+        .getRawMany();
+
+      // Log the result to ensure data is returned
+      console.log("Rated movies fetched:", ratedMovies);
+
+      return res.status(200).json({
+        ratedMovies,
+      });
+    } catch (error) {
+      console.error("Failed to fetch rated movies:", error);
+      return res.status(500).json({ message: "Failed to fetch rated movies" });
+    }
+  });
+
+  static getBookmarkedMovies = catchAsync(
+    async (req: Request, res: Response) => {
+      const token = req.cookies.accessToken;
+      if (!token) {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
+
+      let decoded;
+      try {
+        decoded = jwt.verify(token, process.env.JWT_ACCESS_TOKEN_KEY!) as {
+          id: string;
+        };
+      } catch (error) {
+        return res.status(401).json({ message: "Invalid token" });
+      }
+
+      const userId = decoded.id;
+
+      const userRepository = AppDataSource.getRepository(User);
+      const user = await userRepository.findOne({
+        where: { id: parseInt(userId) },
+      });
+
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      const movieRepository = AppDataSource.getRepository(Movie);
+
+      // Fetch full movie details using the findBy method and In operator
+      const bookmarkedMovies = await movieRepository.findBy({
+        movie_id: In(user.bookmarkedMovies),
+      });
+      return res.status(200).json({
+        bookmarkedMovies,
+      });
+    }
+  );
 }

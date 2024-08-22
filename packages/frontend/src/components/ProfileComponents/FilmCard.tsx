@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 interface Movie {
   id: number;
+  movie_id: number;
   title?: string;
   poster_path?: string;
   release_date?: string;
@@ -18,7 +19,7 @@ const FilmCard: React.FC<FilmCardProps> = ({ movie }) => {
   const navigate = useNavigate();
 
   const handleClick = () => {
-    navigate(`/movie/${movie.id}`);
+    navigate(`/movie/${movie.movie_id}`);
   };
 
   return (

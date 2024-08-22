@@ -11,4 +11,6 @@ router.get(
   "/:commentId/getLikesAndDislikes",
   CommentController.getCommentLikesAndDislike
 );
+router.delete("/:commentId/delete", CommentController.deleteComment);
+
 export default router;

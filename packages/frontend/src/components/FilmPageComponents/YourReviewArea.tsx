@@ -22,6 +22,7 @@ const YourReviewArea: React.FC<ReviewProps> = ({ details, token }) => {
         if (reviews && reviews.length > 0) {
           const review = reviews[0];
           setUserReview({
+            id: review.id, // Capture the reviewId here
             ratings: review.criteriaRatings || {},
             text: review.comment || "",
             rating: review.rating || 0,
@@ -30,6 +31,7 @@ const YourReviewArea: React.FC<ReviewProps> = ({ details, token }) => {
         } else {
           // Initialize with default ratings
           setUserReview({
+            id: null, // No reviewId when no review exists
             ratings: {
               Cast: 5,
               Plot: 5,
@@ -43,10 +45,10 @@ const YourReviewArea: React.FC<ReviewProps> = ({ details, token }) => {
           });
           setHasRated(false);
         }
-        console.log("User Review Loaded:", reviews); // Debug log
       } catch (error) {
         console.error("Error loading user review:", error);
         setUserReview({
+          id: null, // No reviewId in case of an error
           ratings: {
             Cast: 5,
             Plot: 5,
@@ -61,9 +63,8 @@ const YourReviewArea: React.FC<ReviewProps> = ({ details, token }) => {
         setHasRated(false);
       }
     };
-
     loadUserReview();
-  }, [details.id, token]);
+  }, [details.id, token, userReview]);
 
   const handleClose = () => setModalOpen(false);
 
@@ -78,6 +79,7 @@ const YourReviewArea: React.FC<ReviewProps> = ({ details, token }) => {
         <ReviewModal
           open={isModalOpen}
           onClose={handleClose}
+          reviewId={userReview.id} // Pass the reviewId to the modal
           hasReview={hasRated}
           movieDetails={{
             movie_Id: details.id,
@@ -106,7 +108,7 @@ const YourReviewArea: React.FC<ReviewProps> = ({ details, token }) => {
                     You rated this film
                   </span>
                   <span className="font-bold text-xl ml-2 text-yellow-300">
-                    {userRating.toFixed(1)}
+                    {+userRating.toFixed(1)}
                   </span>
                   <span className="ml-1 text-xl font-bold text-yellow-300">
                     / 10

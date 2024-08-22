@@ -46,3 +46,15 @@ export interface MovieDetails {
   poster_path: string;
   runtime?: number;
 }
+
+export interface User {
+  id: number;
+  name: string;
+  avatarUrl: string;
+  isAdmin: boolean;
+  createdAt: string;
+  watchLaterMovies: number[];
+  bookmarkedMovies: number[];
+  aboutMe?: string;
+  location?: string;
+}

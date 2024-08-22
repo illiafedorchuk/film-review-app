@@ -9,7 +9,9 @@ router.put("/unbookmark", MovieController.unbookMovie);
 router.post("/add-watchlist", MovieController.addWatchlist);
 router.put("/remove-watchlist", MovieController.removeWatchLater);
 router.post("/add", MovieController.addMovieToDatabase);
-
+router.get("/getWatchLaterMovies", MovieController.getWatchLaterMovies);
+router.get("/getRatedMovies", MovieController.getRatedMovies);
+router.get("/getBookmarkedMovies", MovieController.getBookmarkedMovies);
 // Add these routes for reactions
 router.get("/:movieId/reactions", MovieController.getReaction); // Ensure this line exists
 router.post("/:movieId/react", MovieController.addFastReaction);

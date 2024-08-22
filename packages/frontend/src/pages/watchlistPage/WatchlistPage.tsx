@@ -1,7 +1,10 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import React, { useEffect, useState } from "react";
 import { DarkModeProvider } from "../../components/layouts/DarkModeContext";
 import AppLayout from "../../components/layouts/AppLayout";
 import FilmPreviewCard from "../../components/MainPageComponents/FilmPreviewCard";
 import { GENRE_MAP } from "../../lib/constants";
+import { fetchWatchLaterMovies } from "../../lib/api"; // Import the fetchWatchlist function
 
 interface Movie {
   id: number;
@@ -12,43 +15,38 @@ interface Movie {
   genre_ids?: number[];
 }
 
-const watchlist: Movie[] = [
-  {
-    id: 4,
-    title: "Avatar",
-    poster_path: "/6EiRUJpuoeQPghrs3YNktfnqOVh.jpg",
-    release_date: "2009",
-  },
-  {
-    id: 5,
-    title: "Avengers: Endgame",
-    poster_path: "/or06FN3Dka5tukK1e9sl16pB3iy.jpg",
-  },
-  {
-    id: 6,
-    title: "The Matrix",
-    poster_path: "/f89U3ADr1oiB1s9GkdPOEpXUk5H.jpg",
-  },
-  {
-    id: 7,
-    title: "Inception",
-    poster_path: "/qJ2tW6WMUDux911r6m7haRef0WH.jpg",
-  },
-  {
-    id: 8,
-    title: "Interstellar",
-    poster_path: "/gEU2QniE6E77NI6lCU6MxlNBvIx.jpg",
-  },
-  {
-    id: 9,
-    title: "The Dark Knight",
-    poster_path: "/qJ2tW6WMUDux911r6m7haRef0WH.jpg",
-  },
-];
-
 const genreMap: { [key: number]: string } = GENRE_MAP;
 
 function WatchlistPage() {
+  const token = "";
+  const [watchlist, setWatchlist] = useState<Movie[]>([]); // State to store the watchlist
+  const [loading, setLoading] = useState<boolean>(true); // Loading state
+  const [error, setError] = useState<string | null>(null); // Error state
+
+  useEffect(() => {
+    const loadWatchlist = async () => {
+      try {
+        const data = await fetchWatchLaterMovies(token);
+        setWatchlist(data.watchLaterMovies); // Assuming the API returns { watchLaterMovies: Movie[] }
+      } catch (error) {
+        setError("Failed to load watchlist. Please try again later.");
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadWatchlist();
+  }, [token]);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>{error}</div>;
+  }
+
   return (
     <DarkModeProvider>
       <AppLayout>
@@ -57,13 +55,17 @@ function WatchlistPage() {
             My Watchlist
           </h1>
           <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
-            {watchlist.map((movie) => (
-              <FilmPreviewCard
-                key={movie.id}
-                movie={movie}
-                genreMap={genreMap}
-              />
-            ))}
+            {watchlist.length > 0 ? (
+              watchlist.map((movie) => (
+                <FilmPreviewCard
+                  key={movie.id}
+                  movie={movie}
+                  genreMap={genreMap}
+                />
+              ))
+            ) : (
+              <div>No movies in your watchlist</div>
+            )}
           </div>
         </div>
       </AppLayout>

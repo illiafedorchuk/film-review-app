@@ -80,6 +80,15 @@ export class ReviewController {
     });
     console.log("New review object created:", newReview);
 
+    // Update user's bookmarked movies list
+    if (!user.ratedMovies) {
+      user.ratedMovies = [];
+    }
+
+    user.ratedMovies.push(movie.movie_id);
+
+    await userRepository.save(user);
+
     try {
       await reviewRepository.save(newReview);
       console.log("Review saved:", newReview);
@@ -95,7 +104,6 @@ export class ReviewController {
     const token = req.cookies.accessToken;
 
     if (!token) {
-      console.log("No token provided");
       return res.status(401).json({ message: "Unauthorized" });
     }
 
@@ -105,7 +113,6 @@ export class ReviewController {
         id: string;
       };
     } catch (error) {
-      console.log("Token verification failed:", error);
       return res.status(401).json({ message: "Invalid token" });
     }
 
@@ -115,7 +122,8 @@ export class ReviewController {
     const reviews = await reviewRepository.find({
       where: { movie_id: movieId, userId: parseInt(userId) },
     });
-    res.status(200).json(reviews);
+
+    res.status(200).json(reviews); // Return reviews, including reviewId
   });
 
   static updateReview = catchAsync(async (req: Request, res: Response) => {
@@ -161,6 +169,48 @@ export class ReviewController {
       res.status(200).json(review);
     } catch (error) {
       console.log("Error updating review:", error);
+      res.status(500).json({ message: "Internal Server Error" });
+    }
+  });
+
+  static deleteReview = catchAsync(async (req: Request, res: Response) => {
+    const { reviewId } = req.params; // Get movieId from params
+    const token = req.cookies.accessToken; // Get token from cookies
+
+    if (!token) {
+      console.log("No token provided");
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    let decoded;
+    try {
+      decoded = jwt.verify(token, process.env.JWT_ACCESS_TOKEN_KEY!) as {
+        id: string;
+      };
+    } catch (error) {
+      console.log("Token verification failed:", error);
+      return res.status(401).json({ message: "Invalid token" });
+    }
+
+    const userId = decoded.id;
+    const reviewRepository = AppDataSource.getRepository(Review);
+
+    // Find the review by movieId and userId
+    const review = await reviewRepository.findOne({
+      where: { id: parseInt(reviewId) }, // Ensure userId and movieId match
+    });
+
+    if (!review) {
+      console.log("Review not found");
+      return res.status(404).json({ message: "Review not found" });
+    }
+
+    try {
+      await reviewRepository.remove(review); // Remove the review from the database
+      console.log("Review deleted:", review);
+      res.status(200).json({ message: "Review deleted successfully" });
+    } catch (error) {
+      console.log("Error deleting review:", error);
       res.status(500).json({ message: "Internal Server Error" });
     }
   });

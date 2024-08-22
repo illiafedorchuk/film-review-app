@@ -1,9 +1,8 @@
-// Comments.tsx
 import React, { useState, useEffect } from "react";
 import CommentItem from "./CommentItem";
 import CommentForm from "./CommentForm";
 import Pagination from "./Pagination";
-import { fetchComments } from "../../lib/api"; // Import from your API file
+import { fetchComments } from "../../lib/api";
 
 interface Comment {
   id: number;
@@ -11,7 +10,7 @@ interface Comment {
   text: string;
   likes: number;
   dislikes: number;
-  createdAt: string; // Added timestamp field
+  createdAt: string;
   user: {
     id: number;
     name: string;
@@ -23,12 +22,14 @@ interface CommentsProps {
   movieId: number;
   token: string;
   commentsPerPage: number;
+  currentUserId: number; // The ID of the current user
 }
 
 const Comments: React.FC<CommentsProps> = ({
   movieId,
   token,
   commentsPerPage,
+  currentUserId,
 }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [commentData, setCommentData] = useState<Comment[]>([]);
@@ -37,11 +38,11 @@ const Comments: React.FC<CommentsProps> = ({
   useEffect(() => {
     const loadComments = async () => {
       try {
-        const fetchedComments = await fetchComments(movieId, token); // Use the fetchComments function
-        setCommentData(fetchedComments); // Update state with fetched comments
+        const fetchedComments = await fetchComments(movieId, token);
+        setCommentData(fetchedComments);
       } catch (error) {
         setError("Failed to load comments. Please try again later.");
-        console.error(error); // Log error for debugging
+        console.error(error);
       }
     };
 
@@ -63,6 +64,12 @@ const Comments: React.FC<CommentsProps> = ({
           ? { ...comment, dislikes: comment.dislikes + 1 }
           : comment
       )
+    );
+  };
+
+  const handleDelete = (id: number) => {
+    setCommentData((prevComments) =>
+      prevComments.filter((comment) => comment.id !== id)
     );
   };
 
@@ -89,6 +96,8 @@ const Comments: React.FC<CommentsProps> = ({
             <CommentItem
               key={comment.id}
               id={comment.id}
+              userId={comment.user.id}
+              currentUserId={currentUserId}
               name={comment.user.name}
               avatarUrl={comment.user.avatarUrl}
               timestamp={new Date(comment.createdAt).toLocaleString()}
@@ -97,7 +106,8 @@ const Comments: React.FC<CommentsProps> = ({
               dislikes={comment.dislikes}
               onLike={handleLike}
               onDislike={handleDislike}
-              token={token} // Pass token to CommentItem
+              onDelete={handleDelete}
+              token={token}
             />
           ))
         )}

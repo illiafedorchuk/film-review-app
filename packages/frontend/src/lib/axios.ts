@@ -20,7 +20,6 @@ axios.interceptors.request.use(async (config) => {
   return config;
 });
 
-// Response interceptor for handling responses globally
 axios.interceptors.response.use(
   (response) => {
     // Handle a successful response

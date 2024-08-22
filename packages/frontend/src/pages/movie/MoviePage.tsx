@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import MoviePoster from "../../components/FilmPageComponents/MoviePoster";
 import AppLayout from "../../components/layouts/AppLayout";
@@ -14,14 +14,14 @@ import { PLACEHOLDER_URL } from "../../lib/constants";
 import { useMovieDetails } from "../../hooks/useMovieDetails";
 import { useMovieTrailers } from "../../hooks/useMovieTrailers";
 import Comments from "../../components/FilmPageComponents/Comments";
+import { fetchCurrentUser } from "../../lib/api";
 
 const MoviePage: React.FC = () => {
   const { movieId: id } = useParams<{ movieId: string }>();
   const movieId = parseInt(id!, 10);
 
-  // Add your authentication logic to obtain the token
-  const token = ""; // Replace with logic to get the user's token
-
+  const [currentUser, setCurrentUser] = useState<any>(null);
+  const token = localStorage.getItem("accessToken") || "";
   const {
     movieDetails,
     actorsData,
@@ -41,6 +41,19 @@ const MoviePage: React.FC = () => {
     ...movie,
     title: movie.original_title,
   }));
+
+  useEffect(() => {
+    const loadCurrentUser = async () => {
+      try {
+        const userData = await fetchCurrentUser(token);
+        setCurrentUser(userData);
+      } catch (error) {
+        console.error("Failed to load current user:", error);
+      }
+    };
+
+    loadCurrentUser();
+  }, [token]);
 
   const findTrailerKey = (trailers: any[]): string | null => {
     if (!trailers || trailers.length === 0) return null;
@@ -121,7 +134,14 @@ const MoviePage: React.FC = () => {
               backdrop_path: movie.backdrop_path ?? PLACEHOLDER_URL,
             }))}
           />
-          <Comments movieId={movieId} token={token} commentsPerPage={5} />
+          {currentUser && (
+            <Comments
+              movieId={movieId}
+              token={token}
+              commentsPerPage={5}
+              currentUserId={currentUser.id}
+            />
+          )}
         </div>
       </AppLayout>
     </DarkModeProvider>

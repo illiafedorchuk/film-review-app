@@ -7,7 +7,7 @@ interface Movie {
   title?: string;
   poster_path?: string;
   release_date?: string;
-  vote_average?: number;
+  vote_average?: number; // vote_average can be undefined
   genre_ids?: number[];
 }
 
@@ -84,7 +84,7 @@ const FilmPreviewCard: React.FC<FilmPreviewCardProps> = ({ movie }) => {
           alt={movie.title}
           className="h-64 w-48 object-cover rounded-lg shadow-xl"
         />
-        {movie.vote_average !== undefined && (
+        {typeof movie.vote_average === "number" && (
           <div
             className={`absolute top-0 left-0 ${getRatingBgColor(
               movie.vote_average

@@ -1,10 +1,13 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState } from "react";
 import ReviewForm from "./ReviewForm";
 import ReviewDetails from "./ReviewDetails";
 import { BiX } from "react-icons/bi";
+import { deleteReview } from "../../../lib/api"; // Import the deleteReview function
 
 interface ReviewModalProps {
   open: boolean;
+  reviewId: number;
   onClose: () => void;
   hasReview: boolean;
   movieDetails: {
@@ -16,6 +19,7 @@ interface ReviewModalProps {
     posterUrl: string;
     genre_ids: number[];
     review?: {
+      id: number;
       ratings: { [key: string]: number };
       text: string;
       rating: number;
@@ -25,12 +29,14 @@ interface ReviewModalProps {
 }
 
 const ReviewModal: React.FC<ReviewModalProps> = ({
+  reviewId,
   open,
   onClose,
   hasReview,
   movieDetails,
   token,
 }) => {
+  console.log("rr" + movieDetails?.review?.id); // Debug log
   const [isEditing, setIsEditing] = useState(false);
   const [currentRatings, setCurrentRatings] = useState(
     movieDetails.review?.ratings || {
@@ -57,6 +63,22 @@ const ReviewModal: React.FC<ReviewModalProps> = ({
     setIsEditing(false);
   };
 
+  const handleDelete = async () => {
+    if (!reviewId) {
+      console.log(reviewId);
+      alert("No review to delete.");
+      return;
+    }
+
+    try {
+      await deleteReview(reviewId, token); // Call the deleteReview API
+      alert("Review deleted successfully");
+      onClose(); // Close the modal after successful deletion
+    } catch (error) {
+      alert("Failed to delete the review.");
+    }
+  };
+
   return (
     open && (
       <div className="fixed inset-0 flex justify-center items-center z-50 text-[var(--text-color)]">
@@ -80,6 +102,8 @@ const ReviewModal: React.FC<ReviewModalProps> = ({
                 text={reviewText}
                 title={movieDetails.title}
                 onEdit={handleEdit}
+                reviewId={reviewId || 0} // Pass the correct reviewId
+                onDelete={handleDelete} // Pass the delete handler
               />
             ) : (
               <ReviewForm

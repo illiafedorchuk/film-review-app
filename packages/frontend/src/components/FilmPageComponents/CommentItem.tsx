@@ -1,11 +1,10 @@
-// CommentItem.tsx
-
 import React, { useEffect, useState } from "react";
 import { BiLike, BiDislike } from "react-icons/bi";
 import {
   fetchLikesAndDislikes,
   likeCommentApi,
   dislikeCommentApi,
+  deleteCommentApi,
 } from "../../lib/api";
 
 export const useLikeComment = (token: string) => {
@@ -54,6 +53,8 @@ export const useDislikeComment = (token: string) => {
 
 interface CommentItemProps {
   id: number;
+  userId: number; // The ID of the comment's author
+  currentUserId: number; // The ID of the current user
   name: string;
   avatarUrl: string;
   timestamp: string;
@@ -62,11 +63,14 @@ interface CommentItemProps {
   dislikes: number;
   onLike: (id: number) => void;
   onDislike: (id: number) => void;
+  onDelete: (id: number) => void;
   token: string;
 }
 
 const CommentItem: React.FC<CommentItemProps> = ({
   id,
+  userId,
+  currentUserId,
   name,
   avatarUrl,
   timestamp,
@@ -75,6 +79,7 @@ const CommentItem: React.FC<CommentItemProps> = ({
   dislikes,
   onLike,
   onDislike,
+  onDelete,
   token,
 }) => {
   const [currentLikes, setCurrentLikes] = useState<number>(likes);
@@ -129,6 +134,15 @@ const CommentItem: React.FC<CommentItemProps> = ({
     setCurrentDislikes(dislike_count);
   };
 
+  const handleDelete = async () => {
+    try {
+      await deleteCommentApi(id, token);
+      onDelete(id);
+    } catch (error) {
+      console.error("Failed to delete the comment:", error);
+    }
+  };
+
   return (
     <div className="flex items-start space-x-4 bg-[var(--input-bg-color)] p-4 rounded-lg shadow">
       <img
@@ -138,7 +152,7 @@ const CommentItem: React.FC<CommentItemProps> = ({
       />
       <div className="flex-1">
         <div className="flex justify-between items-center">
-          <h3 className="font-bold text-violet-600">{name}</h3>
+          <h3 className="font-bold text-violet-500">{name}</h3>
           <span className="text-sm" style={{ color: "var(--text-color)" }}>
             {timestamp}
           </span>
@@ -174,6 +188,14 @@ const CommentItem: React.FC<CommentItemProps> = ({
             <BiDislike className="w-5 h-5 mr-1" />
             {currentDislikes}
           </button>
+          {currentUserId === userId && (
+            <button
+              onClick={handleDelete}
+              className="text-red-500 text-md focus:outline-none w-full text-end justify-self-end font-bold"
+            >
+              x
+            </button>
+          )}
         </div>
       </div>
     </div>

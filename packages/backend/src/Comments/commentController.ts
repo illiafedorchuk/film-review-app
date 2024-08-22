@@ -5,7 +5,6 @@ import { User } from "../Users/user";
 import { Comment } from "./comment";
 import catchAsync from "../Utils/CatchAsync";
 import jwt from "jsonwebtoken";
-import { FindOptionsWhere } from "typeorm";
 
 export class CommentController {
   static createComment = catchAsync(async (req: Request, res: Response) => {
@@ -185,4 +184,44 @@ export class CommentController {
       });
     }
   );
+
+  static deleteComment = catchAsync(async (req: Request, res: Response) => {
+    const { commentId } = req.params;
+    const token = req.cookies.accessToken;
+
+    if (!token) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    let decoded;
+    try {
+      decoded = jwt.verify(token, process.env.JWT_ACCESS_TOKEN_KEY!) as {
+        id: string;
+        isAdmin: boolean;
+      };
+    } catch (error) {
+      return res.status(401).json({ message: "Invalid token" });
+    }
+
+    const userId = parseInt(decoded.id);
+    const userRole = decoded.isAdmin;
+
+    const commentRepository = AppDataSource.getRepository(Comment);
+    const comment = await commentRepository.findOne({
+      where: { id: parseInt(commentId) },
+    });
+
+    if (!comment) {
+      return res.status(404).json({ message: "Comment not found" });
+    }
+
+    // Allow deletion if the user is the author or an admin
+    if (comment.userId !== userId && userRole !== true) {
+      return res.status(403).json({ message: "Forbidden" });
+    }
+
+    await commentRepository.remove(comment);
+
+    return res.status(200).json({ message: "Comment deleted successfully" });
+  });
 }
