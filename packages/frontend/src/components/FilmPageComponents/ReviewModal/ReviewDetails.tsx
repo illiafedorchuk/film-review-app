@@ -26,7 +26,6 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = ({
   const backdropFullUrl = "https://image.tmdb.org/t/p/original" + backdropUrl;
   const posterFullUrl = "https://image.tmdb.org/t/p/original" + posterUrl;
 
-  
   const averageScore =
     Object.values(ratings).reduce((sum, value) => sum + value, 0) /
     (Object.keys(ratings).length || 1);
@@ -70,7 +69,7 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = ({
             Total Score
           </div>
           <div className="rounded-b-xl bg-white dark:bg-[#2c2c2c] text-violet-600 text-3xl font-bold text-center px-4 py-2 w-full">
-            {averageScore.toFixed(1)}/10
+            {+averageScore.toFixed(1)}/10
           </div>
         </div>
       </div>

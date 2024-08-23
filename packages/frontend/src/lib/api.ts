@@ -116,7 +116,7 @@ export const fetchSimilarMovies = async (
 
 export const bookmarkMovie = async (movie: any, token: string) => {
   const response = await axios.post(
-    `http://localhost:3000/movie/bookmark`, // Ensure this matches your backend route
+    `http://localhost:3000/movie/bookmark`,
     {
       movie_id: movie.id,
       title: movie.title,
@@ -138,7 +138,7 @@ export const bookmarkMovie = async (movie: any, token: string) => {
 
 export const unbookmarkMovie = async (movieId: number, token: string) => {
   const response = await axios.put(
-    `http://localhost:3000/movie/unbookmovie`, // Ensure this matches your backend route
+    `http://localhost:3000/movie/unbookmovie`,
     {
       movie_id: movieId,
     },
@@ -177,7 +177,7 @@ export const addWatchLaterMovie = async (movie: any, token: string) => {
 export const removeWatchLaterMovie = async (movieId: number, token: string) => {
   const response = await axios.put(
     `http://localhost:3000/movie/remove-watchlist`,
-    { movie_id: movieId }, // Send movie_id directly in the request body
+    { movie_id: movieId },
     {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -188,7 +188,6 @@ export const removeWatchLaterMovie = async (movieId: number, token: string) => {
   return response.data;
 };
 
-// Function to fetch the watchlist
 export const fetchWatchlist = async (token: string) => {
   const response = await axios.get("http://localhost:3000/user/watchlist", {
     headers: {
@@ -237,7 +236,7 @@ export const createReview = async (
 export const fetchUserReview = async (movieId: number, token: string) => {
   try {
     const response = await axios.get(
-      `http://localhost:3000/review/get-user-review/${movieId}`, // Correctly passes movieId
+      `http://localhost:3000/review/get-user-review/${movieId}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -260,7 +259,7 @@ export const updateReview = async (
   token: string
 ) => {
   const response = await axios.patch(
-    `http://localhost:3000/review/update-review`, // Correct endpoint
+    `http://localhost:3000/review/update-review`,
     {
       movieId,
       rating,
@@ -279,7 +278,7 @@ export const updateReview = async (
 
 export const addMovieToDatabase = async (movie: any, token: string) => {
   const response = await axios.post(
-    `http://localhost:3000/movie/add`, // Ensure this matches your backend route
+    `http://localhost:3000/movie/add`,
     {
       movie_id: movie.id,
       title: movie.title,
@@ -315,7 +314,6 @@ export const fetchMovieReactions = async (movieId: number, token: string) => {
   }
 };
 
-// Add or update a reaction for a movie
 export const addFastReaction = async (
   movieId: number,
   reactionType: string | null,
@@ -345,10 +343,6 @@ export const fetchComments = async (movieId: number, token: string) => {
       }
     );
 
-    // Log the entire response to check its structure
-    console.log("API Response:", response.data);
-
-    // Assume response.data is an object and comments are inside a field named `comments`
     if (Array.isArray(response.data)) {
       return response.data;
     } else if (response.data && Array.isArray(response.data.comments)) {
@@ -395,7 +389,6 @@ export const likeCommentApi = async (commentId: number, token: string) => {
   return response.data.like_count;
 };
 
-// API function to dislike a comment
 export const dislikeCommentApi = async (commentId: number, token: string) => {
   const response = await axios.post(
     `http://localhost:3000/comment/${commentId}/dislike`,
@@ -433,16 +426,15 @@ export const deleteCommentApi = async (commentId: number, token: string) => {
   return response.data;
 };
 
-// API call to fetch the current user's information
 export const fetchCurrentUser = async (token: string) => {
   try {
     const response = await axios.get("http://localhost:3000/user/me", {
       headers: {
         Authorization: `Bearer ${token}`,
       },
-      withCredentials: true, // Ensure cookies are sent with the request
+      withCredentials: true,
     });
-    return response.data; // Returns { id, name, avatarUrl, isAdmin }
+    return response.data;
   } catch (error) {
     console.error("Failed to fetch current user:", error);
     throw new Error("Failed to fetch current user");
@@ -511,13 +503,44 @@ export const deleteReview = async (reviewId: number, token: string) => {
         headers: {
           Authorization: `Bearer ${token}`,
         },
-        withCredentials: true, // Include cookies in the request
+        withCredentials: true,
       }
     );
 
-    return response.data; // Return the response data
+    return response.data;
   } catch (error) {
     console.error("Failed to delete review:", error);
     throw new Error("Failed to delete review");
+  }
+};
+
+export const editUserProfile = async (
+  token: string,
+  avatarUrl: string,
+  name: string,
+  aboutMe: string,
+  country: string
+) => {
+  try {
+    const response = await axios.put(
+      `http://localhost:3000/user/editProfile`, // Adjust the route if needed
+      {
+        name,
+        avatarUrl,
+        aboutMe,
+        country,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        withCredentials: true,
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error("Error while editing user profile:", error); // Log the error
+    throw new Error("Failed to edit user profile");
   }
 };

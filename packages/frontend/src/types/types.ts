@@ -51,10 +51,10 @@ export interface User {
   id: number;
   name: string;
   avatarUrl: string;
-  isAdmin: boolean;
-  createdAt: string;
-  watchLaterMovies: number[];
+  isAdmin?: boolean;
+  createdAt: Date;
+  watchLaterMovies?: number[];
   bookmarkedMovies: number[];
   aboutMe?: string;
-  location?: string;
+  country?: string;
 }

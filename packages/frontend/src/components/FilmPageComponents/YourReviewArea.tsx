@@ -22,16 +22,15 @@ const YourReviewArea: React.FC<ReviewProps> = ({ details, token }) => {
         if (reviews && reviews.length > 0) {
           const review = reviews[0];
           setUserReview({
-            id: review.id, // Capture the reviewId here
+            id: review.id,
             ratings: review.criteriaRatings || {},
             text: review.comment || "",
             rating: review.rating || 0,
           });
           setHasRated(true);
         } else {
-          // Initialize with default ratings
           setUserReview({
-            id: null, // No reviewId when no review exists
+            id: null,
             ratings: {
               Cast: 5,
               Plot: 5,

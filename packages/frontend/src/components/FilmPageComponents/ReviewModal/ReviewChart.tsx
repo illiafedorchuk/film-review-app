@@ -39,6 +39,7 @@ const ReviewChart: React.FC<ReviewChartProps> = ({ score, label }) => {
           dominantBaseline="middle"
           fill="#7C3AED"
           fontSize="20"
+          fontWeight="bold"
         >
           {score}/10
         </text>

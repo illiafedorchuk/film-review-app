@@ -19,6 +19,7 @@ const Watchlist: React.FC<{ token: string }> = ({ token }) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
+
   useEffect(() => {
     const loadWatchlist = async () => {
       try {
@@ -48,19 +49,27 @@ const Watchlist: React.FC<{ token: string }> = ({ token }) => {
   };
 
   return (
-    <div className="mt-6 w-full bg-[var(--input-bg-color)] p-6 rounded-xl shadow-lg">
+    <div className="mt-6 bg-[var(--input-bg-color)] p-4 rounded-xl shadow-lg">
       <h2 className="text-xl font-bold mb-4">Watchlist</h2>
       {watchlist.length > 0 ? (
         <>
-          <div className="hidden lg:grid grid-cols-6 gap-4">
+          <div className="hidden lg:grid xl:grid-cols-6 lg:grid-cols-5 justify-items-start gap-4 w-full">
             {watchlist.slice(0, 5).map((movie) => (
               <FilmCard key={movie.id} movie={movie} />
             ))}
           </div>
           <div className="lg:hidden">
-            <MovieCarousel movies={watchlist.slice(0, 5)} />
+            {watchlist.length <= 5 ? (
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                {watchlist.map((movie) => (
+                  <FilmCard key={movie.id} movie={movie} />
+                ))}
+              </div>
+            ) : (
+              <MovieCarousel movies={watchlist.slice(0, 5)} />
+            )}
           </div>
-          <div className="flex justify-end">
+          <div className="flex justify-end mt-4">
             <button
               className="text-violet-500 hover:underline"
               onClick={handleShowMore}

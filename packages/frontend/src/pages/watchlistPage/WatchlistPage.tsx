@@ -8,6 +8,7 @@ import { fetchWatchLaterMovies } from "../../lib/api"; // Import the fetchWatchl
 
 interface Movie {
   id: number;
+  movie_id: number;
   title?: string;
   poster_path?: string;
   release_date?: string;
@@ -58,7 +59,7 @@ function WatchlistPage() {
             {watchlist.length > 0 ? (
               watchlist.map((movie) => (
                 <FilmPreviewCard
-                  key={movie.id}
+                  key={movie.movie_id}
                   movie={movie}
                   genreMap={genreMap}
                 />

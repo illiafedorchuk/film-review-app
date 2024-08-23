@@ -10,6 +10,7 @@ import MovieRatings from "../../components/ProfileComponents/MovieRatings";
 import Settings from "../../components/ProfileComponents/Settings";
 import { fetchCurrentUser } from "../../lib/api";
 import { User } from "../../types/types";
+import Footer from "../../components/Footer";
 
 function ProfilePage() {
   const [user, setUser] = useState<User>();
@@ -45,6 +46,7 @@ function ProfilePage() {
             <Settings />
           </div>
         </div>
+        <Footer />
       </AppLayout>
     </DarkModeProvider>
   );

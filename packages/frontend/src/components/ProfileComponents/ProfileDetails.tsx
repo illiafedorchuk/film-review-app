@@ -32,14 +32,13 @@ const ProfileDetails: React.FC = () => {
             className="object-cover w-full h-full"
           />
         </div>
-        <h1 className="text-2xl font-bold mt-4">{user.name}</h1>
+        <h1 className="text-2xl font-bold mt-4">{user.name || "boba"}</h1>
         <p className="text-gray-600 mt-2">active 11 hours ago</p>
       </div>
       <div className="mt-6 text-center">
         <h2 className="text-xl font-bold">ABOUT ME</h2>
         <p className="mt-2 text-gray-600">
-          Welcome to my page. If you like my content, please consider
-          supporting. Any donation will be well received.
+          {user.aboutMe || "I dont have any information yet."}
         </p>
       </div>
       <div className="mt-4">
@@ -49,7 +48,7 @@ const ProfileDetails: React.FC = () => {
         </div>
         <div className="flex items-center justify-center space-x-2 mt-2">
           <i className="fas fa-map-marker-alt text-violet-500"></i>
-          <p>{user.location || "United States"}</p>
+          <p>{user.country || "I need to set country"}</p>
         </div>
         <div className="flex items-center justify-center space-x-2 mt-2">
           <i className="fas fa-calendar-alt text-violet-500"></i>

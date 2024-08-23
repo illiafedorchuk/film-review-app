@@ -10,6 +10,7 @@ import MoviePage from "./pages/movie/MoviePage";
 import ProfilePage from "./pages/profile/ProfilePage";
 import RatedMoviesPage from "./pages/movieLists/RatedMoviesPage";
 import WatchlistPage from "./pages/watchlistPage/WatchlistPage"; // Import the WatchlistPage component
+import ChangeProfilePage from "./pages/changeProfilePage/changeProfilePage";
 
 const rootElement = document.getElementById("root");
 if (rootElement) {
@@ -29,6 +30,10 @@ if (rootElement) {
           <Route path="profile/me" element={<ProfilePage />} />
           <Route path="profile/me/ratedMovies" element={<RatedMoviesPage />} />
           <Route path="profile/me/watchlist" element={<WatchlistPage />} />
+          <Route
+            path="profile/me/editProfile"
+            element={<ChangeProfilePage />}
+          />
         </Routes>
       </BrowserRouter>
     </React.StrictMode>
