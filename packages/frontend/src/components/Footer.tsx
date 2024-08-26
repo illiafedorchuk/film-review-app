@@ -57,7 +57,7 @@ const Footer = () => {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <FaTelegramPlane className="text-2xl hover:text-gray-400 dark:hover:text-gray-600" />
+                <FaTelegramPlane className="text-2xl" />
               </a>
               <a
                 href="https://www.linkedin.com/in/yourprofile"

@@ -16,10 +16,13 @@ export class MovieController {
         movie_id,
         title,
         poster_path,
+        backdrop_path,
         release_date,
         vote_average,
         genre_ids,
       } = req.body;
+
+      console.log("Received data in backend:", req.body);
 
       // Extract access token from cookies
       const token = req.cookies.accessToken;
@@ -59,6 +62,7 @@ export class MovieController {
         movie = movieRepository.create({
           movie_id,
           title,
+          backdrop_path,
           poster_path,
           release_date,
           vote_average,
@@ -102,7 +106,6 @@ export class MovieController {
     } catch (error) {
       return res.status(401).json({ message: "Invalid token" });
     }
-
     const userId = decoded.id;
 
     // Get user repository
@@ -140,7 +143,7 @@ export class MovieController {
     }
 
     user.bookmarkedMovies.push(movie.movie_id);
-
+    user.updatedAt = new Date();
     await userRepository.save(user);
 
     res
@@ -183,7 +186,7 @@ export class MovieController {
     user.bookmarkedMovies = user.bookmarkedMovies.filter(
       (movie) => movie != movie_id
     );
-
+    user.updatedAt = new Date();
     await userRepository.save(user);
 
     res
@@ -244,6 +247,7 @@ export class MovieController {
         vote_average,
         genre_ids,
       });
+
       await movieRepository.save(movie);
     } else {
     }
@@ -252,9 +256,9 @@ export class MovieController {
     if (!user.watchLaterMovies) {
       user.watchLaterMovies = [];
     }
-
+    user.updatedAt = new Date();
     user.watchLaterMovies.push(movie.movie_id);
-
+    user.updatedAt = new Date();
     await userRepository.save(user);
 
     res
@@ -297,7 +301,7 @@ export class MovieController {
     user.watchLaterMovies = user.watchLaterMovies.filter(
       (movie) => movie != movie_id
     );
-
+    user.updatedAt = new Date();
     await userRepository.save(user);
 
     res
@@ -391,7 +395,7 @@ export class MovieController {
       );
       fastReactions[reactionKey]++;
     }
-
+    user.updatedAt = new Date();
     movie.fastReactions = fastReactions;
     await movieRepository.save(movie);
     await userRepository.save(user);
@@ -521,7 +525,6 @@ export class MovieController {
 
     // Check if user has rated movies
     if (!user.ratedMovies || user.ratedMovies.length === 0) {
-      console.log("User has no rated movies");
       return res.status(200).json({ ratedMovies: [] });
     }
 
@@ -541,15 +544,13 @@ export class MovieController {
           "movie.movie_id",
           "movie.title",
           "movie.poster_path",
+          "movie.backdrop_path",
           "review.rating AS movieRating",
         ])
         .where("movie.movie_id IN (:...movieIds)", {
           movieIds: user.ratedMovies,
         })
         .getRawMany();
-
-      // Log the result to ensure data is returned
-      console.log("Rated movies fetched:", ratedMovies);
 
       return res.status(200).json({
         ratedMovies,

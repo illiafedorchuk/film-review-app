@@ -53,6 +53,8 @@ export interface User {
   avatarUrl: string;
   isAdmin?: boolean;
   createdAt: Date;
+  updatedAt: string;
+  recentActivity?: string[];
   watchLaterMovies?: number[];
   bookmarkedMovies: number[];
   aboutMe?: string;

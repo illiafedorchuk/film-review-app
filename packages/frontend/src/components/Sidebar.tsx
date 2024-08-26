@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState, useEffect, useCallback } from "react";
+import { FaEye } from "react-icons/fa";
+import { MdOutlineReviews } from "react-icons/md";
 import {
   BiHome,
   BiBookmark as BiBookmarkFill,
@@ -11,11 +13,13 @@ import {
   BiMoon,
   BiSun,
   BiSearch,
+  BiLogIn,
 } from "react-icons/bi";
 import SidebarItem from "./SidebarItem";
 import { useDarkMode } from "./layouts/DarkModeContext";
 import MovieSearch from "./MainPageComponents/MovieSearch";
 import { useNavigate } from "react-router-dom";
+import { fetchCurrentUser, logout } from "../lib/api"; // Import the fetchCurrentUser and logout functions
 
 const Sidebar = ({
   expanded = false,
@@ -23,10 +27,13 @@ const Sidebar = ({
 }: {
   expanded: boolean;
   setExpanded: React.Dispatch<React.SetStateAction<boolean>>;
+  token: string;
 }) => {
+  const token = ""; // Initialize token state
   const [isMobile, setIsMobile] = useState(window.innerWidth < 640);
   const [isSidebarVisible, setIsSidebarVisible] = useState(false);
   const [isSearchActive, setIsSearchActive] = useState(false);
+  const [user, setUser] = useState<any>(null); // State to store user data
   const navigate = useNavigate(); // Initialize useNavigate
 
   const toggleSidebar = useCallback(() => {
@@ -69,6 +76,19 @@ const Sidebar = ({
     };
   }, [handleClickOutside]);
 
+  // Fetch user data when the component mounts
+  useEffect(() => {
+    const loadUserData = async () => {
+      try {
+        const userData = await fetchCurrentUser(token);
+        setUser(userData); // Store user data in state
+      } catch (error) {
+        console.error("Failed to load user data:", error);
+      }
+    };
+    loadUserData();
+  }, [token]);
+
   const handleSearchClick = () => {
     if (!expanded) {
       setExpanded(true);
@@ -78,6 +98,20 @@ const Sidebar = ({
 
   const handleMovieSelect = (movie: any) => {
     navigate(`/movie/${movie.id}`);
+  };
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      setUser(null); // Clear user state
+      navigate("/signin"); // Redirect to login
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
+  };
+
+  const handleLogin = () => {
+    navigate("/signin"); // Redirect to the login page
   };
 
   return (
@@ -103,6 +137,9 @@ const Sidebar = ({
                 isSearchActive={isSearchActive}
                 handleSearchClick={handleSearchClick}
                 onMovieSelect={handleMovieSelect}
+                user={user} // Pass the user data to the SidebarContent
+                handleLogout={handleLogout} // Pass logout function
+                handleLogin={handleLogin} // Pass login function
               />
             </div>
           )}
@@ -119,6 +156,9 @@ const Sidebar = ({
             isSearchActive={isSearchActive}
             handleSearchClick={handleSearchClick}
             onMovieSelect={handleMovieSelect}
+            user={user} // Pass the user data to the SidebarContent
+            handleLogout={handleLogout} // Pass logout function
+            handleLogin={handleLogin} // Pass login function
           />
         </div>
       )}
@@ -133,28 +173,36 @@ const SidebarContent = React.memo(
     isSearchActive,
     handleSearchClick,
     onMovieSelect,
+    user,
+    handleLogout,
+    handleLogin,
   }: {
     expanded: boolean;
     toggleSidebar: () => void;
     isSearchActive: boolean;
     handleSearchClick: () => void;
     onMovieSelect: (movie: any) => void;
+    user: any; // Type for user
+    handleLogout: () => void;
+    handleLogin: () => void;
   }) => {
     const { isDarkMode, toggleDarkMode } = useDarkMode();
-    const user = {
-      avatarUrl: "https://via.placeholder.com/48",
-      nickname: "Username",
-      uniqueCode: "#12345",
+    const navigate = useNavigate();
+
+    const handleBookmarkNavigate = () => {
+      navigate(`/profile/me/favouriteMovies`);
     };
 
-    const [copiedMessageVisible, setCopiedMessageVisible] = useState(false);
+    const handleWatchlistNavigate = () => {
+      navigate(`/profile/me/watchlist`);
+    };
 
-    const handleCodeClick = () => {
-      navigator.clipboard.writeText(user.uniqueCode);
-      setCopiedMessageVisible(true);
-      setTimeout(() => {
-        setCopiedMessageVisible(false);
-      }, 3000);
+    const handleReviewsNavigate = () => {
+      navigate(`/profile/me/ratedMovies`);
+    };
+
+    const handleProfileNavigate = () => {
+      navigate(`/profile/me`);
     };
 
     return (
@@ -175,25 +223,29 @@ const SidebarContent = React.memo(
         <hr className="my-2 border-gray-300" />
         <div className="flex flex-col flex-1">
           <div className="py-5">
-            <div className="flex mb-4">
-              <img
-                src={user.avatarUrl}
-                alt="User Avatar"
-                className="w-12 h-12 rounded-full object-cover"
-              />
-              {expanded && (
-                <div className="flex flex-col ml-2">
-                  <span className="font-bold">{user.nickname}</span>
-                  {copiedMessageVisible ? (
-                    <span className="text-sm text-gray-500">ID copied</span>
-                  ) : (
-                    <span
-                      className="text-sm text-left text-gray-500 cursor-pointer"
-                      onClick={handleCodeClick}
-                    >
-                      {user.uniqueCode}
-                    </span>
+            <div
+              className="flex mb-4 cursor-pointer duration-300 hover:bg-violet-500 hover:text-white p-2 rounded-md"
+              onClick={handleProfileNavigate}
+            >
+              {user ? (
+                <>
+                  <img
+                    src={user.avatarUrl}
+                    alt="User Avatar"
+                    className="w-12 h-12 rounded-full object-cover"
+                  />
+                  {expanded && (
+                    <div className="flex flex-col ml-2">
+                      <span className="font-bold">{user.name}</span>
+                      <span className="text-sm text-left cursor-pointer  hover:text-white">
+                        {user.id}
+                      </span>
+                    </div>
                   )}
+                </>
+              ) : (
+                <div className="bg-violet-500 p-1 text-white font-bold rounded-sm">
+                  {expanded ? "Login to see your profile" : "Hello!"}
                 </div>
               )}
             </div>
@@ -216,14 +268,28 @@ const SidebarContent = React.memo(
                 <SidebarItem icon={BiHome} expanded={expanded} label={"Home"} />
               </a>
               <SidebarItem
+                icon={MdOutlineReviews}
+                expanded={expanded}
+                label={"Reviews"}
+                onClick={handleReviewsNavigate}
+              />
+              <SidebarItem
                 icon={BiBookmarkFill}
                 expanded={expanded}
                 label={"Bookmark"}
+                onClick={handleBookmarkNavigate}
               />
               <SidebarItem
                 icon={BiEnvelope}
                 expanded={expanded}
                 label={"Messages"}
+                onClick={handleBookmarkNavigate}
+              />
+              <SidebarItem
+                icon={FaEye}
+                expanded={expanded}
+                label={"Watchlist"}
+                onClick={handleWatchlistNavigate}
               />
             </nav>
           </div>
@@ -246,11 +312,21 @@ const SidebarContent = React.memo(
               />
             )}
           </div>
-          <SidebarItem
-            icon={BiArrowFromLeft}
-            expanded={expanded}
-            label={"Exit"}
-          />
+          {user ? (
+            <SidebarItem
+              icon={BiArrowFromLeft}
+              expanded={expanded}
+              label={"Logout"}
+              onClick={handleLogout}
+            />
+          ) : (
+            <SidebarItem
+              icon={BiLogIn}
+              expanded={expanded}
+              label={"Login"}
+              onClick={handleLogin}
+            />
+          )}
         </div>
       </div>
     );

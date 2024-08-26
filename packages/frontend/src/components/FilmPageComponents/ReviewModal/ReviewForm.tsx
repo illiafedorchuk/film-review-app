@@ -8,7 +8,7 @@ import {
 
 interface ReviewFormProps {
   movie_Id: number;
-  backdropUrl: string;
+  backdrop_path: string;
   posterUrl: string;
   title: string;
   releaseDate: string;
@@ -18,12 +18,13 @@ interface ReviewFormProps {
   initialText: string;
   onSubmit: (ratings: { [key: string]: number }, text: string) => void;
   token: string;
-  hasExistingReview: boolean; // New prop to indicate if a review already exists
+  hasExistingReview: boolean;
+  onReviewUpdated: () => void; // New prop to notify parent
 }
 
 const ReviewForm: React.FC<ReviewFormProps> = ({
   movie_Id,
-  backdropUrl,
+  backdrop_path,
   posterUrl,
   title,
   releaseDate,
@@ -34,6 +35,7 @@ const ReviewForm: React.FC<ReviewFormProps> = ({
   onSubmit,
   token,
   hasExistingReview,
+  onReviewUpdated, // New prop
 }) => {
   const [ratings, setRatings] = useState(initialRatings);
   const [text, setText] = useState(initialText);
@@ -64,21 +66,20 @@ const ReviewForm: React.FC<ReviewFormProps> = ({
         "Writing/Script": ratings["Writing/Script"],
         "Themes/Idea": ratings["Themes/Idea"],
       };
-      console.log("Review criteria ratings:", criteriaRatings);
 
       const overallRating =
         Object.values(criteriaRatings).reduce((a, b) => a + b, 0) /
         Object.values(criteriaRatings).length;
 
-      console.log("Overall Rating:", overallRating);
-      console.log("Movie ID:", movie_Id);
-
-      // Ensure the movie is in the database
       await addMovieToDatabase(
         {
           id: movie_Id,
           title,
           poster_path: posterUrl.replace(
+            "https://image.tmdb.org/t/p/original",
+            ""
+          ),
+          backdrop_path: backdrop_path.replace(
             "https://image.tmdb.org/t/p/original",
             ""
           ),
@@ -90,7 +91,6 @@ const ReviewForm: React.FC<ReviewFormProps> = ({
       );
 
       if (hasExistingReview) {
-        // Update existing review if it exists
         await updateReview(
           movie_Id,
           overallRating,
@@ -99,7 +99,6 @@ const ReviewForm: React.FC<ReviewFormProps> = ({
           token
         );
       } else {
-        // Create a new review if no existing review
         await createReview(
           movie_Id,
           overallRating,
@@ -115,6 +114,7 @@ const ReviewForm: React.FC<ReviewFormProps> = ({
       }
 
       onSubmit(ratings, text);
+      onReviewUpdated(); // Notify parent to switch back to ReviewDetails
     } catch (error) {
       console.error("Failed to submit review:", error);
     }
@@ -124,7 +124,7 @@ const ReviewForm: React.FC<ReviewFormProps> = ({
     <>
       <div className="relative mb-4">
         <img
-          src={backdropUrl}
+          src={backdrop_path}
           alt=""
           className="rounded-xl w-full h-48 sm:h-64 md:h-72 lg:h-96 bg-cover bg-center brightness-50"
         />

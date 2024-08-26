@@ -50,6 +50,13 @@ const ChangeProfilePage = ({
     // Create an object to store fields that should be updated
     const updatedFields: any = {};
 
+    // Validation for username
+    if (username.trim().length < 3) {
+      setError("Username must be at least 3 characters long.");
+      setLoading(false);
+      return;
+    }
+
     // Only add fields to the update if they are not empty and different from the initial value
     if (avatarFileName) updatedFields.avatarUrl = avatarFileName;
     if (username.trim() && username !== initialProfile?.name)

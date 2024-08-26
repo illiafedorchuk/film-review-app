@@ -43,6 +43,8 @@ export class ReviewController {
     const user = await userRepository.findOne({
       where: { id: parseInt(userId) },
     });
+
+    // Check if the user exists before proceeding
     if (!user) {
       console.log("User not found");
       return res.status(404).json({ message: "User not found" });
@@ -55,7 +57,6 @@ export class ReviewController {
 
     if (!movie) {
       console.log("Movie not found, adding to the database.");
-      // If the movie does not exist, add it to the database
       movie = movieRepository.create({
         movie_id: movieId,
         title,
@@ -84,12 +85,25 @@ export class ReviewController {
     if (!user.ratedMovies) {
       user.ratedMovies = [];
     }
-
+    user.updatedAt = new Date(); // Update the timestamp
     user.ratedMovies.push(movie.movie_id);
 
-    await userRepository.save(user);
+    // Initialize recentActivity if undefined
+    if (!user.recentActivity) {
+      user.recentActivity = [];
+    }
 
+    // Ensure recentActivity has a maximum of 2 items
+    if (user.recentActivity.length >= 2) {
+      user.recentActivity.shift(); // Remove the oldest activity
+    }
+
+    // Add the new activity to recentActivity
+    user.recentActivity.push(`You add a review for ${movie?.title}`);
+
+    // Make sure that user is not null when saving
     try {
+      await userRepository.save(user); // This is safe since we already checked for null
       await reviewRepository.save(newReview);
       console.log("Review saved:", newReview);
       res.status(201).json(newReview);
@@ -174,8 +188,8 @@ export class ReviewController {
   });
 
   static deleteReview = catchAsync(async (req: Request, res: Response) => {
-    const { reviewId } = req.params; // Get movieId from params
-    const token = req.cookies.accessToken; // Get token from cookies
+    const { reviewId } = req.params;
+    const token = req.cookies.accessToken;
 
     if (!token) {
       console.log("No token provided");
@@ -194,10 +208,11 @@ export class ReviewController {
 
     const userId = decoded.id;
     const reviewRepository = AppDataSource.getRepository(Review);
+    const movieRepository = AppDataSource.getRepository(Movie);
 
-    // Find the review by movieId and userId
+    // Find the review and corresponding movie
     const review = await reviewRepository.findOne({
-      where: { id: parseInt(reviewId) }, // Ensure userId and movieId match
+      where: { id: parseInt(reviewId), userId: parseInt(userId) },
     });
 
     if (!review) {
@@ -205,8 +220,40 @@ export class ReviewController {
       return res.status(404).json({ message: "Review not found" });
     }
 
+    const movie = await movieRepository.findOne({
+      where: { movie_id: review.movie_id },
+    });
+
+    // Remove the review
     try {
-      await reviewRepository.remove(review); // Remove the review from the database
+      await reviewRepository.remove(review);
+
+      // Find the user and update recentActivity
+      const userRepository = AppDataSource.getRepository(User);
+      const user = await userRepository.findOne({
+        where: { id: parseInt(userId) },
+      });
+
+      if (!user) {
+        console.log("User not found");
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      // Initialize recentActivity if undefined
+      if (!user.recentActivity) {
+        user.recentActivity = [];
+      }
+
+      // Ensure recentActivity has a maximum of 2 items
+      if (user.recentActivity.length >= 2) {
+        user.recentActivity.shift(); // Remove the oldest activity
+      }
+
+      // Add the new activity to recentActivity
+      user.recentActivity.push(`You deleted a review for ${movie?.title}`);
+      user.updatedAt = new Date(); // Update the timestamp
+      await userRepository.save(user);
+
       console.log("Review deleted:", review);
       res.status(200).json({ message: "Review deleted successfully" });
     } catch (error) {

@@ -35,6 +35,10 @@ const StyledSlider = styled(Slider)({
     opacity: 0.4,
     backgroundColor: "#833ff9d9",
   },
+  "& .MuiSlider-markLabel": {
+    color: "#833ff9d9", // Sets color of the labels (min and max)
+    fontWeight: "bold", // Makes the min and max labels bold
+  },
 });
 
 interface CustomSliderProps {
@@ -65,6 +69,13 @@ const CustomSlider: React.FC<CustomSliderProps> = ({
       max={max}
       valueLabelDisplay={valueLabelDisplay}
       marks={marks}
+      // Ensure marks have labels for min and max
+      sx={{
+        "& .MuiSlider-markLabel": {
+          color: "#833ff9d9",
+          fontWeight: "bold",
+        },
+      }}
     />
   );
 };

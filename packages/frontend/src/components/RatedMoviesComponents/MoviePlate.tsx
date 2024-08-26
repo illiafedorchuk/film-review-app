@@ -1,11 +1,14 @@
 import React from "react";
+
 import ReviewChart from "../FilmPageComponents/ReviewModal/ReviewChart";
 
 interface MoviePlateProps {
   movie_title: string;
   movierating: number;
   movie_poster_path: string;
-  onClick: () => void; // Add the onClick prop for navigation
+  onClick: () => void;
+  onEdit: () => void;
+  onDelete: () => void;
 }
 
 function MoviePlate({
@@ -21,8 +24,8 @@ function MoviePlate({
 
   return (
     <div
-      className="w-full md:w-[100%] md:h-56 bg-[var(--input-bg-color)] rounded-xl p-2 shadow-lg overflow-hidden cursor-pointer"
-      onClick={onClick} // Trigger the onClick event to navigate
+      className="w-full md:w-[100%] md:h-56 bg-[var(--input-bg-color)] rounded-xl p-2 shadow-lg overflow-hidden cursor-pointer relative"
+      onClick={onClick}
     >
       <div className="flex flex-wrap h-full">
         <div className="w-32 h-full rounded-xl bg-black">

@@ -107,6 +107,8 @@ export class UserController {
       avatarUrl: user.avatarUrl,
       isAdmin: user.isAdmin,
       createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
+      recentActivity: user.recentActivity,
       watchLaterMovies: user.watchLaterMovies,
       bookmarkedMovies: user.bookmarkedMovies,
     });
@@ -128,6 +130,9 @@ export class UserController {
       id: user.id,
       name: user.name,
       avatarUrl: user.avatarUrl,
+      aboutMe: user.aboutMe,
+      country: user.country,
+      recentActivity: user.recentActivity,
       isAdmin: user.isAdmin,
       createdAt: user.createdAt,
       watchLaterMovies: user.watchLaterMovies,

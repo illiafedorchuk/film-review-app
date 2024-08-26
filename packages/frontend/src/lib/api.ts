@@ -277,12 +277,15 @@ export const updateReview = async (
 };
 
 export const addMovieToDatabase = async (movie: any, token: string) => {
+  console.log("Movie data being sent to backend:", movie); // Add this line to debug
+
   const response = await axios.post(
     `http://localhost:3000/movie/add`,
     {
       movie_id: movie.id,
       title: movie.title,
       poster_path: movie.poster_path,
+      backdrop_path: movie.backdrop_path, // Ensure this is correct
       release_date: movie.release_date,
       vote_average: movie.vote_average,
       genre_ids: movie.genre_ids,
@@ -542,5 +545,38 @@ export const editUserProfile = async (
   } catch (error) {
     console.error("Error while editing user profile:", error); // Log the error
     throw new Error("Failed to edit user profile");
+  }
+};
+
+export const logout = async () => {
+  try {
+    await axios.post("http://localhost:3000/auth/logout", {
+      withCredentials: true,
+    });
+  } catch (error) {
+    console.error("Error during logout:", error);
+    throw new Error("Failed to log out");
+  }
+};
+
+export const changePassword = async (
+  oldPassword: string,
+  newPassword: string
+) => {
+  try {
+    const response = await axios.put(
+      `http://localhost:3000/auth/changePassword`, // Adjust the route if needed
+      {
+        oldPassword,
+        newPassword,
+      },
+      {
+        withCredentials: true, // Ensure cookies are sent with the request
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    throw new Error("Failed to change password");
   }
 };

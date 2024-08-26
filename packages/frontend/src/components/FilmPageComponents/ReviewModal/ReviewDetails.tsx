@@ -7,7 +7,7 @@ interface ReviewDetailsProps {
   reviewId: number;
   ratings: { [key: string]: number };
   text: string;
-  backdropUrl: string;
+  backdrop_path: string;
   posterUrl: string;
   title: string;
   onEdit: () => void;
@@ -17,13 +17,13 @@ interface ReviewDetailsProps {
 const ReviewDetails: React.FC<ReviewDetailsProps> = ({
   ratings = {},
   text,
-  backdropUrl,
+  backdrop_path,
   posterUrl,
   title,
   onEdit,
   onDelete, // Destructure the onDelete prop
 }) => {
-  const backdropFullUrl = "https://image.tmdb.org/t/p/original" + backdropUrl;
+  const backdropFullUrl = "https://image.tmdb.org/t/p/original" + backdrop_path;
   const posterFullUrl = "https://image.tmdb.org/t/p/original" + posterUrl;
 
   const averageScore =

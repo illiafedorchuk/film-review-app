@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import FilmCard from "./FilmCard";
-import MovieCarousel from "./MovieCarousel";
 import { fetchWatchLaterMovies } from "../../lib/api";
 import { useNavigate } from "react-router-dom";
 
@@ -50,25 +49,39 @@ const Watchlist: React.FC<{ token: string }> = ({ token }) => {
 
   return (
     <div className="mt-6 bg-[var(--input-bg-color)] p-4 rounded-xl shadow-lg">
-      <h2 className="text-xl font-bold mb-4">Watchlist</h2>
+      <h2 className="text-2xl font-bold mb-4">Watchlist</h2>
       {watchlist.length > 0 ? (
         <>
-          <div className="hidden lg:grid xl:grid-cols-6 lg:grid-cols-5 justify-items-start gap-4 w-full">
+          {/* Extra large screen grid layout, maximum 6 items */}
+          <div className="hidden xl:grid xl:grid-cols-6 justify-items-start gap-4 w-full">
+            {watchlist.slice(0, 6).map((movie) => (
+              <FilmCard key={movie.id} movie={movie} />
+            ))}
+          </div>
+
+          {/* Large screen grid layout, maximum 5 items */}
+          <div className="hidden lg:grid xl:hidden lg:grid-cols-5 justify-items-start gap-4 w-full">
             {watchlist.slice(0, 5).map((movie) => (
               <FilmCard key={movie.id} movie={movie} />
             ))}
           </div>
-          <div className="lg:hidden">
-            {watchlist.length <= 5 ? (
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-                {watchlist.map((movie) => (
-                  <FilmCard key={movie.id} movie={movie} />
-                ))}
-              </div>
-            ) : (
-              <MovieCarousel movies={watchlist.slice(0, 5)} />
-            )}
+
+          {/* Medium screen grid layout, maximum 4 items */}
+          <div className="hidden md:grid lg:hidden grid-cols-4 gap-4 w-full">
+            {watchlist.slice(0, 4).map((movie) => (
+              <FilmCard key={movie.id} movie={movie} />
+            ))}
           </div>
+
+          {/* Small screen grid layout, maximum 3 items */}
+          <div className="md:hidden">
+            <div className="grid grid-cols-3 sm:grid-cols-3 gap-6 sm:gap-4">
+              {watchlist.slice(0, 3).map((movie) => (
+                <FilmCard key={movie.id} movie={movie} />
+              ))}
+            </div>
+          </div>
+
           <div className="flex justify-end mt-4">
             <button
               className="text-violet-500 hover:underline"
@@ -79,7 +92,7 @@ const Watchlist: React.FC<{ token: string }> = ({ token }) => {
           </div>
         </>
       ) : (
-        <p className="text-gray-600">Your watchlist is empty.</p>
+        <p>Your watchlist is empty.</p>
       )}
     </div>
   );

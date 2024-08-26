@@ -84,7 +84,7 @@ const YourReviewArea: React.FC<ReviewProps> = ({ details, token }) => {
             movie_Id: details.id,
             title: details.title,
             release_date: details.release_date,
-            backdropUrl: `https://image.tmdb.org/t/p/original${details.backdrop_path}`,
+            backdrop_path: `https://image.tmdb.org/t/p/original${details.backdrop_path}`,
             vote_average: details.vote_average,
             posterUrl: `https://image.tmdb.org/t/p/original${details.poster_path}`,
             genre_ids: [],

@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { DarkModeProvider } from "../../components/layouts/DarkModeContext";
 import AppLayout from "../../components/layouts/AppLayout";
-import { fetchWatchLaterMovies } from "../../lib/api"; // Import the fetchWatchlist function
+import { fetchBookmarkedMovies } from "../../lib/api"; // Import the fetchWatchlist function
 import FilmCard from "../../components/ProfileComponents/FilmCard";
 
 interface Movie {
@@ -15,7 +15,7 @@ interface Movie {
   genre_ids?: number[];
 }
 
-function WatchlistPage() {
+function FavouriteMoviePage() {
   const token = "";
   const [watchlist, setWatchlist] = useState<Movie[]>([]); // State to store the watchlist
   const [loading, setLoading] = useState<boolean>(true); // Loading state
@@ -24,10 +24,10 @@ function WatchlistPage() {
   useEffect(() => {
     const loadWatchlist = async () => {
       try {
-        const data = await fetchWatchLaterMovies(token);
-        setWatchlist(data.watchLaterMovies); // Assuming the API returns { watchLaterMovies: Movie[] }
+        const data = await fetchBookmarkedMovies(token);
+        setWatchlist(data.bookmarkedMovies); // Assuming the API returns { bookmarkedMovies: Movie[] }
       } catch (error) {
-        setError("Failed to load watchlist. Please try again later.");
+        setError("Failed to load favourite movies. Please try again later.");
         console.error(error);
       } finally {
         setLoading(false);
@@ -50,7 +50,7 @@ function WatchlistPage() {
       <AppLayout>
         <div className="px-[10%] pl-[5%] lg:pr-[10%] lg:pl-[15%] md:pr-[10%] md:pl-[15%] sm:pl-[15%] py-10">
           <h1 className="text-4xl font-bold mb-4 pb-10 text-center">
-            My Watchlist
+            My Favourite Movies
           </h1>
           <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
             {watchlist.length > 0 ? (
@@ -63,7 +63,7 @@ function WatchlistPage() {
                 />
               ))
             ) : (
-              <div>No movies in your watchlist</div>
+              <div>No favourite movies found</div>
             )}
           </div>
         </div>
@@ -72,4 +72,4 @@ function WatchlistPage() {
   );
 }
 
-export default WatchlistPage;
+export default FavouriteMoviePage;

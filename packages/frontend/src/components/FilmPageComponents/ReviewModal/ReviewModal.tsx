@@ -1,9 +1,9 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState } from "react";
 import ReviewForm from "./ReviewForm";
 import ReviewDetails from "./ReviewDetails";
 import { BiX } from "react-icons/bi";
-import { deleteReview } from "../../../lib/api"; // Import the deleteReview function
+import { deleteReview } from "../../../lib/api";
 
 interface ReviewModalProps {
   open: boolean;
@@ -14,7 +14,7 @@ interface ReviewModalProps {
     movie_Id: number;
     title: string;
     release_date: string;
-    backdropUrl: string;
+    backdrop_path: string;
     vote_average: number;
     posterUrl: string;
     genre_ids: number[];
@@ -36,47 +36,45 @@ const ReviewModal: React.FC<ReviewModalProps> = ({
   movieDetails,
   token,
 }) => {
-  console.log("rr" + movieDetails?.review?.id); // Debug log
   const [isEditing, setIsEditing] = useState(false);
-  const [currentRatings, setCurrentRatings] = useState(
-    movieDetails.review?.ratings || {
-      Cast: 5,
-      Plot: 5,
-      Direction: 5,
-      Cinematography: 5,
-      "Writing/Script": 5,
-      "Themes/Idea": 5,
-    }
-  );
-  const [reviewText, setReviewText] = useState(movieDetails.review?.text || "");
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const backdropFullUrl = movieDetails.backdrop_path
+    ? `https://image.tmdb.org/t/p/original${movieDetails.backdrop_path}`
+    : null;
+
+  const posterFullUrl = movieDetails.posterUrl
+    ? `https://image.tmdb.org/t/p/original${movieDetails.posterUrl}`
+    : null;
 
   const handleEdit = () => {
     setIsEditing(true);
   };
 
-  const handleFormSubmit = (
-    ratings: { [key: string]: number },
-    text: string
-  ) => {
-    setCurrentRatings(ratings);
-    setReviewText(text);
-    setIsEditing(false);
+  const handleDelete = async () => {
+    setIsDeleting(true);
+    try {
+      if (!reviewId) {
+        console.error("No review to delete");
+        return;
+      }
+
+      // Call the deleteReview API function
+      await deleteReview(reviewId, token);
+
+      // Clear the review data, close the modal, and reset states after deletion
+      movieDetails.review = undefined;
+      setIsEditing(false);
+      onClose();
+    } catch (error) {
+      console.error("Failed to delete review:", error);
+    } finally {
+      setIsDeleting(false);
+    }
   };
 
-  const handleDelete = async () => {
-    if (!reviewId) {
-      console.log(reviewId);
-      alert("No review to delete.");
-      return;
-    }
-
-    try {
-      await deleteReview(reviewId, token); // Call the deleteReview API
-      alert("Review deleted successfully");
-      onClose(); // Close the modal after successful deletion
-    } catch (error) {
-      alert("Failed to delete the review.");
-    }
+  const handleReviewUpdated = () => {
+    setIsEditing(false); // Switch back to review details after update
   };
 
   return (
@@ -93,32 +91,36 @@ const ReviewModal: React.FC<ReviewModalProps> = ({
                 <BiX size={28} />
               </button>
             </div>
-            {hasReview && !isEditing ? (
+
+            {hasReview && !isEditing && movieDetails.review ? (
               <ReviewDetails
                 movie_Id={movieDetails.movie_Id}
-                backdropUrl={movieDetails.backdropUrl}
-                posterUrl={movieDetails.posterUrl}
-                ratings={currentRatings}
-                text={reviewText}
+                backdrop_path={backdropFullUrl || ""}
+                posterUrl={posterFullUrl || ""}
+                ratings={movieDetails.review.ratings}
+                text={movieDetails.review.text || "No review text"}
                 title={movieDetails.title}
                 onEdit={handleEdit}
-                reviewId={reviewId || 0} // Pass the correct reviewId
-                onDelete={handleDelete} // Pass the delete handler
+                reviewId={reviewId}
+                onDelete={handleDelete} // Trigger delete
               />
             ) : (
               <ReviewForm
                 movie_Id={movieDetails.movie_Id}
-                backdropUrl={movieDetails.backdropUrl}
-                posterUrl={movieDetails.posterUrl}
+                backdrop_path={backdropFullUrl || ""}
+                posterUrl={posterFullUrl || ""}
                 title={movieDetails.title}
-                initialRatings={currentRatings}
-                initialText={reviewText}
-                onSubmit={handleFormSubmit}
+                initialRatings={movieDetails.review?.ratings || {}}
+                initialText={movieDetails.review?.text || ""}
+                onSubmit={handleReviewUpdated} // Pass the new callback
                 token={token}
                 releaseDate={movieDetails.release_date}
                 voteAverage={movieDetails.vote_average}
-                genreIds={[...movieDetails.genre_ids]}
+                genreIds={movieDetails.genre_ids}
                 hasExistingReview={hasReview}
+                onReviewUpdated={function (): void {
+                  throw new Error("Function not implemented.");
+                }}
               />
             )}
           </div>

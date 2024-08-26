@@ -1,12 +1,19 @@
 import React from "react";
 
-const UserActivity: React.FC = () => {
+interface UserActivityProps {
+  activities: string[]; // Array of activity strings
+}
+
+const UserActivity: React.FC<UserActivityProps> = ({ activities }) => {
   return (
     <div className="bg-[var(--input-bg-color)] p-6 rounded-xl shadow-lg w-full">
       <h2 className="text-xl font-bold">Recent Activity</h2>
       <div className="mt-2">
-        <p className="text-gray-600">You rated "Inception" 5 stars</p>
-        <p className="text-gray-600">You reviewed "The Dark Knight"</p>
+        {activities.length > 0 ? (
+          activities.map((activity, index) => <p key={index}>{activity}</p>)
+        ) : (
+          <p className="text-gray-600">No recent activity</p>
+        )}
       </div>
     </div>
   );

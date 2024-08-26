@@ -13,9 +13,15 @@ interface Movie {
 
 interface FilmCardProps {
   movie: Movie;
+  height?: string;
+  width?: string;
 }
 
-const FilmCard: React.FC<FilmCardProps> = ({ movie }) => {
+const FilmCard: React.FC<FilmCardProps> = ({
+  movie,
+  height = "h-48",
+  width = "w-42",
+}) => {
   const navigate = useNavigate();
 
   const handleClick = () => {
@@ -24,7 +30,7 @@ const FilmCard: React.FC<FilmCardProps> = ({ movie }) => {
 
   return (
     <div
-      className="rounded-lg flex flex-wrap justify-center w-full overflow-hidden duration-300 hover:scale-105"
+      className={`rounded-lg flex flex-wrap justify-center w-full overflow-hidden duration-300 hover:scale-105 ${height} ${width}`}
       onClick={handleClick}
     >
       <div className="relative">
@@ -34,10 +40,15 @@ const FilmCard: React.FC<FilmCardProps> = ({ movie }) => {
               ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
               : "https://via.placeholder.com/200x300?text=No+Image"
           }
-          alt={movie.title}
-          className="h-48 w-42 object-cover rounded-lg shadow-xl"
+          alt={movie.title || "No Title"}
+          className={`object-cover rounded-lg shadow-xl ${height} ${width}`}
         />
       </div>
+      {movie.title && (
+        <div className="mt-2 text-center">
+          <p className="text-sm font-semibold">{movie.title}</p>
+        </div>
+      )}
     </div>
   );
 };

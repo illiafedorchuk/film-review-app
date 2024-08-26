@@ -139,39 +139,62 @@ class AuthController {
   );
 
   public logout = catchAsync(
-    async (req: ExtendedRequest, res: Response): Promise<Response | void> => {
-      // Access the accessToken from cookies
-      const accessToken = req.cookies.accessToken;
-
-      // You might want to verify the access token here if needed
+    async (req: Request, res: Response): Promise<Response | void> => {
       try {
-        const decoded: JwtPayload = jwt.verify(
-          accessToken,
-          process.env.JWT_ACCESS_TOKEN_KEY!
-        ) as JwtPayload;
+        // Get the access token from cookies
+        const accessToken = req.cookies.accessToken;
+        // If no access token is provided, return an error
+        if (!accessToken) {
+          return res.status(400).json({ message: "No access token provided." });
+        }
 
-        // If the token is valid, proceed to invalidate the refresh token
-        const userId = decoded.id; // Or however you extract the user ID from the decoded token
+        let decoded: JwtPayload;
+        try {
+          // Verify the access token
+          decoded = jwt.verify(
+            accessToken,
+            process.env.JWT_ACCESS_TOKEN_KEY!
+          ) as JwtPayload;
+        } catch (error) {
+          // If token verification fails, return an unauthorized error
+          return res.status(401).json({ message: "Invalid token." });
+        }
 
+        const userId = decoded.id;
         const userRepository = AppDataSource.getRepository(User);
+
+        // Find the user by their ID
         const user = await userRepository.findOne({
           where: { id: userId },
           select: ["id", "refreshToken"],
         });
 
+        // If user is not found, return an error
         if (!user) {
           return res.status(404).json({ message: "User not found." });
         }
 
-        user.refreshToken = null; // Invalidate the refresh token
+        // Invalidate the refresh token by setting it to null
+        user.refreshToken = null;
         await userRepository.save(user);
 
-        // Optionally clear the access token cookie
-        res.clearCookie("accessToken"); // Again, replace 'accessTokenName' with the actual name of your cookie
-
+        // Clear the access token and refresh token cookies
+        res.clearCookie("accessToken", {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === "production", // Use secure flag only in production
+          sameSite: "strict",
+          path: "/",
+        });
+        res.clearCookie("refreshToken", {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === "production", // Use secure flag only in production
+          sameSite: "strict",
+          path: "/",
+        });
+        console.log("exit");
         return res.status(200).json({ message: "Successfully logged out." });
       } catch (error) {
-        console.error("Error during logout or token verification:", error);
+        console.error("Error during logout:", error);
         return res.status(500).json({ message: "Internal server error." });
       }
     }
@@ -219,10 +242,9 @@ class AuthController {
 
   public resetPassword = catchAsync(
     async (req: Request, res: Response): Promise<Response | void> => {
-      const { signResetPasswordToken } = req.params; // Verify that 'token' is correctly extracted from params
-      const { password } = req.body; // Assuming you're also receiving 'password' in the request body
+      const { signResetPasswordToken } = req.params;
+      const { password } = req.body;
       try {
-        // Verify the token
         const decoded: any = jwt.verify(
           signResetPasswordToken,
           process.env.JWT_RESET_PASSWORD_TOKEN_KEY!
@@ -246,6 +268,69 @@ class AuthController {
       } catch (error) {
         console.error("Error during password reset:", error);
         return res.status(500).json({ message: "Failed to reset password." });
+      }
+    }
+  );
+
+  public changePassword = catchAsync(
+    async (req: Request, res: Response): Promise<Response | void> => {
+      const { oldPassword, newPassword } = req.body;
+
+      // Ensure both old and new passwords are provided
+      if (!oldPassword || !newPassword) {
+        return res
+          .status(400)
+          .json({ message: "Both old and new passwords are required." });
+      }
+
+      try {
+        // Get the token from cookies
+        const token = req.cookies.accessToken;
+
+        if (!token) {
+          return res
+            .status(401)
+            .json({ message: "Unauthorized, no token provided." });
+        }
+
+        // Verify the token
+        const decoded = jwt.verify(
+          token,
+          process.env.JWT_ACCESS_TOKEN_KEY!
+        ) as JwtPayload;
+
+        // Find the user by decoded token user id
+        const userRepository = AppDataSource.getRepository(User);
+        const user = await userRepository
+          .createQueryBuilder("user")
+          .addSelect("user.password") // Explicitly select the password field for comparison
+          .where("user.id = :id", { id: decoded.id })
+          .getOne();
+
+        if (!user) {
+          return res.status(404).json({ message: "User not found." });
+        }
+
+        // Compare the provided old password with the stored hashed password
+        const isMatch = await bcrypt.compare(oldPassword, user.password);
+
+        if (!isMatch) {
+          return res
+            .status(401)
+            .json({ message: "Old password is incorrect." });
+        }
+
+        // Hash the new password and update the user record
+        const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+        user.password = hashedNewPassword;
+        await userRepository.save(user);
+
+        return res
+          .status(200)
+          .json({ message: "Password updated successfully." });
+      } catch (error) {
+        console.error("Error during password change:", error);
+        return res.status(500).json({ message: "Failed to change password." });
       }
     }
   );

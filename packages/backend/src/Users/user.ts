@@ -47,6 +47,9 @@ export class User {
   bookmarkedMovies!: number[];
 
   @Column("simple-array", { nullable: true })
+  recentActivity!: string[];
+
+  @Column("simple-array", { nullable: true })
   ratedMovies!: number[];
 
   @Column("simple-array", { nullable: true })

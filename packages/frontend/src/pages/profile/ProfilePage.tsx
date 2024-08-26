@@ -32,12 +32,12 @@ function ProfilePage() {
   return (
     <DarkModeProvider>
       <AppLayout>
-        <div className="px-[6%] sm:pl-[15%] md:px-[13%] lg:px-[20%] lg:pr-[15%]  md:pr-[3%] py-10">
+        <div className="px-[7%] sm:pl-[15%] md:px-[14%]  lg:px-[20%] lg:pr-[15%]  md:pr-[5%] py-10">
           <div className="sm:px-6 lg:px-8 py-10">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               <ProfileDetails />
               <div className="space-y-8">
-                <UserActivity />
+                <UserActivity activities={user?.recentActivity || []} />
                 <FavoriteMovies token={token} />
               </div>
             </div>

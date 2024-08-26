@@ -13,15 +13,16 @@ authRouter.patch(
   "/resetPassword/:signResetPasswordToken",
   authController.resetPassword.bind(authController)
 );
-authRouter.post("/logout", protect, authController.logout.bind(authController));
+authRouter.post("/logout", authController.logout.bind(authController));
 authRouter.post("/signup", authController.signup.bind(authController));
 authRouter.post("/login", authController.login.bind(authController));
-
+authRouter.put(
+  "/changePassword",
+  authController.changePassword.bind(authController)
+);
 authRouter.post(
   "/refresh-token/:id",
   authController.refreshToken.bind(authController)
 );
-
-// Protected route, explicitly applying the 'protect' middleware
 
 export default authRouter;

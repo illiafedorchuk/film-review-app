@@ -14,6 +14,9 @@ export class Movie {
   @Column()
   poster_path!: string;
 
+  @Column({ nullable: true })
+  backdrop_path!: string;
+
   @Column()
   release_date!: string;
 
