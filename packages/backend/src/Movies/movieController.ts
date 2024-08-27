@@ -556,7 +556,6 @@ export class MovieController {
         ratedMovies,
       });
     } catch (error) {
-      console.error("Failed to fetch rated movies:", error);
       return res.status(500).json({ message: "Failed to fetch rated movies" });
     }
   });

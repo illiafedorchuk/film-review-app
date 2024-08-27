@@ -19,7 +19,7 @@ interface ReviewFormProps {
   onSubmit: (ratings: { [key: string]: number }, text: string) => void;
   token: string;
   hasExistingReview: boolean;
-  onReviewUpdated: () => void; // New prop to notify parent
+  onReviewUpdated: () => void;
 }
 
 const ReviewForm: React.FC<ReviewFormProps> = ({
@@ -35,7 +35,7 @@ const ReviewForm: React.FC<ReviewFormProps> = ({
   onSubmit,
   token,
   hasExistingReview,
-  onReviewUpdated, // New prop
+  onReviewUpdated,
 }) => {
   const [ratings, setRatings] = useState(initialRatings);
   const [text, setText] = useState(initialText);
