@@ -1,5 +1,3 @@
-import React from "react";
-
 import ReviewChart from "../FilmPageComponents/ReviewModal/ReviewChart";
 
 interface MoviePlateProps {
@@ -24,7 +22,7 @@ function MoviePlate({
 
   return (
     <div
-      className="w-full md:w-[100%] md:h-56 bg-[var(--input-bg-color)] rounded-xl p-2 shadow-lg overflow-hidden cursor-pointer relative"
+      className="w-full md:w-[100%] md:h-56 bg-[var(--input-bg-color)] rounded-xl p-2 shadow-lg overflow-hidden cursor-pointer relative hover:scale-105 duration-500"
       onClick={onClick}
     >
       <div className="flex flex-wrap h-full">

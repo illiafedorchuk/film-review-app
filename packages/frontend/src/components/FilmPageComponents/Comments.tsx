@@ -3,6 +3,7 @@ import CommentItem from "./CommentItem";
 import CommentForm from "./CommentForm";
 import Pagination from "./Pagination";
 import { fetchComments } from "../../lib/api";
+import { User } from "../../types/types";
 
 interface Comment {
   id: number;
@@ -11,26 +12,15 @@ interface Comment {
   likes: number;
   dislikes: number;
   createdAt: string;
-  user: {
-    id: number;
-    name: string;
-    avatarUrl: string;
-  };
+  user: User | null;
 }
 
 interface CommentsProps {
   movieId: number;
-  token: string;
   commentsPerPage: number;
-  currentUserId: number; // The ID of the current user
 }
 
-const Comments: React.FC<CommentsProps> = ({
-  movieId,
-  token,
-  commentsPerPage,
-  currentUserId,
-}) => {
+const Comments: React.FC<CommentsProps> = ({ movieId, commentsPerPage }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [commentData, setCommentData] = useState<Comment[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -38,7 +28,7 @@ const Comments: React.FC<CommentsProps> = ({
   useEffect(() => {
     const loadComments = async () => {
       try {
-        const fetchedComments = await fetchComments(movieId, token);
+        const fetchedComments = await fetchComments(movieId);
         setCommentData(fetchedComments);
       } catch (error) {
         setError("Failed to load comments. Please try again later.");
@@ -47,7 +37,7 @@ const Comments: React.FC<CommentsProps> = ({
     };
 
     loadComments();
-  }, [movieId, token]);
+  }, [movieId]);
 
   const handleLike = (id: number) => {
     setCommentData((prevComments) =>
@@ -96,10 +86,9 @@ const Comments: React.FC<CommentsProps> = ({
             <CommentItem
               key={comment.id}
               id={comment.id}
-              userId={comment.user.id}
-              currentUserId={currentUserId}
-              name={comment.user.name}
-              avatarUrl={comment.user.avatarUrl}
+              userId={comment.user!.id}
+              name={comment.user!.name}
+              avatarUrl={comment.user!.avatarUrl}
               timestamp={new Date(comment.createdAt).toLocaleString()}
               text={comment.text}
               likes={comment.likes}
@@ -107,12 +96,11 @@ const Comments: React.FC<CommentsProps> = ({
               onLike={handleLike}
               onDislike={handleDislike}
               onDelete={handleDelete}
-              token={token}
             />
           ))
         )}
       </div>
-      <CommentForm movieId={movieId} token={token} />
+      <CommentForm movieId={movieId} />
       <div className="mt-6 flex justify-center">
         <Pagination
           totalComments={commentData.length}

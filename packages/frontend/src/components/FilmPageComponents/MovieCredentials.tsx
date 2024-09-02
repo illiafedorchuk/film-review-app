@@ -25,20 +25,18 @@ interface MovieCredentialsProps {
     crew: Array<{ name: string; job: string }>;
     cast: Array<{ name: string }>;
   };
-  token: string;
 }
 
 const MovieCredentials = ({
   movieDetails,
   actorsData,
-  token,
 }: MovieCredentialsProps) => {
   const [watchLater, setWatchLater] = useState(false);
 
   // Function to fetch the watchlist and check if the movie is in it
   const checkWatchlist = async () => {
     try {
-      const data = await fetchWatchlist(token);
+      const data = await fetchWatchlist();
       console.log(data);
       const watchlist = data.watchLaterMovies;
       if (watchlist.includes(movieDetails.id.toString())) {
@@ -58,7 +56,7 @@ const MovieCredentials = ({
   };
 
   const handleDeleteLaterClick = async () => {
-    await removeWatchLaterMovie(movieDetails.id, token);
+    await removeWatchLaterMovie(movieDetails.id);
     setWatchLater(false);
   };
 
@@ -71,7 +69,7 @@ const MovieCredentials = ({
       vote_average: movieDetails.vote_average,
       genre_ids: movieDetails.genres.map((genre) => genre.id),
     };
-    await addWatchLaterMovie(movie, token);
+    await addWatchLaterMovie(movie);
     setWatchLater(true);
   };
 

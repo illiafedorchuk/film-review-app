@@ -6,8 +6,9 @@ import {
   dislikeCommentApi,
   deleteCommentApi,
 } from "../../lib/api";
+import { useAuth } from "../../lib/AuthContext";
 
-export const useLikeComment = (token: string) => {
+export const useLikeComment = () => {
   const [likeCount, setLikeCount] = useState<number | null>(null);
   const [liked, setLiked] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -16,7 +17,7 @@ export const useLikeComment = (token: string) => {
     if (liked) return; // Prevent multiple likes
 
     try {
-      const like_count = await likeCommentApi(commentId, token);
+      const like_count = await likeCommentApi(commentId);
       setLikeCount(like_count);
       setLiked(true);
       setError(null);
@@ -29,7 +30,7 @@ export const useLikeComment = (token: string) => {
   return { likeCount, liked, error, likeComment, setLiked };
 };
 
-export const useDislikeComment = (token: string) => {
+export const useDislikeComment = () => {
   const [dislikeCount, setDislikeCount] = useState<number | null>(null);
   const [disliked, setDisliked] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -38,7 +39,7 @@ export const useDislikeComment = (token: string) => {
     if (disliked) return; // Prevent multiple dislikes
 
     try {
-      const dislike_count = await dislikeCommentApi(commentId, token);
+      const dislike_count = await dislikeCommentApi(commentId);
       setDislikeCount(dislike_count);
       setDisliked(true);
       setError(null);
@@ -54,7 +55,6 @@ export const useDislikeComment = (token: string) => {
 interface CommentItemProps {
   id: number;
   userId: number; // The ID of the comment's author
-  currentUserId: number; // The ID of the current user
   name: string;
   avatarUrl: string;
   timestamp: string;
@@ -64,13 +64,11 @@ interface CommentItemProps {
   onLike: (id: number) => void;
   onDislike: (id: number) => void;
   onDelete: (id: number) => void;
-  token: string;
 }
 
 const CommentItem: React.FC<CommentItemProps> = ({
   id,
   userId,
-  currentUserId,
   name,
   avatarUrl,
   timestamp,
@@ -80,13 +78,13 @@ const CommentItem: React.FC<CommentItemProps> = ({
   onLike,
   onDislike,
   onDelete,
-  token,
 }) => {
+  const { user } = useAuth();
   const [currentLikes, setCurrentLikes] = useState<number>(likes);
   const [currentDislikes, setCurrentDislikes] = useState<number>(dislikes);
-  const { likeCount, liked, likeComment, setLiked } = useLikeComment(token);
+  const { likeCount, liked, likeComment, setLiked } = useLikeComment();
   const { dislikeCount, disliked, dislikeComment, setDisliked } =
-    useDislikeComment(token);
+    useDislikeComment();
 
   useEffect(() => {
     const loadLikesAndDislikes = async () => {
@@ -136,7 +134,7 @@ const CommentItem: React.FC<CommentItemProps> = ({
 
   const handleDelete = async () => {
     try {
-      await deleteCommentApi(id, token);
+      await deleteCommentApi(id);
       onDelete(id);
     } catch (error) {
       console.error("Failed to delete the comment:", error);
@@ -188,7 +186,7 @@ const CommentItem: React.FC<CommentItemProps> = ({
             <BiDislike className="w-5 h-5 mr-1" />
             {currentDislikes}
           </button>
-          {currentUserId === userId && (
+          {user?.id === userId && (
             <button
               onClick={handleDelete}
               className="text-red-500 text-md focus:outline-none w-full text-end justify-self-end font-bold"

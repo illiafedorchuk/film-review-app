@@ -152,7 +152,7 @@ export const unbookmarkMovie = async (movieId: number, token: string) => {
   return response.data;
 };
 
-export const addWatchLaterMovie = async (movie: any, token: string) => {
+export const addWatchLaterMovie = async (movie: any) => {
   const response = await axios.post(
     `http://localhost:3000/movie/add-watchlist`,
     {
@@ -166,7 +166,6 @@ export const addWatchLaterMovie = async (movie: any, token: string) => {
     {
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
       },
       withCredentials: true,
     }
@@ -174,25 +173,21 @@ export const addWatchLaterMovie = async (movie: any, token: string) => {
   return response.data;
 };
 
-export const removeWatchLaterMovie = async (movieId: number, token: string) => {
+export const removeWatchLaterMovie = async (movieId: number) => {
   const response = await axios.put(
     `http://localhost:3000/movie/remove-watchlist`,
     { movie_id: movieId },
     {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+      headers: {},
       withCredentials: true,
     }
   );
   return response.data;
 };
 
-export const fetchWatchlist = async (token: string) => {
+export const fetchWatchlist = async () => {
   const response = await axios.get("http://localhost:3000/user/watchlist", {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
+    headers: {},
     withCredentials: true,
   });
   return response.data;
@@ -207,8 +202,7 @@ export const createReview = async (
   posterPath: string,
   releaseDate: string,
   voteAverage: number,
-  genreIds: number[],
-  token: string
+  genreIds: number[]
 ) => {
   const response = await axios.post(
     `http://localhost:3000/review/add-review`,
@@ -224,23 +218,19 @@ export const createReview = async (
       genre_ids: genreIds,
     },
     {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+      headers: {},
       withCredentials: true,
     }
   );
   return response.data;
 };
 
-export const fetchUserReview = async (movieId: number, token: string) => {
+export const fetchUserReview = async (movieId: number) => {
   try {
     const response = await axios.get(
       `http://localhost:3000/review/get-user-review/${movieId}`,
       {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: {},
         withCredentials: true,
       }
     );
@@ -255,8 +245,7 @@ export const updateReview = async (
   movieId: number,
   rating: number,
   comment: string,
-  criteriaRatings: { [key: string]: number },
-  token: string
+  criteriaRatings: { [key: string]: number }
 ) => {
   const response = await axios.patch(
     `http://localhost:3000/review/update-review`,
@@ -267,16 +256,14 @@ export const updateReview = async (
       criteriaRatings,
     },
     {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+      headers: {},
       withCredentials: true,
     }
   );
   return response.data;
 };
 
-export const addMovieToDatabase = async (movie: any, token: string) => {
+export const addMovieToDatabase = async (movie: any) => {
   console.log("Movie data being sent to backend:", movie); // Add this line to debug
 
   const response = await axios.post(
@@ -293,7 +280,6 @@ export const addMovieToDatabase = async (movie: any, token: string) => {
     {
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
       },
       withCredentials: true,
     }
@@ -301,12 +287,12 @@ export const addMovieToDatabase = async (movie: any, token: string) => {
   return response.data;
 };
 
-export const fetchMovieReactions = async (movieId: number, token: string) => {
+export const fetchMovieReactions = async (movieId: number) => {
   try {
     const response = await axios.get(
       `http://localhost:3000/movie/${movieId}/reactions`,
       {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: {},
       }
     );
 
@@ -316,18 +302,32 @@ export const fetchMovieReactions = async (movieId: number, token: string) => {
     throw new Error("Failed to fetch movie reactions");
   }
 };
-
 export const addFastReaction = async (
   movieId: number,
-  reactionType: string | null,
-  token: string
+  title: string,
+  poster_path: string,
+  backdrop_path: string,
+  release_date: string,
+  vote_average: string,
+  genre_ids: string,
+  reactionType: string | null
 ) => {
   try {
     const response = await axios.post(
       `http://localhost:3000/movie/${movieId}/react`,
-      { reactionType },
       {
-        headers: { Authorization: `Bearer ${token}` },
+        reactionType,
+        movieId, // Make sure movieId is sent correctly
+        title,
+        poster_path,
+        backdrop_path,
+        release_date,
+        vote_average,
+        genre_ids,
+      },
+      {
+        headers: {}, // Add any required headers, such as authorization, if needed
+        withCredentials: true, // Ensure credentials like cookies are included
       }
     );
     return response.data;
@@ -337,12 +337,12 @@ export const addFastReaction = async (
   }
 };
 
-export const fetchComments = async (movieId: number, token: string) => {
+export const fetchComments = async (movieId: number) => {
   try {
     const response = await axios.get(
       `http://localhost:3000/comment/${movieId}`,
       {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: {},
       }
     );
 
@@ -359,18 +359,12 @@ export const fetchComments = async (movieId: number, token: string) => {
   }
 };
 
-export const createComment = async (
-  movieId: number,
-  token: string,
-  text: string
-) => {
+export const createComment = async (movieId: number, text: string) => {
   try {
     const response = await axios.post(
       `http://localhost:3000/comment/${movieId}/create`,
       { text },
-      {
-        headers: { Authorization: `Bearer ${token}` },
-      }
+      {}
     );
     return response.data;
   } catch (error) {
@@ -379,27 +373,23 @@ export const createComment = async (
   }
 };
 
-export const likeCommentApi = async (commentId: number, token: string) => {
+export const likeCommentApi = async (commentId: number) => {
   const response = await axios.post(
     `http://localhost:3000/comment/${commentId}/like`,
     {},
     {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+      headers: {},
     }
   );
   return response.data.like_count;
 };
 
-export const dislikeCommentApi = async (commentId: number, token: string) => {
+export const dislikeCommentApi = async (commentId: number) => {
   const response = await axios.post(
     `http://localhost:3000/comment/${commentId}/dislike`,
     {},
     {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+      headers: {},
     }
   );
   return response.data.dislike_count;
@@ -417,13 +407,11 @@ export const fetchLikesAndDislikes = async (commentId: number) => {
   }
 };
 
-export const deleteCommentApi = async (commentId: number, token: string) => {
+export const deleteCommentApi = async (commentId: number) => {
   const response = await axios.delete(
     `http://localhost:3000/comment/${commentId}/delete`,
     {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+      headers: {},
     }
   );
   return response.data;
@@ -437,6 +425,7 @@ export const fetchCurrentUser = async (token: string) => {
       },
       withCredentials: true,
     });
+
     return response.data;
   } catch (error) {
     console.error("Failed to fetch current user:", error);
@@ -480,14 +469,11 @@ export const fetchRatedMovies = async (token: string) => {
   }
 };
 
-export const fetchBookmarkedMovies = async (token: string) => {
+export const fetchBookmarkedMovies = async () => {
   try {
     const response = await axios.get(
       `http://localhost:3000/movie/getBookmarkedMovies`,
       {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
         withCredentials: true,
       }
     );
@@ -498,14 +484,12 @@ export const fetchBookmarkedMovies = async (token: string) => {
   }
 };
 
-export const deleteReview = async (reviewId: number, token: string) => {
+export const deleteReview = async (reviewId: number) => {
   try {
     const response = await axios.delete(
       `http://localhost:3000/review/delete-review/${reviewId}`,
       {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: {},
         withCredentials: true,
       }
     );
@@ -550,9 +534,13 @@ export const editUserProfile = async (
 
 export const logout = async () => {
   try {
-    await axios.post("http://localhost:3000/auth/logout", {
-      withCredentials: true,
-    });
+    await axios.post(
+      "http://localhost:3000/auth/logout",
+      {}, // Pass an empty object for the request body
+      {
+        withCredentials: true, // This should be in the options object
+      }
+    );
   } catch (error) {
     console.error("Error during logout:", error);
     throw new Error("Failed to log out");

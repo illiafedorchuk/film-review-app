@@ -1,9 +1,16 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useEffect, useState } from "react";
-import { fetchRatedMovies, fetchUserReview } from "../../lib/api";
+import {
+  fetchCurrentUser,
+  fetchRatedMovies,
+  fetchUserReview,
+} from "../../lib/api";
 import { DarkModeProvider } from "../../components/layouts/DarkModeContext";
 import AppLayout from "../../components/layouts/AppLayout";
 import MoviePlate from "../../components/RatedMoviesComponents/MoviePlate";
 import ReviewModal from "../../components/FilmPageComponents/ReviewModal/ReviewModal";
+import UnauthorizedTable from "../../components/unauthComponents/UnauthorizedTable"; // Ensure this import is correct
 
 interface Movie {
   movie_movie_id: number;
@@ -23,36 +30,58 @@ interface Movie {
 }
 
 function RatedMovies() {
+  const [currentUser, setCurrentUser] = useState<any>(null);
+  const [showUnauthorized, setShowUnauthorized] = useState(false);
   const [ratedMovies, setRatedMovies] = useState<Movie[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
-  const [token] = useState<string>("your-auth-token");
+  const token = ""; // Replace this with actual token management logic
+
+  useEffect(() => {
+    const loadCurrentUser = async () => {
+      try {
+        const userData = await fetchCurrentUser(token);
+        setCurrentUser(userData);
+      } catch (err: any) {
+        if (err.response && err.response.status === 401) {
+          setShowUnauthorized(true);
+        } else {
+          setError("Unauthorized");
+        }
+      }
+    };
+
+    loadCurrentUser();
+  });
 
   useEffect(() => {
     const loadRatedMovies = async () => {
+      if (showUnauthorized) return;
+
       try {
         const data = await fetchRatedMovies(token);
         setRatedMovies(data.ratedMovies);
+      } catch (err: any) {
+        if (err.response && err.response.status === 401) {
+          setShowUnauthorized(true);
+        } else {
+          setError("Failed to fetch rated movies");
+        }
+      } finally {
         setLoading(false);
-      } catch (err) {
-        setError("Failed to fetch rated movies");
-        setLoading(false);
-        console.error(err);
       }
     };
 
     loadRatedMovies();
-  }, [token]);
+  }, [token, showUnauthorized, ratedMovies]);
 
   const handlePlateClick = async (movie: Movie) => {
     try {
-      // Fetch the user's review for the selected movie
-      const reviews = await fetchUserReview(movie.movie_movie_id, token);
+      const reviews = await fetchUserReview(movie.movie_movie_id);
       const userReview = reviews.length > 0 ? reviews[0] : null;
 
-      // Set the selected movie and review details
       setSelectedMovie({
         ...movie,
         review: userReview
@@ -71,30 +100,33 @@ function RatedMovies() {
     }
   };
 
-  useEffect(() => {
-    if (selectedMovie) {
-      console.log("selectedMovie:", selectedMovie);
-    }
-  }, [selectedMovie]); // This effect will trigger when selectedMovie is updated
-
   const handleCloseModal = () => {
     setIsModalOpen(false);
-    setSelectedMovie(null); // Clear selected movie
+    setSelectedMovie(null);
   };
 
   if (loading) {
     return <div>Loading...</div>;
   }
 
-  if (error) {
-    return <div>{error}</div>;
+  if (error == "Unauthorized") {
+    return (
+      <DarkModeProvider>
+        <AppLayout>
+          <UnauthorizedTable
+            pageName="Restricted Access"
+            text="You need to be logged in to perform this action."
+          />
+        </AppLayout>
+      </DarkModeProvider>
+    );
   }
 
   return (
     <DarkModeProvider>
       <AppLayout>
-        <div className="px-[5%] sm:pl-[15%] sm:pr-[5%] md:pl-[13%] lg:pl-[8%] lg:pr-[2%] md:pr-[5%] py-10 text-center">
-          <h1 className=" text-4xl font-bold pb-10">
+        <div className="px-[6%] sm:pl-[15%] sm:pr-[5%] md:pl-[13%] lg:pl-[15%] lg:pr-[10%] md:pr-[5%] py-10">
+          <h1 className="text-4xl font-bold pb-10 text-center">
             Rated <span className="text-violet-500">Movies</span>
           </h1>
           <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-2 justify-items-center">
@@ -105,7 +137,7 @@ function RatedMovies() {
                   movie_title={movie.movie_title}
                   movierating={movie.movierating}
                   movie_poster_path={movie.movie_poster_path}
-                  onClick={() => handlePlateClick(movie)} // Fetch and set review on click
+                  onClick={() => handlePlateClick(movie)}
                   onEdit={() =>
                     console.log("Edit movie:", movie.movie_movie_id)
                   }
@@ -119,13 +151,12 @@ function RatedMovies() {
             )}
           </div>
 
-          {/* Review Modal */}
           {selectedMovie && (
             <ReviewModal
               open={isModalOpen}
               onClose={handleCloseModal}
-              reviewId={selectedMovie.review?.id || 0} // Ensure 'reviewId' is passed correctly
-              hasReview={!!selectedMovie.review} // Ensure 'hasReview' is correct
+              reviewId={selectedMovie.review?.id || 0}
+              hasReview={!!selectedMovie.review}
               movieDetails={{
                 movie_Id: selectedMovie.movie_movie_id,
                 title: selectedMovie.movie_title,
@@ -136,7 +167,6 @@ function RatedMovies() {
                 genre_ids: selectedMovie.genre_ids ?? [],
                 review: selectedMovie.review,
               }}
-              token={token}
             />
           )}
         </div>

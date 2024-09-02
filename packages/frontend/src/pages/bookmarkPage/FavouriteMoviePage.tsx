@@ -1,48 +1,66 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { useEffect, useState } from "react";
 import { DarkModeProvider } from "../../components/layouts/DarkModeContext";
 import AppLayout from "../../components/layouts/AppLayout";
-import { fetchBookmarkedMovies } from "../../lib/api"; // Import the fetchWatchlist function
+import { fetchBookmarkedMovies } from "../../lib/api"; // Import the necessary functions
 import FilmCard from "../../components/ProfileComponents/FilmCard";
-
-interface Movie {
-  id: number;
-  movie_id: number;
-  title?: string;
-  poster_path?: string;
-  release_date?: string;
-  vote_average?: number;
-  genre_ids?: number[];
-}
-
+import UnauthorizedTable from "../../components/unauthComponents/UnauthorizedTable"; // Ensure this import is correct
+import { useAuth } from "../../lib/AuthContext"; //
+import { Movie } from "../../types/types";
 function FavouriteMoviePage() {
-  const token = "";
-  const [watchlist, setWatchlist] = useState<Movie[]>([]); // State to store the watchlist
-  const [loading, setLoading] = useState<boolean>(true); // Loading state
-  const [error, setError] = useState<string | null>(null); // Error state
+  useAuth();
+  const [showUnauthorized, setShowUnauthorized] = useState(false);
+  const [watchlist, setWatchlist] = useState<Movie[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const loadWatchlist = async () => {
+      if (showUnauthorized) return;
+
       try {
-        const data = await fetchBookmarkedMovies(token);
+        const data = await fetchBookmarkedMovies();
         setWatchlist(data.bookmarkedMovies); // Assuming the API returns { bookmarkedMovies: Movie[] }
-      } catch (error) {
-        setError("Failed to load favourite movies. Please try again later.");
-        console.error(error);
+      } catch (err: any) {
+        if (err.response && err.response.status === 401) {
+          setShowUnauthorized(true);
+        } else {
+          setError("Failed to load favourite movies. Please try again later.");
+        }
       } finally {
         setLoading(false);
       }
     };
 
     loadWatchlist();
-  }, [token]);
+  }, [showUnauthorized]);
 
   if (loading) {
     return <div>Loading...</div>;
   }
 
+  if (error == "Unauthorized") {
+    return (
+      <DarkModeProvider>
+        <AppLayout>
+          <UnauthorizedTable
+            pageName="Restricted Access"
+            text="You need to be logged in to view your favourite movies."
+          />
+        </AppLayout>
+      </DarkModeProvider>
+    );
+  }
+
   if (error) {
-    return <div>{error}</div>;
+    return (
+      <DarkModeProvider>
+        <AppLayout>
+          <div>{error}</div>
+        </AppLayout>
+      </DarkModeProvider>
+    );
   }
 
   return (

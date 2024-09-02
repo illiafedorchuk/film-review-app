@@ -1,34 +1,22 @@
 import React, { useState, useEffect } from "react";
 import { BiBookmark, BiSolidBookmark } from "react-icons/bi";
 import axios from "axios";
-
+import { Movie } from "../../types/types";
 const BASE_URL = "https://image.tmdb.org/t/p/w500";
 
 interface MoviePosterProps {
-  movie: {
-    id: number;
-    poster_path: string;
-    title: string;
-    release_date: string;
-    vote_average: number;
-    genre_ids: number[];
-  };
-  token: string; // Assuming you pass the token as a prop
+  movie: Movie;
 }
 
-const MoviePoster: React.FC<MoviePosterProps> = ({ movie, token }) => {
+const MoviePoster: React.FC<MoviePosterProps> = ({ movie }) => {
   const [isBookmarkHovered, setIsBookmarkHovered] = useState(false);
   const [isBooked, setIsBooked] = useState(false);
-
   useEffect(() => {
     const checkIfBookmarked = async () => {
       try {
         const response = await axios.get(
           `http://localhost:3000/user/bookmarked-movies`, // Adjust the path as needed
           {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
             withCredentials: true,
           }
         );
@@ -42,7 +30,7 @@ const MoviePoster: React.FC<MoviePosterProps> = ({ movie, token }) => {
     };
 
     checkIfBookmarked();
-  }, [movie.id, token]);
+  }, [movie.id]);
 
   const handleBookmark = async () => {
     try {
@@ -59,7 +47,6 @@ const MoviePoster: React.FC<MoviePosterProps> = ({ movie, token }) => {
         {
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
           },
           withCredentials: true,
         }
@@ -83,7 +70,6 @@ const MoviePoster: React.FC<MoviePosterProps> = ({ movie, token }) => {
         {
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
           },
           withCredentials: true,
         }

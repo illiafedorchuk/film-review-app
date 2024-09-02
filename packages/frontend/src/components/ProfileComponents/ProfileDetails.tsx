@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
-import { fetchCurrentUser } from "../../lib/api";
-import { User } from "../../types/types";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import React from "react";
+import { useAuth } from "../../lib/AuthContext"; // Import the useAuth hook
 
 // Utility function to calculate the time difference
 const timeAgo = (date: string): string => {
@@ -26,24 +26,18 @@ const timeAgo = (date: string): string => {
 };
 
 const ProfileDetails: React.FC = () => {
-  const [user, setUser] = useState<User>();
-  const token = "";
+  const { user, loading, error } = useAuth(); // Use the context to access user data
 
-  useEffect(() => {
-    const loadUser = async () => {
-      try {
-        const userData = await fetchCurrentUser(token);
-        setUser(userData);
-      } catch (error) {
-        console.error("Failed to load user:", error);
-      }
-    };
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
-    loadUser();
-  }, [token]);
+  if (error) {
+    return <div>Error loading user data: {error}</div>;
+  }
 
   if (!user) {
-    return <div>Loading...</div>;
+    return <div>No user data available.</div>;
   }
 
   return (
@@ -57,7 +51,7 @@ const ProfileDetails: React.FC = () => {
           />
         </div>
         <h1 className="text-2xl font-bold mt-4">{user.name || "boba"}</h1>
-        <p className=" mt-2">active {timeAgo(user.updatedAt)}</p>
+        <p className="mt-2">active {timeAgo(user.updatedAt)}</p>
       </div>
       <div className="mt-6 text-center">
         <h2 className="text-xl font-bold">ABOUT ME</h2>

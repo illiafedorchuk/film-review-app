@@ -11,7 +11,7 @@ const GenreButtonsContainer = ({
 }: {
   genres: { id: number; name: string }[];
   onGenreClick: (genreId: number) => void;
-  selectedGenre: string;
+  selectedGenre: number;
 }) => {
   return (
     <div className="flex flex-col w-full">
@@ -37,7 +37,7 @@ const GenreButtonsContainer = ({
               <GenreButton
                 genre={genre.name}
                 onClick={() => onGenreClick(genre.id)}
-                selected={selectedGenre === genre.name}
+                selected={selectedGenre === genre.id}
               />
             </SwiperSlide>
           ))}
@@ -51,7 +51,7 @@ const GenreButtonsContainer = ({
             genre={genre.name}
             key={genre.id}
             onClick={() => onGenreClick(genre.id)}
-            selected={selectedGenre === genre.name}
+            selected={selectedGenre === genre.id}
           />
         ))}
       </div>

@@ -1,5 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useEffect, useCallback } from "react";
 import { FaEye } from "react-icons/fa";
 import { MdOutlineReviews } from "react-icons/md";
@@ -18,8 +18,8 @@ import {
 import SidebarItem from "./SidebarItem";
 import { useDarkMode } from "./layouts/DarkModeContext";
 import MovieSearch from "./MainPageComponents/MovieSearch";
-import { useNavigate } from "react-router-dom";
-import { fetchCurrentUser, logout } from "../lib/api"; // Import the fetchCurrentUser and logout functions
+import { useNavigate, useLocation } from "react-router-dom";
+import { useAuth } from "../lib/AuthContext"; // Use the custom hook from AuthContext
 
 const Sidebar = ({
   expanded = false,
@@ -27,21 +27,20 @@ const Sidebar = ({
 }: {
   expanded: boolean;
   setExpanded: React.Dispatch<React.SetStateAction<boolean>>;
-  token: string;
 }) => {
-  const token = ""; // Initialize token state
+  const { user, logout } = useAuth(); // Get user and logout from context
   const [isMobile, setIsMobile] = useState(window.innerWidth < 640);
   const [isSidebarVisible, setIsSidebarVisible] = useState(false);
   const [isSearchActive, setIsSearchActive] = useState(false);
-  const [user, setUser] = useState<any>(null); // State to store user data
-  const navigate = useNavigate(); // Initialize useNavigate
+  const navigate = useNavigate();
+  const location = useLocation(); // Get current route location
 
   const toggleSidebar = useCallback(() => {
     if (isMobile) {
       setIsSidebarVisible((prevVisible) => !prevVisible);
     } else {
       setExpanded((prevExpanded) => !prevExpanded);
-      setIsSearchActive(false); // Reset search active state when manually toggling sidebar
+      setIsSearchActive(false);
     }
   }, [isMobile, setExpanded]);
 
@@ -64,7 +63,7 @@ const Sidebar = ({
       const screenWidth = window.innerWidth;
       setIsMobile(screenWidth < 640);
       if (screenWidth >= 640) {
-        setIsSidebarVisible(false); // Ensures sidebar is closed on non-mobile screens
+        setIsSidebarVisible(false);
       }
     };
 
@@ -75,19 +74,6 @@ const Sidebar = ({
       window.removeEventListener("mousedown", handleClickOutside);
     };
   }, [handleClickOutside]);
-
-  // Fetch user data when the component mounts
-  useEffect(() => {
-    const loadUserData = async () => {
-      try {
-        const userData = await fetchCurrentUser(token);
-        setUser(userData); // Store user data in state
-      } catch (error) {
-        console.error("Failed to load user data:", error);
-      }
-    };
-    loadUserData();
-  }, [token]);
 
   const handleSearchClick = () => {
     if (!expanded) {
@@ -103,16 +89,18 @@ const Sidebar = ({
   const handleLogout = async () => {
     try {
       await logout();
-      setUser(null); // Clear user state
-      navigate("/signin"); // Redirect to login
+      navigate("/signin");
     } catch (error) {
       console.error("Logout failed:", error);
     }
   };
 
   const handleLogin = () => {
-    navigate("/signin"); // Redirect to the login page
+    navigate("/signin");
   };
+
+  // Determine if a menu item is active
+  const isActive = (path: string) => location.pathname === path;
 
   return (
     <div className="fixed z-50 top-0 left-0" id="sidebar">
@@ -120,10 +108,7 @@ const Sidebar = ({
         <>
           {!isSidebarVisible && (
             <div className="fixed left-4 top-4 z-50 p-2 rounded-full cursor-pointer bg-purple-600">
-              <BiChevronRight
-                className="text-4xl text-white"
-                onClick={toggleSidebar}
-              />
+              <BiChevronRight className="text-4xl" onClick={toggleSidebar} />
             </div>
           )}
           {isSidebarVisible && (
@@ -137,16 +122,16 @@ const Sidebar = ({
                 isSearchActive={isSearchActive}
                 handleSearchClick={handleSearchClick}
                 onMovieSelect={handleMovieSelect}
-                user={user} // Pass the user data to the SidebarContent
-                handleLogout={handleLogout} // Pass logout function
-                handleLogin={handleLogin} // Pass login function
+                user={user}
+                handleLogout={handleLogout}
+                handleLogin={handleLogin}
               />
             </div>
           )}
         </>
       ) : (
         <div
-          className={`fixed top-0 bottom-0 left-0 duration-500 p-4 overflow-y-auto text-center h-screen z-50 rounded-r-3xl shadow-lg bg-[var(--input-bg-color)] ${
+          className={`fixed top-0 bottom-0 left-0 p-4 overflow-y-auto text-center h-screen z-50 rounded-r-3xl shadow-lg bg-[var(--input-bg-color)]  duration-500 transition-width ${
             expanded ? "w-[240px]" : "w-[80px]"
           }`}
         >
@@ -156,9 +141,9 @@ const Sidebar = ({
             isSearchActive={isSearchActive}
             handleSearchClick={handleSearchClick}
             onMovieSelect={handleMovieSelect}
-            user={user} // Pass the user data to the SidebarContent
-            handleLogout={handleLogout} // Pass logout function
-            handleLogin={handleLogin} // Pass login function
+            user={user}
+            handleLogout={handleLogout}
+            handleLogin={handleLogin}
           />
         </div>
       )}
@@ -182,12 +167,15 @@ const SidebarContent = React.memo(
     isSearchActive: boolean;
     handleSearchClick: () => void;
     onMovieSelect: (movie: any) => void;
-    user: any; // Type for user
+    user: any;
     handleLogout: () => void;
     handleLogin: () => void;
   }) => {
     const { isDarkMode, toggleDarkMode } = useDarkMode();
     const navigate = useNavigate();
+    const location = useLocation();
+
+    const isActive = (path: string) => location.pathname === path;
 
     const handleBookmarkNavigate = () => {
       navigate(`/profile/me/favouriteMovies`);
@@ -224,7 +212,9 @@ const SidebarContent = React.memo(
         <div className="flex flex-col flex-1">
           <div className="py-5">
             <div
-              className="flex mb-4 cursor-pointer duration-300 hover:bg-violet-500 hover:text-white p-2 rounded-md"
+              className={`flex mb-4 cursor-pointer duration-300 hover:text-white p-2 rounded-md ${
+                expanded ? "hover:bg-violet-500" : ""
+              }`}
               onClick={handleProfileNavigate}
             >
               {user ? (
@@ -237,7 +227,7 @@ const SidebarContent = React.memo(
                   {expanded && (
                     <div className="flex flex-col ml-2">
                       <span className="font-bold">{user.name}</span>
-                      <span className="text-sm text-left cursor-pointer  hover:text-white">
+                      <span className="text-sm text-left cursor-pointer hover:text-white">
                         {user.id}
                       </span>
                     </div>
@@ -261,35 +251,44 @@ const SidebarContent = React.memo(
                 label={""}
                 expanded={false}
                 onClick={handleSearchClick}
+                active={isActive("/search")} // Check if the current route is "/search"
               />
             )}
             <nav className="flex-1">
-              <a href="/">
-                <SidebarItem icon={BiHome} expanded={expanded} label={"Home"} />
-              </a>
+              <SidebarItem
+                icon={BiHome}
+                expanded={expanded}
+                label={"Home"}
+                onClick={() => navigate("/")}
+                active={isActive("/")}
+              />
               <SidebarItem
                 icon={MdOutlineReviews}
                 expanded={expanded}
                 label={"Reviews"}
                 onClick={handleReviewsNavigate}
+                active={isActive("/profile/me/ratedMovies")}
               />
               <SidebarItem
                 icon={BiBookmarkFill}
                 expanded={expanded}
                 label={"Bookmark"}
                 onClick={handleBookmarkNavigate}
+                active={isActive("/profile/me/favouriteMovies")}
               />
               <SidebarItem
                 icon={BiEnvelope}
                 expanded={expanded}
                 label={"Messages"}
                 onClick={handleBookmarkNavigate}
+                active={isActive("/profile/me/messages")}
               />
               <SidebarItem
                 icon={FaEye}
                 expanded={expanded}
                 label={"Watchlist"}
                 onClick={handleWatchlistNavigate}
+                active={isActive("/profile/me/watchlist")}
               />
             </nav>
           </div>

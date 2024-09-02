@@ -22,12 +22,9 @@ const PasswordChangeForm: React.FC<PasswordChangeFormProps> = ({
     register,
     handleSubmit,
     formState: { errors },
-    watch,
     reset,
   } = useForm<PasswordFormValues>();
   const [formError, setFormError] = useState<string | null>(null);
-
-  const newPassword = watch("newPassword");
 
   const handleFormSubmit: SubmitHandler<PasswordFormValues> = (data) => {
     setFormError(null);

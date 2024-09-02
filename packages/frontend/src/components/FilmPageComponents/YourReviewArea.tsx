@@ -3,22 +3,23 @@ import React, { useState, useEffect } from "react";
 import { BiSolidStar } from "react-icons/bi";
 import ReviewModal from "./ReviewModal/ReviewModal";
 import { fetchUserReview } from "../../lib/api";
-
+import { User } from "../../types/types";
 interface ReviewProps {
   rating: number;
-  details: any;
-  token: string;
+  details: any; // Consider replacing 'any' with a more specific type for movie details
+  user: User | null; // Add a 'user' prop of type 'User | null'
 }
 
-const YourReviewArea: React.FC<ReviewProps> = ({ details, token }) => {
+const YourReviewArea: React.FC<ReviewProps> = ({ details, user }: any) => {
   const [isModalOpen, setModalOpen] = useState(false);
   const [userReview, setUserReview] = useState<any>(null);
   const [hasRated, setHasRated] = useState<boolean>(false);
 
   useEffect(() => {
     const loadUserReview = async () => {
+      if (!user) return; // Only load the review if the user is logged in
       try {
-        const reviews = await fetchUserReview(details.id, token);
+        const reviews = await fetchUserReview(details.id);
         if (reviews && reviews.length > 0) {
           const review = reviews[0];
           setUserReview({
@@ -62,8 +63,9 @@ const YourReviewArea: React.FC<ReviewProps> = ({ details, token }) => {
         setHasRated(false);
       }
     };
+
     loadUserReview();
-  }, [details.id, token, userReview]);
+  }, [details.id, user, userReview]);
 
   const handleClose = () => setModalOpen(false);
 
@@ -90,7 +92,6 @@ const YourReviewArea: React.FC<ReviewProps> = ({ details, token }) => {
             genre_ids: [],
             review: userReview,
           }}
-          token={token}
         />
       )}
       <div

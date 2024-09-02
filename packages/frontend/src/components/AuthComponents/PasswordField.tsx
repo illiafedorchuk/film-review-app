@@ -2,13 +2,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import * as React from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import { PiWarningCircleFill } from "react-icons/pi";
 import { useState } from "react";
 
 function PasswordField({
   label,
   placeholder,
-  type,
   register,
   name,
   error,

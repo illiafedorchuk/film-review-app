@@ -84,8 +84,8 @@ const MovieSearch: React.FC<MovieSearchProps> = ({
   return (
     <div className="w-full" ref={searchRef}>
       <div className="relative w-full">
-        <div className="flex justify-center items-center">
-          <div className="relative my-auto w-full rounded-3xl">
+        <div className="flex justify-center items-center ">
+          <div className="relative my-auto w-full rounded-3xl ">
             <BiSearch
               className="absolute left-3 top-4 dark:text-white text-black"
               size="1.5em"
@@ -96,14 +96,14 @@ const MovieSearch: React.FC<MovieSearchProps> = ({
               value={searchQuery}
               onChange={handleSearchChange}
               placeholder="Search..."
-              className="pl-10 p-2 bg-[var(--input-border-color)] dark:text-white dark:bg-[var(--border-color)] text-black w-full h-14 rounded-full"
+              className="pl-10 p-2 bg-[var(--input-border-color)] border  dark:text-white dark:bg-[var(--border-color)]  text-black w-full h-14 rounded-full"
             />
             {isDropdownVisible && (
-              <ul className="absolute z-10 w-full bg-[var(--input-bg-color)] border border-[var(--input-border-color)] rounded-md mt-1 max-h-60 overflow-y-auto">
+              <ul className="absolute z-10 w-full bg-[var(--input-bg-color)]  border border-[var(--input-border-color)] rounded-md mt-1 max-h-60 overflow-y-auto">
                 {searchResults.map((movie) => (
                   <li
                     key={movie.id}
-                    className="p-2 hover:bg-violet-400 hover:text-white dark:hover:bg-[var(--border-color)] cursor-pointer text-left"
+                    className="p-2 hover:bg-violet-400 hover:text-white dark:hover:bg-[var(--border-color)]  cursor-pointer text-left"
                     onClick={() => handleMovieSelect(movie)}
                   >
                     <div className="flex items-center">

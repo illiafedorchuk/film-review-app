@@ -9,7 +9,6 @@ import {
   signResetPasswordToken,
 } from "../Utils/TokenUtils";
 import catchAsync from "../Utils/CatchAsync";
-import { MailtrapClient } from "mailtrap";
 import nodemailer from "nodemailer";
 
 var transport = nodemailer.createTransport({
@@ -21,9 +20,6 @@ var transport = nodemailer.createTransport({
   },
 });
 
-interface ExtendedRequest extends Request {
-  user?: User;
-}
 const EmailValidation: RegExp = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
 
 class AuthController {
@@ -58,8 +54,6 @@ class AuthController {
 
         jwt.verify(user.refreshToken, process.env.JWT_REFRESH_TOKEN_KEY!);
 
-        // Assuming signAccessToken is a utility function you have that signs JWTs
-        // You might need to modify signAccessToken to accept additional parameters for setting a longer duration
         const newAccessToken = signAccessToken(user.id);
 
         const decoded = jwt.decode(newAccessToken) as JwtPayload;
@@ -143,7 +137,7 @@ class AuthController {
       try {
         // Get the access token from cookies
         const accessToken = req.cookies.accessToken;
-        // If no access token is provided, return an error
+        console.log(accessToken);
         if (!accessToken) {
           return res.status(400).json({ message: "No access token provided." });
         }
@@ -175,15 +169,16 @@ class AuthController {
         }
 
         // Invalidate the refresh token by setting it to null
+        console.log(user.refreshToken);
         user.refreshToken = null;
         await userRepository.save(user);
 
         // Clear the access token and refresh token cookies
         res.clearCookie("accessToken", {
           httpOnly: true,
-          secure: process.env.NODE_ENV === "production", // Use secure flag only in production
+          secure: process.env.NODE_ENV === "production", // Ensure this matches the setting when the cookie was set
           sameSite: "strict",
-          path: "/",
+          path: "/", // Ensure path matches where the cookie was set
         });
         res.clearCookie("refreshToken", {
           httpOnly: true,

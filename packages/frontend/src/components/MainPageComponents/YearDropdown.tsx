@@ -12,7 +12,7 @@ const YearDropdown: React.FC<YearDropdownProps> = ({
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const years = Array.from({ length: 25 }, (v, i) =>
+  const years = Array.from({ length: 25 }, (i: number) =>
     (2024 - i).toString()
   ).concat("<2000");
 

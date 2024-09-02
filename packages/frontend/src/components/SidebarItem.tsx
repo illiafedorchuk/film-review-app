@@ -19,7 +19,7 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
   return (
     <div
       className={`p-3 mt-1 text-[var(--text-color)] flex items-center rounded-full cursor-pointer duration-500 ${
-        active ? "bg-purple-200" : "hover:bg-violet-500 hover:text-white"
+        active ? "bg-violet-500 text-white" : "hover:bg-violet-500 hover:text-white"
       }`}
       onClick={onClick}
     >

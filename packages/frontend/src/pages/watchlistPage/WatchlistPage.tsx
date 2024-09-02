@@ -1,25 +1,38 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { DarkModeProvider } from "../../components/layouts/DarkModeContext";
 import AppLayout from "../../components/layouts/AppLayout";
-import { fetchWatchLaterMovies } from "../../lib/api"; // Import the fetchWatchlist function
+import { fetchCurrentUser, fetchWatchLaterMovies } from "../../lib/api"; // Import the fetchWatchlist function
 import FilmCard from "../../components/ProfileComponents/FilmCard";
-
-interface Movie {
-  id: number;
-  movie_id: number;
-  title?: string;
-  poster_path?: string;
-  release_date?: string;
-  vote_average?: number;
-  genre_ids?: number[];
-}
+import { Movie } from "../../types/types";
+import UnauthorizedTable from "../../components/unauthComponents/UnauthorizedTable";
+import { AuthContext } from "../../lib/AuthContext";
 
 function WatchlistPage() {
   const token = "";
   const [watchlist, setWatchlist] = useState<Movie[]>([]); // State to store the watchlist
   const [loading, setLoading] = useState<boolean>(true); // Loading state
   const [error, setError] = useState<string | null>(null); // Error state
+  const [currentUser, setCurrentUser] = useState<any>(null);
+  const [showUnauthorized, setShowUnauthorized] = useState(false);
+  const user = useContext(AuthContext);
+  console.log("12312" + user);
+  useEffect(() => {
+    const loadCurrentUser = async () => {
+      try {
+        const userData = await fetchCurrentUser(token);
+        setCurrentUser(userData);
+      } catch (err: any) {
+        if (err.response && err.response.status === 401) {
+          setShowUnauthorized(true);
+        } else {
+          setError("Unauthorized");
+        }
+      }
+    };
+    loadCurrentUser();
+  });
 
   useEffect(() => {
     const loadWatchlist = async () => {
@@ -41,10 +54,18 @@ function WatchlistPage() {
     return <div>Loading...</div>;
   }
 
-  if (error) {
-    return <div>{error}</div>;
+  if (error == "Unauthorized") {
+    return (
+      <DarkModeProvider>
+        <AppLayout>
+          <UnauthorizedTable
+            pageName="Restricted Access"
+            text="You need to be logged in to view your favourite movies."
+          />
+        </AppLayout>
+      </DarkModeProvider>
+    );
   }
-
   return (
     <DarkModeProvider>
       <AppLayout>

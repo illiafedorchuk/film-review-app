@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -15,7 +14,6 @@ type ForgotPasswordFormFields = {
 };
 
 const ForgotPasswordModal = ({ onClose }: { onClose: () => void }) => {
-  const [submissionMessage, setSubmissionMessage] = useState("");
   const {
     register,
     handleSubmit,
@@ -27,6 +25,7 @@ const ForgotPasswordModal = ({ onClose }: { onClose: () => void }) => {
   const onSubmit = async (data: ForgotPasswordFormFields) => {
     try {
       const response = await axios.post("/auth/forgotPassword", data);
+      console.log(response);
     } catch (error) {
       console.error("Error during form submission:", error);
     }

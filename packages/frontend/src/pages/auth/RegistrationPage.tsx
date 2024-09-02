@@ -14,8 +14,10 @@ import {
   schema,
   FormFields,
 } from "../../components/AuthComponents/ValidationSchema";
+import { useRedirectIfAuthenticated } from "../../hooks/useRedirectIfAuthenticated";
 
 const RegisterPage = () => {
+  useRedirectIfAuthenticated(false);
   const [error, setError] = useState<string | null>(null);
   const {
     register,
@@ -40,6 +42,7 @@ const RegisterPage = () => {
         password: data.password,
       });
       reset();
+      console.log(response);
       setError(null);
     } catch (error: any) {
       setError(error.response?.data?.message || "An error occurred");

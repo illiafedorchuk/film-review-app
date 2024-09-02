@@ -25,15 +25,12 @@ import { Movie, ApiResponse } from "../../types/types";
 const MainPage: React.FC = () => {
   const [currentMovieIndex, setCurrentMovieIndex] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
-  const [selectedGenre, setSelectedGenre] = useState<string>("🍿All");
+  const [selectedGenre, setSelectedGenre] = useState<number>(0);
   const [sortBy, setSortBy] = useState<string>("popularity.desc");
   const [selectedGenres, setSelectedGenres] = useState<number[]>([]);
   const [selectedYear, setSelectedYear] = useState<string>("");
   const navigate = useNavigate();
 
-  const { data: popularMoviesData } = useApiGet<ApiResponse<Movie>>(
-    `${BASE_URL}/movie/popular?api_key=${API_KEY}`
-  );
   const { data: randomMovieList } = useApiGet<ApiResponse<Movie>>(
     `${BASE_URL}/movie/top_rated?api_key=${API_KEY}`
   );
@@ -44,10 +41,9 @@ const MainPage: React.FC = () => {
 
   const handleGenreClick = (genreId: number) => {
     if (genreId === 0) {
-      setSelectedGenre("🍿All");
-      setSelectedGenres([]);
+      setSelectedGenre(0);
     } else {
-      setSelectedGenre(GENRE_MAP[genreId]);
+      setSelectedGenre(genreId);
       setSelectedGenres([genreId]);
     }
   };

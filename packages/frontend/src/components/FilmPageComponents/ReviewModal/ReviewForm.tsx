@@ -17,9 +17,11 @@ interface ReviewFormProps {
   initialRatings: { [key: string]: number };
   initialText: string;
   onSubmit: (ratings: { [key: string]: number }, text: string) => void;
-  token: string;
   hasExistingReview: boolean;
-  onReviewUpdated: () => void;
+  onReviewUpdated: (
+    updatedRatings: { [key: string]: number },
+    updatedText: string
+  ) => void;
 }
 
 const ReviewForm: React.FC<ReviewFormProps> = ({
@@ -32,8 +34,7 @@ const ReviewForm: React.FC<ReviewFormProps> = ({
   genreIds,
   initialRatings,
   initialText,
-  onSubmit,
-  token,
+
   hasExistingReview,
   onReviewUpdated,
 }) => {
@@ -71,34 +72,28 @@ const ReviewForm: React.FC<ReviewFormProps> = ({
         Object.values(criteriaRatings).reduce((a, b) => a + b, 0) /
         Object.values(criteriaRatings).length;
 
-      await addMovieToDatabase(
-        {
-          id: movie_Id,
-          title,
-          poster_path: posterUrl.replace(
-            "https://image.tmdb.org/t/p/original",
-            ""
-          ),
-          backdrop_path: backdrop_path.replace(
-            "https://image.tmdb.org/t/p/original",
-            ""
-          ),
-          release_date: releaseDate,
-          vote_average: voteAverage,
-          genre_ids: genreIds,
-        },
-        token
-      );
+      // Add the movie to the database first
+      await addMovieToDatabase({
+        id: movie_Id,
+        title,
+        poster_path: posterUrl.replace(
+          "https://image.tmdb.org/t/p/original",
+          ""
+        ),
+        backdrop_path: backdrop_path.replace(
+          "https://image.tmdb.org/t/p/original",
+          ""
+        ),
+        release_date: releaseDate,
+        vote_average: voteAverage,
+        genre_ids: genreIds,
+      });
 
       if (hasExistingReview) {
-        await updateReview(
-          movie_Id,
-          overallRating,
-          text,
-          criteriaRatings,
-          token
-        );
+        // If there's an existing review, update it
+        await updateReview(movie_Id, overallRating, text, criteriaRatings);
       } else {
+        // If no existing review, create a new one
         await createReview(
           movie_Id,
           overallRating,
@@ -108,13 +103,12 @@ const ReviewForm: React.FC<ReviewFormProps> = ({
           posterUrl.replace("https://image.tmdb.org/t/p/original", ""),
           releaseDate,
           voteAverage,
-          genreIds,
-          token
+          genreIds
         );
       }
 
-      onSubmit(ratings, text);
-      onReviewUpdated(); // Notify parent to switch back to ReviewDetails
+      // Call the parent callback with updated data
+      onReviewUpdated(ratings, text);
     } catch (error) {
       console.error("Failed to submit review:", error);
     }
@@ -183,7 +177,7 @@ const ReviewForm: React.FC<ReviewFormProps> = ({
           onChange={handleTextChange}
           style={{
             backgroundColor: "var(--input-bg-color)",
-            borderColor: "var(--input-border-color)",
+            borderColor: "var(x--input-border-color)",
             color: "var(--text-color)",
           }}
         ></textarea>

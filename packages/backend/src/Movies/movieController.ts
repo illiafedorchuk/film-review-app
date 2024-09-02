@@ -310,8 +310,16 @@ export class MovieController {
   });
 
   static addFastReaction = catchAsync(async (req: Request, res: Response) => {
+    const {
+      title,
+      poster_path,
+      backdrop_path,
+      release_date,
+      vote_average,
+      genre_ids,
+      reactionType,
+    } = req.body;
     const { movieId } = req.params;
-    const { reactionType } = req.body;
 
     // Extract access token from cookies
     const token = req.cookies.accessToken;
@@ -319,7 +327,6 @@ export class MovieController {
       return res.status(401).json({ message: "Unauthorized" });
     }
 
-    // Decode token to get user ID
     let decoded;
     try {
       decoded = jwt.verify(token, process.env.JWT_ACCESS_TOKEN_KEY!) as {
@@ -341,14 +348,28 @@ export class MovieController {
       return res.status(404).json({ message: "User not found" });
     }
 
+    // Convert movieId to number
+    const numericMovieId = parseInt(movieId, 10);
+
     // Get movie repository
     const movieRepository = AppDataSource.getRepository(Movie);
-    const movie = await movieRepository.findOne({
-      where: { movie_id: parseInt(movieId) } as FindOptionsWhere<Movie>, // Correct typing here
+    let movie = await movieRepository.findOne({
+      where: { movie_id: numericMovieId }, // Use numericMovieId here
     });
 
     if (!movie) {
-      return res.status(404).json({ message: "Movie not found" });
+      // Convert movieId to a number when creating the movie
+      movie = movieRepository.create({
+        movie_id: numericMovieId, // Ensure movie_id is a number
+        title,
+        poster_path,
+        backdrop_path,
+        release_date,
+        vote_average,
+        genre_ids,
+      });
+      console.log(movie);
+      await movieRepository.save(movie);
     }
 
     const fastReactions = movie.fastReactions || {
@@ -363,38 +384,36 @@ export class MovieController {
     const reactionKey: FastReactionKey =
       `${reactionType}_count` as FastReactionKey;
 
-    if (MovieController.userReactionExists(user, parseInt(movieId))) {
-      // If the user already reacted, remove the previous reaction
+    if (MovieController.userReactionExists(user, numericMovieId)) {
       const previousReactionType = MovieController.getPreviousReaction(
         user,
-        parseInt(movieId)
+        numericMovieId
       );
       if (previousReactionType) {
         const previousReactionKey: FastReactionKey =
           `${previousReactionType}_count` as FastReactionKey;
         fastReactions[previousReactionKey]--;
       }
+
       if (previousReactionType === reactionType) {
-        // If the reaction is the same, unset the reaction
-        MovieController.removeUserReaction(user, parseInt(movieId));
+        MovieController.removeUserReaction(user, numericMovieId);
       } else {
-        // Otherwise, set the new reaction
         MovieController.setUserReaction(
           user,
-          parseInt(movieId),
+          numericMovieId,
           reactionType as ReactionType
         );
         fastReactions[reactionKey]++;
       }
     } else {
-      // Add new reaction
       MovieController.setUserReaction(
         user,
-        parseInt(movieId),
+        numericMovieId,
         reactionType as ReactionType
       );
       fastReactions[reactionKey]++;
     }
+
     user.updatedAt = new Date();
     movie.fastReactions = fastReactions;
     await movieRepository.save(movie);

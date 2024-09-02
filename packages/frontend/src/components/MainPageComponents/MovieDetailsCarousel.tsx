@@ -7,7 +7,7 @@ interface Movie {
   id: number;
   title: string;
   overview: string;
-  backdrop_path: string;
+  backdrop_path?: string;
 }
 
 interface MovieDetailsCarouselProps {
@@ -24,7 +24,6 @@ const WhiteLinearProgress = styled(LinearProgress)(({}) => ({
   },
   [`& .${linearProgressClasses.bar}`]: {
     backgroundColor: "rgba(255, 255, 255, 0.5)",
-    transition: "width 0.01s linear",
   },
 }));
 
@@ -40,10 +39,9 @@ const MovieDetailsCarousel: React.FC<MovieDetailsCarouselProps> = ({
   const updateMovieIndex = useCallback(() => {
     setCurrentIndex((prevIndex) => {
       const nextIndex = (prevIndex + 1) % movies.length;
-      onMovieChange(nextIndex);
       return nextIndex;
     });
-  }, [movies.length, onMovieChange]);
+  }, [movies.length]);
 
   useEffect(() => {
     if (!isHovered) {
@@ -56,13 +54,17 @@ const MovieDetailsCarousel: React.FC<MovieDetailsCarouselProps> = ({
           }
           return prevProgress + 0.1;
         });
-      }, 10);
+      }, 15);
     }
 
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
     };
   }, [isHovered, updateMovieIndex]);
+
+  useEffect(() => {
+    onMovieChange(currentIndex);
+  }, [currentIndex, onMovieChange]);
 
   if (!movies.length) {
     return <div>Loading...</div>;

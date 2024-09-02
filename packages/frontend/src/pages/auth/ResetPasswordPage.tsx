@@ -1,12 +1,11 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useState } from "react";
+
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useParams } from "react-router-dom"; // Import useParams
 
-import InputError from "../../components/InputErrors";
 import axios from "../../lib/axios";
 import PasswordField from "../../components/AuthComponents/PasswordField";
 import { DarkModeProvider } from "../../components/layouts/DarkModeContext";
@@ -44,7 +43,7 @@ const ResetPasswordPage = () => {
         `/auth/resetPassword/${signResetPasswordToken}`, // Use the extracted token in the URL
         data
       );
-
+      console.log(response);
       reset();
     } catch (error: any) {
       console.error("Error resetting password:", error);

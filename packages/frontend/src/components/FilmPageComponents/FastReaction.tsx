@@ -14,10 +14,23 @@ const reactions = [
 
 interface FastReactionProps {
   movieId: number;
-  token: string;
+  title: string;
+  poster_path: string;
+  backdrop_path: string;
+  release_date: string;
+  vote_average: string;
+  genre_ids: string;
 }
 
-const FastReaction: React.FC<FastReactionProps> = ({ movieId, token }) => {
+const FastReaction: React.FC<FastReactionProps> = ({
+  movieId,
+  title,
+  poster_path,
+  backdrop_path,
+  release_date,
+  vote_average,
+  genre_ids,
+}) => {
   const [userReaction, setUserReaction] = useState<string | null>(null);
   const [reactionCounts, setReactionCounts] = useState<{
     [key: string]: number;
@@ -34,7 +47,7 @@ const FastReaction: React.FC<FastReactionProps> = ({ movieId, token }) => {
     const loadReactions = async () => {
       try {
         console.log("Fetching reactions for movieId:", movieId);
-        const data = await fetchMovieReactions(movieId, token);
+        const data = await fetchMovieReactions(movieId);
         console.log("Fetched reaction counts:", data);
         setReactionCounts(data);
       } catch (error) {
@@ -43,15 +56,20 @@ const FastReaction: React.FC<FastReactionProps> = ({ movieId, token }) => {
     };
 
     loadReactions();
-  }, [movieId, token]);
+  }, [movieId]);
 
   const handleReactionClick = async (reactionType: string) => {
     try {
       console.log("Adding reaction:", reactionType);
       const newReactionCounts = await addFastReaction(
         movieId,
-        reactionType,
-        token
+        title,
+        poster_path,
+        backdrop_path,
+        release_date,
+        vote_average,
+        genre_ids,
+        reactionType
       );
       console.log("Updated reaction counts:", newReactionCounts);
       setUserReaction(reactionType === userReaction ? null : reactionType);

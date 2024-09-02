@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useState } from "react";
+import { useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import InputError from "../../components/InputErrors";
 import AppLayout from "../../components/layouts/AppLayout";
 import TextInput from "../../components/AuthComponents/TextInput";
@@ -12,20 +12,17 @@ import axios from "../../lib/axios";
 import ForgotPasswordModal from "../../components/ForgotPassword";
 import PasswordField from "../../components/AuthComponents/PasswordField";
 import { DarkModeProvider } from "../../components/layouts/DarkModeContext";
+import { useRedirectIfAuthenticated } from "../../hooks/useRedirectIfAuthenticated";
 
 const schema = z.object({
   email: z.string().email(),
   password: z.string().min(8),
 });
 
-const emailSchema = z.object({
-  email: z.string().email(),
-});
-
 type LoginPageFields = z.infer<typeof schema>;
-type ForgotPasswordFormFields = z.infer<typeof emailSchema>;
 
 const LoginPage = () => {
+  useRedirectIfAuthenticated(false);
   const [forgotPasswordModalOpen, setForgotPasswordModalOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const {
@@ -38,12 +35,15 @@ const LoginPage = () => {
     resolver: zodResolver(schema),
   });
 
+  const navigate = useNavigate();
+
   const onSubmit: SubmitHandler<LoginPageFields> = async (data) => {
     try {
       const response = await axios.post("/auth/login", data);
-
+      console.log(response);
       reset(); // Reset the form after successful login
       setError(null); // Clear any previous errors
+      navigate("/"); // Redirect to the home page
     } catch (error: any) {
       setError(error.response?.data?.message || "An error occurred");
     }

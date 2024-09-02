@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useEffect } from "react";
 import FilmCard from "./FilmCard";
 import { fetchBookmarkedMovies } from "../../lib/api";
@@ -13,11 +14,11 @@ interface Movie {
   genre_ids?: number[];
 }
 
-const FavoriteMovies: React.FC<{ token: string }> = ({ token }) => {
+const FavoriteMovies: React.FC<any> = () => {
   const [favoriteMovies, setFavoriteMovies] = useState<Movie[]>([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-
+  const token = "";
   const handleShowMore = () => {
     navigate("favouriteMovies");
   };

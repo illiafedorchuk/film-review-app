@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, {
   createContext,
   useContext,
@@ -7,23 +6,28 @@ import React, {
   useEffect,
 } from "react";
 
+// Define the interface for the context props
 interface DarkModeContextProps {
   isDarkMode: boolean;
   toggleDarkMode: () => void;
 }
 
+// Create the context with a default undefined value
 const DarkModeContext = createContext<DarkModeContextProps | undefined>(
   undefined
 );
 
+// Provider component to manage dark mode state
 export const DarkModeProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
-  const [isDarkMode, setIsDarkMode] = useState(() => {
+  // Initialize dark mode state based on localStorage
+  const [isDarkMode, setIsDarkMode] = useState<boolean>(() => {
     const savedMode = localStorage.getItem("dark-mode");
     return savedMode ? JSON.parse(savedMode) : false;
   });
 
+  // Effect to update localStorage and apply the dark mode class
   useEffect(() => {
     localStorage.setItem("dark-mode", JSON.stringify(isDarkMode));
     if (isDarkMode) {
@@ -33,8 +37,9 @@ export const DarkModeProvider: React.FC<{ children: ReactNode }> = ({
     }
   }, [isDarkMode]);
 
+  // Toggle function to switch dark mode on and off
   const toggleDarkMode = () => {
-    setIsDarkMode((prevMode: any) => !prevMode);
+    setIsDarkMode((prevMode) => !prevMode);
   };
 
   return (
@@ -44,6 +49,7 @@ export const DarkModeProvider: React.FC<{ children: ReactNode }> = ({
   );
 };
 
+// Custom hook to use dark mode context
 export const useDarkMode = (): DarkModeContextProps => {
   const context = useContext(DarkModeContext);
   if (!context) {

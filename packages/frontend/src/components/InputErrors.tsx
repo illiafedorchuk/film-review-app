@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 export default function InputError({
   messages,
-  className = "",
 }: {
   messages?: string | string[];
   className?: string;

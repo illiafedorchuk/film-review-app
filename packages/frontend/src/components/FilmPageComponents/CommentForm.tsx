@@ -3,10 +3,9 @@ import { createComment } from "../../lib/api";
 
 interface CommentFormProps {
   movieId: number; // Assuming you have a movieId prop
-  token: string; // Assuming you have a token prop
 }
 
-const CommentForm: React.FC<CommentFormProps> = ({ movieId, token }) => {
+const CommentForm: React.FC<CommentFormProps> = ({ movieId }) => {
   console.log(movieId);
   const [newComment, setNewComment] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -23,7 +22,7 @@ const CommentForm: React.FC<CommentFormProps> = ({ movieId, token }) => {
     setError(null);
 
     try {
-      const response = await createComment(movieId, token, newComment);
+      const response = await createComment(movieId, newComment);
       console.log("Comment created:", response);
 
       // Clear the textarea after a successful post
